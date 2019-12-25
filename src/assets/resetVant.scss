@@ -1,0 +1,65 @@
+  .van-button--danger {
+    width: 226%;
+    height: 100%;
+    margin-left: 10px;
+    text-align: center;
+  }
+  //下拉刷新组件样式修改
+  .van-pull-refresh,
+  .van-pull-refresh__track {
+    min-height: calc(100vh - 55px);
+    height: auto;
+  }
+  .van-pull-refresh__head {
+    top: -55px;
+    height: 40px;
+    line-height: 40px;
+  }
+  //骨架屏 样式修改
+  .van-skeleton {
+      width: 92%;
+      margin: 0 auto;
+    .van-skeleton__content {
+        margin-left: 12px;
+    }
+    .van-skeleton__title {
+        height: 30px;
+    }
+  }
+  // 标签栏
+  .van-tabs__content {
+    width: 90%;
+    margin: 0 auto;
+  }
+  // 搜索栏
+  .van-search__label {
+    margin-right: 6px;
+  }
+  .van-dropdown-menu {
+    height: 34px;
+  }
+  .van-dropdown-menu__item {
+    line-height: 34px;
+    height: 34px;
+    background-color: #f7f8fa;
+    font-size: 12px;
+  }
+  .van-cell__title span {
+    padding-left: 16px;
+  }
+
+  // 消息滑动组件
+  .van-swipe-cell__right {
+    height: 84px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    width: 82px;
+  }
+  .van-button--danger {
+    margin-left:0px;
+  }
+  .van-divider{
+    margin: 8px 0;
+  }
