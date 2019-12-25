@@ -54,15 +54,15 @@ export default {
   },
   mounted() {
     // 如果支持 popstate 一般移动端都支持了
-    if (window.history && window.history.pushState) {
-      // 往历史记录里面添加一条新的当前页面的url
-      history.pushState(null, null, document.URL);
-      // 给 popstate 绑定一个方法 监听页面刷新
-      window.addEventListener("popstate", this.backChange, false); //false阻止默认事件
-    }
+    // if (window.history && window.history.pushState) {
+    //   // 往历史记录里面添加一条新的当前页面的url
+    //   history.pushState(null, null, document.URL);
+    //   // 给 popstate 绑定一个方法 监听页面刷新
+    //   window.addEventListener("popstate", this.backChange, false); //false阻止默认事件
+    // }
   },
   destroyed() {
-    window.removeEventListener("popstate", this.backChange, false); //false阻止默认事件
+    // window.removeEventListener("popstate", this.backChange, false); //false阻止默认事件
   }
 };
 </script>

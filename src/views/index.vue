@@ -11,8 +11,8 @@
         <div class="content">
           <div class="classify">
             <div class="half">
-              <div class="fen fen-top-left">1</div>
-              <div class="fen fen-bottom-left">2</div>
+              <div class="fen fen-top-left"></div>
+              <div class="fen fen-bottom-left"></div>
             </div>
             <div class="half">
               <div class="fen fen-top-right">3</div>

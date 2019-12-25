@@ -1,7 +1,6 @@
 <template>
-  <div class="comment-border">
-    <div class="header">全部留言{{ totalNumber }}</div>
-    <div v-for="(item, index) in getCommentList" :key="index">
+  <div>
+    <div>
       <div class="content">
         <div class="user-log">
           <img src="../assets/th.jpg" href="#" />
@@ -10,8 +9,8 @@
           <div class="msg-top">
             <div class="title">{{ item.name }}</div>
             <div
-              :class="zanActive(item) ? 'zan-active' : 'zan'"
               @click="addFabulous(item)"
+              :class="zanActive(item) ? 'zan-active' : 'zan'"
             >
               <van-icon :name="zanActive(item) ? 'good-job' : 'good-job-o'" />
               <div v-if="item.fabulous > 0" class="number">
@@ -31,9 +30,9 @@
           v-for="(itemC, indexC) in getChildCommentList(item.objectId)"
           :key="indexC"
         >
-          <div v-show="indexC < 2 || !isMore">
+          <div v-show="indexC < 1 || !isMore">
             <div class="content">
-              <div class="user-log">
+              <div class="reply-user-log">
                 <img src="../assets/th.jpg" href="#" />
               </div>
               <div class="msg">
@@ -60,146 +59,44 @@
             <van-divider />
           </div>
         </div>
-        <div class="hideContent" v-show="isMore = moreStatus(item, index)" @click="isMoreEnable(item)">
-          <van-cell title="展开更多" style="padding:0px" icon="arrow-down"></van-cell>
+        <div
+          class="hideContent"
+          v-if="isMore && getChildCommentList(item.objectId).length > 1"
+          @click="isMoreEnable()"
+        >
+          <van-cell
+            :title="
+              `展开剩余 ${getChildCommentList(item.objectId).length - 1} 评论`
+            "
+            style="padding:0px"
+            icon="arrow-down"
+          ></van-cell>
         </div>
-        <van-divider v-show="isMore" />
+        <van-divider
+          v-if="isMore && getChildCommentList(item.objectId).length > 1"
+        />
       </div>
     </div>
-    <div v-if="commentList.length == 0" class="noreply">
-      <div>
-        <img src="" />
-      </div>
-      <div>
-        <van-button size="small" type="warning">警告按钮</van-button>
-      </div>
-    </div>
-    <van-popup v-model="popup" position="bottom">
-      <van-cell-group id="keyboard">
-        <van-field v-model="reply" center clearable :placeholder="repayName">
-          <van-button slot="button" size="small" type="primary"
-            >回复</van-button
-          >
-        </van-field>
-      </van-cell-group>
-    </van-popup>
   </div>
 </template>
 
 <script>
 import axios from "axios";
 export default {
+  props: ["commentChild", "comment"],
   data() {
     return {
       reply: "",
       repayName: "",
       popup: false,
-      isMore: false,
-      moreDom: [],
+      isMore: true,
       fabulousList: [],
-      backupCommentList: [],
-      commentList: [
-        {
-          articleId: "",
-          objectId: "123",
-          commentFloorId: "",
-          name: "1",
-          replyId: "",
-          comment: "第一层",
-          fabulous: 2,
-          createTime: 1
-        },
-        {
-          articleId: "",
-          objectId: "234",
-          commentFloorId: "123",
-          replyId: "123",
-          name: "2",
-          comment:
-            "123层回复1232313123124123122131232123层回复1232313123124123122131232123层回复1232313123124123122131232",
-          fabulous: 3,
-          createTime: 2
-        },
-        {
-          articleId: "",
-          commentFloorId: "123",
-          objectId: "345",
-          replyId: "234",
-          comment: "123层回复234",
-          name: "3",
-          fabulous: 4,
-          createTime: 4
-        },
-        {
-          articleId: "",
-          commentFloorId: "567",
-          objectId: "456",
-          replyId: "567",
-          comment: "567层回复567",
-          name: "4",
-          fabulous: 5,
-          createTime: 3
-        },
-        {
-          articleId: "",
-          commentFloorId: "",
-          objectId: "567",
-          name: "5",
-          replyId: "",
-          comment: "567",
-          fabulous: 2,
-          createTime: 2
-        },
-        {
-          articleId: "",
-          commentFloorId: "123",
-          objectId: "000",
-          replyId: "123",
-          name: "6",
-          comment: "123层回复234",
-          fabulous: 3,
-          createTime: 5
-        },
-        {
-          articleId: "",
-          commentFloorId: "567",
-          objectId: "789",
-          replyId: "456",
-          comment: "567层回复456",
-          name: "7",
-          fabulous: 4,
-          createTime: 1
-        },
-        {
-          articleId: "",
-          commentFloorId: "123",
-          objectId: "900",
-          replyId: "234",
-          comment: "123层回复234",
-          name: "8",
-          fabulous: 5,
-          createTime: 2
-        }
-      ]
+      commentList: this.commentChild,
+      item: this.comment
     };
   },
   mounted() {
     this.createFabulousList();
-  },
-  computed: {
-    totalNumber() {
-      if (this.commentList.length == 0) {
-        return "";
-      }
-      return ` · ${this.commentList.length}`;
-    },
-    getCommentList() {
-      var comment = this.commentList.filter(item => {
-        return item.commentFloorId == "";
-      });
-      console.log(this.commentSort(comment));
-      return this.commentSort(comment);
-    }
   },
   methods: {
     // 评论按照日期排序
@@ -215,14 +112,14 @@ export default {
       }
       return arr;
     },
-    // 获取直接回复文章的评论
+    // 获取二次回复的评论
     getChildCommentList(obj) {
       var commentChild = this.commentList.filter(item => {
         return item.commentFloorId == obj;
       }, obj);
       return this.commentSort(commentChild);
     },
-    // 点赞功能
+    // 增加点赞数
     addFabulous(item) {
       let arr = this.fabulousList;
       for (let i = 0; i < arr.length; i++) {
@@ -260,6 +157,11 @@ export default {
     createFabulousList() {
       var arr = [];
       var commentList = this.commentList;
+      let obj = {};
+      obj.objectId = this.item.objectId;
+      obj.fabulous = false;
+      obj.createTime = this.item.createTime;
+      arr.push(obj);
       for (let index = 0; index < commentList.length; index++) {
         let obj = {};
         obj.objectId = commentList[index].objectId;
@@ -267,21 +169,7 @@ export default {
         obj.createTime = commentList[index].createTime;
         arr.push(obj);
       }
-      this.createMoreDom();
       this.fabulousList = arr;
-    },
-    createMoreDom() {
-      var arr = [];
-      var moreList = this.getCommentList;
-      for (let index = 0; index < moreList.length; index++) {
-        let obj = {};
-        obj.commentFloorId = moreList[index].objectId;
-        obj.hideMore = false;
-        arr.push(obj);
-      }
-      Array.prototype.isMore = false;
-      console.log(arr);
-      this.moreDom = arr;
     },
     // 提交最新点赞记录
     updateCommentList() {
@@ -311,30 +199,13 @@ export default {
       this.repayName = `@${name} `;
       this.popup = true;
     },
-    isMoreEnable(item) {
-      for (let index = 0; index < this.moreDom.length; index++) {
-        if (item.commentFloorId == this.moreDom[index].commentFloorId) {
-          this.moreDom[index].hideMore = true;
-        }
-      }
-    },
-    moreStatus(item, index) {
-      if (this.moreDom[index].commentFloorId == item.commentFloorId||!this.moreDom[index].hideMore) {
-        return true;
-      }else{
-        return false;
-      }
+    isMoreEnable() {
+      this.isMore = false;
     }
   }
 };
 </script>
 <style lang="scss" scoped>
-.comment-border {
-  padding: 4px 15px 55px;
-}
-.header {
-  margin: 6px 0px;
-}
 .content {
   display: flex;
   justify-content: flex-start;
@@ -345,9 +216,13 @@ export default {
     display: flex;
     color: yellow;
   }
+  .reply-user-log img {
+    width: 30px;
+    height: 30px;
+  }
   .user-log img {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
   }
   .msg {
     width: 90%;
@@ -358,6 +233,7 @@ export default {
     }
     .comment {
       word-break: break-all;
+      font-size: 0.9em;
     }
     .timeStamp {
       font-size: 12px;

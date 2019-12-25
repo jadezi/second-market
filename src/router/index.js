@@ -5,7 +5,7 @@ import index from "@/views/index.vue";
 import Message from "@/views/message.vue";
 import NProgress from "nprogress";
 import Add from "@/views/add.vue";
-import Comment from "@/views/comment.vue";
+import Comment from "@/views/cmtParent.vue";
 import "nprogress/nprogress.css";
 
 Vue.use(VueRouter);
