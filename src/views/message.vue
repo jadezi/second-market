@@ -156,6 +156,7 @@ export default {
     },
     updateUserInfo(item) {
       this.messageFlag = true;
+
       this.$store.commit("setInfo", item);
     }
   },

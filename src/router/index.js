@@ -6,6 +6,7 @@ import Message from "@/views/message.vue";
 import NProgress from "nprogress";
 import Add from "@/views/add.vue";
 import Comment from "@/views/cmtParent.vue";
+import ShopDetail from "@/views/shopDetail.vue";
 import "nprogress/nprogress.css";
 
 Vue.use(VueRouter);
@@ -35,6 +36,11 @@ const routes = [
     path: "/user/comment",
     name: "comment",
     component: Comment
+  },
+  {
+    path: "/user/shop/:userId/:shopId",
+    name: "shopDetail",
+    component: ShopDetail
   }
 ];
 
@@ -43,6 +49,8 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
+
+NProgress.configure({ showSpinner: false });
 
 router.beforeEach((to, from, next) => {
   NProgress.start();
