@@ -34,7 +34,10 @@ import {
   Popup,
   RadioGroup,
   Radio,
-  NumberKeyboard
+  NumberKeyboard,
+  Tag,
+  Sticky,
+  ImagePreview
 } from "vant";
 
 Vue.use(Grid).use(GridItem);
@@ -63,6 +66,9 @@ Vue.use(RadioGroup);
 Vue.use(Radio);
 Vue.use(NumberKeyboard);
 Vue.use(Collapse).use(CollapseItem);
+Vue.use(Tag);
+Vue.use(Sticky);
+Vue.use(ImagePreview);
 Vue.config.productionTip = false;
 
 import "@/assets/resetVant.scss";

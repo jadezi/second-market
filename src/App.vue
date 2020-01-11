@@ -3,7 +3,6 @@
     <transition mode="out-in" name="fade">
       <router-view></router-view>
     </transition>
-    <tar></tar>
   </div>
 </template>
 <style scoped>
@@ -18,7 +17,6 @@
 }
 </style>
 <script>
-import tar from "@/components/tar.vue";
 export default {
   data() {
     return {
@@ -48,9 +46,6 @@ export default {
           });
       }, 100);
     }
-  },
-  components: {
-    tar
   },
   mounted() {
     // 如果支持 popstate 一般移动端都支持了

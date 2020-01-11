@@ -5,6 +5,8 @@
         title="标题"
         left-text="返回"
         left-arrow
+        right-text="发布"
+        @click-right="release"
         @click-left="onClickLeft"
       />
     </div>
@@ -181,6 +183,9 @@ export default {
       this.shopList.timeStamp = timestamp;
       this.priceAction = false;
       console.log(this.shopList);
+    },
+    release() {
+      console.log(this.fileList);
     }
   }
 };

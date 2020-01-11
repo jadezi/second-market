@@ -67,6 +67,7 @@
     <div v-if="circularLoading" class="main">
       <van-loading color="#FF66CC" :size="45" />
     </div>
+    <tar></tar>
   </div>
 </template>
 
@@ -76,6 +77,7 @@ import contact from "@/views/contacts.vue";
 import activity from "../../public/img/activity.jpg";
 import inform from "../../public/img/inform.gif";
 import message from "../../public/img/message.jpg";
+import tar from "@/components/tar.vue";
 export default {
   name: "message",
   data() {
@@ -161,7 +163,8 @@ export default {
     }
   },
   components: {
-    contact
+    contact,
+    tar
   }
 };
 </script>

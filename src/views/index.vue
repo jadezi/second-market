@@ -43,12 +43,14 @@
         </div>
       </transition>
     </div>
+    <tar></tar>
   </div>
 </template>
 
 <script>
 import search from "@/components/search.vue";
 import searchBar from "@/views/searchBar.vue";
+import tar from "@/components/tar.vue";
 export default {
   data() {
     return {
@@ -60,7 +62,8 @@ export default {
   },
   components: {
     search,
-    searchBar
+    searchBar,
+    tar
   },
   methods: {
     onRefresh() {
@@ -140,5 +143,9 @@ export default {
   z-index: 99999;
   position: absolute;
   top: 0px;
+}
+.main > div {
+  margin: 0 auto;
+  width: 95%;
 }
 </style>
