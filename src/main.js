@@ -34,10 +34,17 @@ import {
   Popup,
   RadioGroup,
   Radio,
+  SwitchCell,
   NumberKeyboard,
   Tag,
+  ContactCard,
+  Card,
   Sticky,
-  ImagePreview
+  ImagePreview,
+  AddressEdit,
+  AddressList,
+  Panel,
+  SubmitBar
 } from "vant";
 
 Vue.use(Grid).use(GridItem);
@@ -63,12 +70,19 @@ Vue.use(ActionSheet);
 Vue.use(Area);
 Vue.use(Popup);
 Vue.use(RadioGroup);
+Vue.use(Panel);
 Vue.use(Radio);
 Vue.use(NumberKeyboard);
 Vue.use(Collapse).use(CollapseItem);
 Vue.use(Tag);
 Vue.use(Sticky);
 Vue.use(ImagePreview);
+Vue.use(Card);
+Vue.use(AddressList);
+Vue.use(SwitchCell);
+Vue.use(AddressEdit);
+Vue.use(ContactCard);
+Vue.use(SubmitBar);
 Vue.config.productionTip = false;
 
 import "@/assets/resetVant.scss";

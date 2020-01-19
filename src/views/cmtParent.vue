@@ -26,10 +26,12 @@
         <img src />
       </div>
       <div style="margin:0 auto;width:60px;">
-        <van-button size="small" type="warning" @click="showPopup">留言</van-button>
+        <van-button size="small" type="warning" @click="showPopup"
+          >留言</van-button
+        >
       </div>
     </div>
-     <van-popup v-model="popup" position="bottom">
+    <van-popup v-model="popup" position="bottom">
       <van-cell-group id="keyboard">
         <van-field v-model="reply" center clearable placeholder="请输入">
           <van-button slot="button" size="small" type="primary"

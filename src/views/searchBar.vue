@@ -10,7 +10,7 @@
       >
         <div slot="label">
           <van-dropdown-menu>
-            <van-dropdown-item v-model="selected" :options="searchOption" />
+            <van-dropdown-item v-model="selected" :options="searchOption" title-class="search-item"/>
           </van-dropdown-menu>
         </div>
       </van-search>
@@ -38,4 +38,11 @@ export default {
   }
 };
 </script>
-<style scoped></style>
+<style scoped>
+.van-cell__title span {
+  padding-left: 16px;
+}
+.search-item {
+  padding-left: 16px;
+}
+</style>

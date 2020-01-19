@@ -11,15 +11,13 @@
       />
     </div>
     <div class="content">
-      <van-cell-group>
-        <van-field
-          v-model="message"
-          rows="5"
-          autosize
-          type="textarea"
-          placeholder="宝贝怎么样"
-        />
-      </van-cell-group>
+      <van-field
+        v-model="message"
+        rows="5"
+        autosize
+        type="textarea"
+        placeholder="宝贝怎么样"
+      />
     </div>
     <div class="upload-image">
       <van-uploader v-model="fileList" multiple :max-count="5" />
@@ -53,6 +51,7 @@
               label="出手价格"
               right-icon="question-o"
               @focus="onFocus(0)"
+              readonly
               placeholder="￥0.00"
             />
           </div>

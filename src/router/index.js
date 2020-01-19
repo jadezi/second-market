@@ -7,6 +7,9 @@ import NProgress from "nprogress";
 import Add from "@/views/add.vue";
 import Comment from "@/views/cmtParent.vue";
 import ShopDetail from "@/views/shopDetail.vue";
+import OrderInfo from "@/views/orderInfo.vue";
+import addressEdit from "@/views/addressEdit.vue";
+import address from "@/views/address.vue";
 import "nprogress/nprogress.css";
 
 Vue.use(VueRouter);
@@ -41,6 +44,21 @@ const routes = [
     path: "/user/shop/:userId/:shopId",
     name: "shopDetail",
     component: ShopDetail
+  },
+  {
+    path: "/user/shop/:userId/:shopId/order",
+    name: "orderInfo",
+    component: OrderInfo
+  },
+  {
+    path: "/user/shop/:userId/:shopId/order/addressEdit",
+    name: "addressEdit",
+    component: addressEdit
+  },
+  {
+    path: "/user/address",
+    name: "address",
+    component: address
   }
 ];
 

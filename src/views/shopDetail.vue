@@ -15,7 +15,13 @@
         </div>
         <div>
           <div class="userName">123</div>
-          <div class="pushTime">123</div>
+          <div class="pushTime">2020-1-1</div>
+        </div>
+        <div class="identity">
+          <van-icon name="award-o" size="1.7em" color="#40E0D0" />
+          <van-button plain type="info" size="mini" color="#40E0D0"
+            >实名认证</van-button
+          >
         </div>
       </div>
       <van-divider />
@@ -35,11 +41,48 @@
     </div>
     <div class="juli"></div>
     <cmtParent></cmtParent>
-    <div class="menu">
-      <div class="replyMsg"><van-icon name="chat-o" /></div>
-      <div class="iwant">
-        <van-button type="danger" size="small" color="linear-gradient(to right, #CC0000, #FF3333,)">想要</van-button>
-      </div>
+    <div class="bottom-menu">
+      <transition name="van-fade">
+        <div class="menu" v-if="isReply">
+          <div class="replyMsg" @click="replyBtn">
+            <van-icon name="chat-o" size="1.8em" />
+            <div class="leaveNote">留言</div>
+          </div>
+          <div class="iwant">
+            <van-button
+              size="normal"
+              style="height:40px"
+              round
+              color="linear-gradient(to right, #fc9114, #ff2222)"
+              >想&nbsp;要</van-button
+            >
+          </div>
+        </div>
+        <!-- </transition>
+       <transition name="van-fade"> -->
+        <div class="menu" v-else-if="isKeyBroad">
+          <div class="KeyBroad">
+            <van-icon name="smile-comment-o" size="1.8em" @click="replyBtn" />
+            <van-cell-group>
+              <van-field
+                :autofocus="1 > 0"
+                v-model="replyContent"
+                placeholder="给ta捎句话吧"
+              />
+            </van-cell-group>
+          </div>
+          <div>
+            <van-button
+              size="normal"
+              style="height:40px"
+              v-bind:disabled="replyContent.length == 0"
+              round
+              type="primary"
+              >留&nbsp;言</van-button
+            >
+          </div>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -47,17 +90,30 @@
 <script>
 import { ImagePreview } from "vant";
 import cmtParent from "@/views/cmtParent.vue";
+import axios from "axios";
 export default {
   name: "ShopDetail",
   data() {
-    return {};
+    return {
+      replyContent: "",
+      isReply: true,
+      isKeyBroad: false,
+      replyMessage: ""
+    };
   },
   components: {
     cmtParent
   },
   methods: {
+    sendReplyContent() {
+      axios.post("http://localhost:3000");
+    },
     onClickLeft() {
       console.log("ok");
+    },
+    replyBtn() {
+      this.isReply = !this.isReply;
+      this.isKeyBroad = !this.isKeyBroad;
     },
     showImage(pos) {
       ImagePreview({
@@ -96,6 +152,9 @@ export default {
     .pushTime {
       color: #efefef;
       font-size: 14px;
+    }
+    .identity {
+      display: flex;
     }
   }
   .priceInfo {
@@ -137,13 +196,37 @@ export default {
   width: 100%;
   background-color: #efefef;
 }
-.menu {
+.bottom-menu {
   width: 100%;
-  height: 25px;
+  margin: 0 auto;
   position: fixed;
-  display: flex;
-  justify-content: space-between;
   bottom: 0;
+  display: flex;
+  justify-content: center;
   background-color: white;
+  border-top: 1px solid #e2e2e2;
+  .menu {
+    width: 90%;
+    height: 55px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .replyMsg {
+      display: flex;
+      flex-direction: column;
+      .leaveNote {
+        font-size: 14px;
+        color: #c2c0c0cb;
+      }
+    }
+    .iwant {
+      display: flex;
+      align-items: center;
+    }
+    .KeyBroad {
+      display: flex;
+      align-items: center;
+    }
+  }
 }
 </style>

@@ -12,6 +12,7 @@
       </van-nav-bar>
     </div>
     <div ref="contentBox" class="content">
+      <msgTool></msgTool>
       <div v-for="(item, index) in messageList" :key="index">
         <template v-if="item.sendUid == nickName">
           <div>
@@ -126,8 +127,12 @@
 <script>
 const appData = require("@/assets/emojis.json");
 import { ImagePreview } from "vant";
+import msgTool from "@/components/msgTool.vue";
 export default {
   name: "contact",
+  components:{
+    msgTool
+  },
   data() {
     return {
       toId: "", // 接受者id
@@ -294,7 +299,7 @@ export default {
 }
 .content {
   width: 100%;
-  background-color: red;
+  background-color: #f7f8fa;
   height: calc(100vh - 101px);
   padding-top: 50px;
   overflow: scroll;
