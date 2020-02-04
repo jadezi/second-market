@@ -90,7 +90,7 @@
   </div>
 </template>
 <script>
-import area from "../assets/address.js";
+import area from "../assets/js/address.js";
 export default {
   name: "add",
   data() {

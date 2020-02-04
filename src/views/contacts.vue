@@ -12,8 +12,8 @@
       </van-nav-bar>
     </div>
     <div ref="contentBox" class="content">
-      <msgTool></msgTool>
       <div v-for="(item, index) in messageList" :key="index">
+        <msgTool :msgTimeStamp="item.timesStamp"></msgTool>
         <template v-if="item.sendUid == nickName">
           <div>
             <div class="father father-right">
@@ -130,11 +130,12 @@ import { ImagePreview } from "vant";
 import msgTool from "@/components/msgTool.vue";
 export default {
   name: "contact",
-  components:{
+  components: {
     msgTool
   },
   data() {
     return {
+      title: "",
       toId: "", // 接受者id
       userImg: "12", // 用户头像路径
       nickName: "12", // 用户昵称
@@ -152,7 +153,7 @@ export default {
             image: "123",
             msgTypeOfImage: false
           },
-          timesStamp: "12",
+          timesStamp: 1580824870000,
           recUid: "123",
           sendUid: "sec99",
           readState: "12"
@@ -198,6 +199,9 @@ export default {
     }
   },
   methods: {
+    initTime() {
+      return Date.parse(new Date());
+    },
     onClickLeft() {
       this.$emit("closeMessage");
     },
@@ -212,7 +216,7 @@ export default {
           image: "",
           msgTypeOfImage: false
         },
-        timesStamp: "12",
+        timesStamp: this.initTime(),
         recUid: this.toId,
         sendUid: this.nickName,
         readState: 0
@@ -271,7 +275,7 @@ export default {
           image: e.content,
           msgTypeOfImage: true
         },
-        timesStamp: "12",
+        timesStamp: this.initTime(),
         recUid: this.toId,
         sendUid: this.nickName,
         readState: 1

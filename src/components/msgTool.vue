@@ -1,10 +1,13 @@
 <template>
   <div class="time-stamp-bg">
-    <div id="time-stamp">{{ date }}</div>
+    <div id="time-stamp">
+      <span>{{ date }}</span>
+    </div>
   </div>
 </template>
 <script>
 export default {
+  props: ["msgTimeStamp"],
   data() {
     return {
       date: null
@@ -43,25 +46,28 @@ export default {
         }
         return format;
       };
-      var newdate = new Date();
-      this.date = newdate.format("yyyy-MM-dd");
+      var newdate = new Date(this.msgTimeStamp);
+      this.date = newdate.format("yyyy-MM-dd hh:mm");
     }
   }
 };
 </script>
-<style scoped>
+<style scoped lang="scss">
 .time-stamp-bg {
   margin: 12px 0px;
 }
 #time-stamp {
-  width: 100px;
-  height: 20px;
-  font-size: 14px;
-  background-color: #f2f2f2;
-  border-radius: 10px;
-  padding: 3px;
-  color: #7a7a7a;
-  margin: 0 auto;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  span {
+    min-width: 100px;
+    max-width: 130px;
+    height: 20px;
+    font-size: 14px;
+    background-color: #f2f2f2;
+    border-radius: 10px;
+    padding: 3px 5px;
+    color: #7a7a7a;
+  }
 }
 </style>

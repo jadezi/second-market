@@ -3,7 +3,7 @@
     <div>
       <div class="content">
         <div class="user-log">
-          <img src="../assets/th.jpg" href="#" />
+          <img src="../assets/img/th.jpg" href="#" />
         </div>
         <div class="msg">
           <div class="msg-top">
@@ -33,7 +33,7 @@
           <div v-show="indexC < 1 || !isMore">
             <div class="content">
               <div class="reply-user-log">
-                <img src="../assets/th.jpg" href="#" />
+                <img src="../assets/img/th.jpg" href="#" />
               </div>
               <div class="msg">
                 <div class="msg-top">
