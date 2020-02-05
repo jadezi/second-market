@@ -1,53 +1,34 @@
 <template>
   <div class="time-stamp-bg">
     <div id="time-stamp">
-      <span>{{ date }}</span>
+      <span>{{ msgTimeStamp | dateFilters }}</span>
     </div>
   </div>
 </template>
 <script>
+import { formatDate } from "@/assets/js/date.js";
 export default {
   props: ["msgTimeStamp"],
-  data() {
-    return {
-      date: null
-    };
-  },
-  mounted() {
-    this.formatDate();
-  },
-  methods: {
-    formatDate() {
-      Date.prototype.format = function(format) {
-        var o = {
-          "M+": this.getMonth() + 1, //month
-          "d+": this.getDate(), //day
-          "h+": this.getHours(), //hour
-          "m+": this.getMinutes(), //minute
-          "s+": this.getSeconds(), //second
-          "q+": Math.floor((this.getMonth() + 3) / 3), //quarter
-          S: this.getMilliseconds() //millisecond
-        };
-        if (/(y+)/.test(format)) {
-          format = format.replace(
-            RegExp.$1,
-            (this.getFullYear() + "").substr(4 - RegExp.$1.length)
-          );
-        }
-        for (var k in o) {
-          if (new RegExp("(" + k + ")").test(format)) {
-            format = format.replace(
-              RegExp.$1,
-              RegExp.$1.length == 1
-                ? o[k]
-                : ("00" + o[k]).substr(("" + o[k]).length)
-            );
-          }
-        }
-        return format;
-      };
-      var newdate = new Date(this.msgTimeStamp);
-      this.date = newdate.format("yyyy-MM-dd hh:mm");
+  filters: {
+    dateFilters: function(timeStamp) {
+      var nowDateStamp = new Date();
+      var timeStampObj = new Date(timeStamp);
+      var day = nowDateStamp.getDate() - timeStampObj.getDate();
+      var minutes = nowDateStamp.getMinutes() - timeStampObj.getMinutes();
+      console.log(minutes);
+      if (minutes < 3) {
+        this.$emit("msgToolIsShow");
+      }
+      if (day == 2) {
+        return "前天 " + formatDate(timeStamp, "hh:mm");
+      } else if (day == 1) {
+        return "昨天 " + formatDate(timeStamp, "hh:mm");
+      } else if (day == 0) {
+        return formatDate(timeStamp, "hh:mm");
+      } else {
+        console.log(timeStamp);
+        return formatDate(timeStamp, "yyyy-MM-dd hh:mm");
+      }
     }
   }
 };
@@ -68,6 +49,7 @@ export default {
     border-radius: 10px;
     padding: 3px 5px;
     color: #7a7a7a;
+    text-align: center;
   }
 }
 </style>

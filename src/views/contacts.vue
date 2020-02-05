@@ -13,7 +13,10 @@
     </div>
     <div ref="contentBox" class="content">
       <div v-for="(item, index) in messageList" :key="index">
-        <msgTool :msgTimeStamp="item.timesStamp"></msgTool>
+        <msgTool
+          :msgTimeStamp="item.timesStamp"
+          v-if="msgToolIsShow(true)"
+        ></msgTool>
         <template v-if="item.sendUid == nickName">
           <div>
             <div class="father father-right">
@@ -201,6 +204,12 @@ export default {
   methods: {
     initTime() {
       return Date.parse(new Date());
+    },
+    msgToolIsShow(status) {
+      if (status == false) {
+        return false;
+      }
+      return true;
     },
     onClickLeft() {
       this.$emit("closeMessage");
