@@ -13,10 +13,7 @@
     </div>
     <div ref="contentBox" class="content">
       <div v-for="(item, index) in messageList" :key="index">
-        <msgTool
-          :msgTimeStamp="item.timesStamp"
-          v-if="msgToolIsShow(true)"
-        ></msgTool>
+        <msgTool :msgTimeStamp="item.timesStamp"></msgTool>
         <template v-if="item.sendUid == nickName">
           <div>
             <div class="father father-right">
@@ -115,10 +112,10 @@
             </ul>
           </div>
           <div class="other-func" v-if="otherFunShow">
-            <van-uploader :after-read="recImage" capture="camera">
+            <van-uploader :after-read="handleImageMessage" capture="camera">
               <van-icon name="photograph" />
             </van-uploader>
-            <van-uploader :after-read="recImage">
+            <van-uploader :after-read="handleImageMessage">
               <van-icon name="photo" />
             </van-uploader>
           </div>
@@ -148,6 +145,7 @@ export default {
       fileList: [],
       faceShow: false,
       otherFunShow: false,
+      messageObj: [],
       messageList: [
         // 消息对象
         {
@@ -196,28 +194,38 @@ export default {
         var content = this.$refs.contentBox;
         content.scrollTop = content.scrollHeight;
       });
-      this.messageList = data;
-      console.log(data);
-      //接收的消息
+      this.messageList.push(data[0]);
+      //接收的消息// 接受完信息 向服务器发送最后通讯时间
     }
   },
   methods: {
     initTime() {
       return Date.parse(new Date());
     },
-    msgToolIsShow(status) {
-      if (status == false) {
-        return false;
-      }
-      return true;
-    },
     onClickLeft() {
-      this.$emit("closeMessage");
+      this.$router.replace("/user/message");
     },
     onClickRight() {
       this.$toast("按钮");
       console.log(this.messageList);
     },
+    // 发送含有图片文件信息
+    handleImageMessage(e) {
+      var msg = {
+        content: {
+          text: this.sms,
+          image: e.content,
+          msgTypeOfImage: true
+        },
+        timesStamp: this.initTime(),
+        recUid: this.toId,
+        sendUid: this.nickName,
+        readState: 1
+      };
+      this.messageObj.push(msg);
+      this.send();
+    },
+    // 输入文本信息
     handleMessage() {
       var msg = {
         content: {
@@ -231,18 +239,23 @@ export default {
         readState: 0
       };
       this.sms = "";
-      this.messageList.push(msg);
+      this.messageObj.push(msg);
+      console.log(this.messageObj);
       this.sendBtn = false;
       this.send();
     },
     send() {
+      // 发送信息
       this.faceShow = false;
       this.otherFunShow = false;
-      this.$socket.emit("send", this.messageList);
+      this.$socket.emit("send", this.messageObj);
+      this.messageList.push(this.messageObj[0]);
       this.$nextTick(function() {
         var content = this.$refs.contentBox;
         content.scrollTop = content.scrollHeight;
       });
+      this.messageObj = [];
+      // 发送完信息 向服务器发送最后通讯时间
     },
     showSendBtn(e) {
       console.log(e);
@@ -275,22 +288,6 @@ export default {
       }
       this.sendBtn = true;
       console.log(this.sms);
-    },
-    recImage(e) {
-      console.log(e);
-      var msg = {
-        content: {
-          text: this.sms,
-          image: e.content,
-          msgTypeOfImage: true
-        },
-        timesStamp: this.initTime(),
-        recUid: this.toId,
-        sendUid: this.nickName,
-        readState: 1
-      };
-      this.messageList.push(msg);
-      this.send();
     },
     showImage(url) {
       ImagePreview(url);

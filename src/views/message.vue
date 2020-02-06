@@ -28,7 +28,7 @@
           <div class="message-content" v-for="(item, i) in chat" :key="i">
             <van-swipe-cell :right-width="rightWidth">
               <template slot="default">
-                <div class="message" @click="updateUserInfo(item)">
+                <div class="message" @click="openContact(item)">
                   <div class="shop-logo">
                     <img :src="item.toUidImgUrl" />
                   </div>
@@ -57,13 +57,13 @@
         </van-skeleton>
       </van-pull-refresh>
     </div>
-    <div>
+    <!-- <div>
       <transition name="van-slide-right">
         <div v-if="messageFlag" class="contact">
           <contact @closeMessage="showMessage"></contact>
         </div>
       </transition>
-    </div>
+    </div> -->
     <div v-if="circularLoading" class="main">
       <van-loading color="#FF66CC" :size="45" />
     </div>
@@ -73,7 +73,7 @@
 
 <script>
 import axios from "axios";
-import contact from "@/views/contacts.vue";
+//import contact from "@/views/contacts.vue";
 import activity from "../../public/img/activity.jpg";
 import inform from "../../public/img/inform.gif";
 import message from "../../public/img/message.jpg";
@@ -129,7 +129,7 @@ export default {
           this.systemImage[i].status = !this.systemImage[i].status;
         }
       }
-      this.loading = !this.loading;
+      //this.loading = !this.loading;
     },
     getMessage() {
       this.circularLoading = true;
@@ -156,14 +156,13 @@ export default {
     showMessage() {
       this.messageFlag = !this.messageFlag;
     },
-    updateUserInfo(item) {
-      this.messageFlag = true;
-
+    openContact(item) {
+      this.$router.push({ path: "/user/message/contacts" });
       this.$store.commit("setInfo", item);
     }
   },
   components: {
-    contact,
+    //acontact,
     tar
   }
 };

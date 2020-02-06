@@ -10,6 +10,7 @@ import ShopDetail from "@/views/shopDetail.vue";
 import OrderInfo from "@/views/orderInfo.vue";
 import addressEdit from "@/views/addressEdit.vue";
 import address from "@/views/address.vue";
+import Contacts from "@/views/contacts.vue";
 import "nprogress/nprogress.css";
 
 Vue.use(VueRouter);
@@ -29,6 +30,11 @@ const routes = [
     path: "/user/message",
     name: "message",
     component: Message
+  },
+  {
+    path: "/user/message/contacts",
+    name: "contacts",
+    component: Contacts
   },
   {
     path: "/user/add",

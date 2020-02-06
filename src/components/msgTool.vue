@@ -1,5 +1,5 @@
 <template>
-  <div class="time-stamp-bg">
+  <div v-if="isDisplay" class="time-stamp-bg">
     <div id="time-stamp">
       <span>{{ msgTimeStamp | dateFilters }}</span>
     </div>
@@ -9,17 +9,22 @@
 import { formatDate } from "@/assets/js/date.js";
 export default {
   props: ["msgTimeStamp"],
+  data() {
+    return {
+      isDisplay: true
+    };
+  },
+  mounted() {
+    this.msgIsEnable();
+  },
   filters: {
     dateFilters: function(timeStamp) {
       var nowDateStamp = new Date();
       var timeStampObj = new Date(timeStamp);
       var day = nowDateStamp.getDate() - timeStampObj.getDate();
-      var minutes = nowDateStamp.getMinutes() - timeStampObj.getMinutes();
-      console.log(minutes);
-      if (minutes < 3) {
-        this.$emit("msgToolIsShow");
-      }
-      if (day == 2) {
+      if (day > 3 && day < 7) {
+        return formatDate(timeStamp, "MM-dd hh:mm");
+      } else if (day == 2) {
         return "前天 " + formatDate(timeStamp, "hh:mm");
       } else if (day == 1) {
         return "昨天 " + formatDate(timeStamp, "hh:mm");
@@ -28,6 +33,17 @@ export default {
       } else {
         console.log(timeStamp);
         return formatDate(timeStamp, "yyyy-MM-dd hh:mm");
+      }
+    }
+  },
+  methods: {
+    msgIsEnable() {
+      var nowDateStamp = new Date();
+      var timeStampObj = new Date(this.msgTimeStamp);
+      var minutes = nowDateStamp.getMinutes() - timeStampObj.getMinutes();
+      console.log(minutes);
+      if (minutes < 3) {
+        this.isDisplay = false;
       }
     }
   }
@@ -41,8 +57,6 @@ export default {
   display: flex;
   justify-content: center;
   span {
-    min-width: 100px;
-    max-width: 130px;
     height: 20px;
     font-size: 14px;
     background-color: #f2f2f2;
