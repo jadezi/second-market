@@ -13,8 +13,7 @@
     </div>
     <div ref="contentBox" class="content">
       <div v-for="(item, index) in messageList" :key="index">
-        <msgTool :msgTimeStamp="item.timesStamp"></msgTool>
-        <template v-if="item.sendUid == nickName">
+        <template v-if="item.sendUid == userId">
           <div>
             <div class="father father-right">
               <div class="log">
@@ -22,7 +21,7 @@
               </div>
               <div class="son son-right">
                 <div class="title title-right">{{ item.sendUid }}</div>
-                <div class="message">
+                <div class="message message-right">
                   <div>
                     <template v-if="!item.content.msgTypeOfImage">
                       <div>{{ item.content.text }}</div>
@@ -36,6 +35,12 @@
                       </div>
                     </template>
                   </div>
+                </div>
+                <div>
+                  <msgTool
+                    :msgTimeStamp="item.timesStamp"
+                    :timeStyle="'right'"
+                  ></msgTool>
                 </div>
               </div>
             </div>
@@ -45,11 +50,11 @@
           <div>
             <div class="father father-left">
               <div class="log">
-                <img :src="userImg" />
+                <img :src="toUserImg" />
               </div>
               <div class="son son-left">
-                <div class="title title">{{ nickName }}</div>
-                <div class="message">
+                <div class="title title">{{ item.sendUid }}</div>
+                <div class="message message-left">
                   <div>
                     <template v-if="!item.content.msgTypeOfImage">
                       <div>{{ item.content.text }}</div>
@@ -64,6 +69,10 @@
                     </template>
                   </div>
                 </div>
+                <msgTool
+                  :msgTimeStamp="item.timesStamp"
+                  :timeStyle="'left'"
+                ></msgTool>
               </div>
             </div>
           </div>
@@ -137,8 +146,9 @@ export default {
     return {
       title: "",
       toId: "", // 接受者id
-      userImg: "12", // 用户头像路径
-      nickName: "12", // 用户昵称
+      userId: "", // 发送者id
+      userImg: "", // 发送者头像路径
+      toUserImg: "", // 收信人头像路径
       sms: "",
       imgSrc: "",
       faceList: [],
@@ -148,26 +158,40 @@ export default {
       messageObj: [],
       messageList: [
         // 消息对象
-        {
-          content: {
-            text: "2",
-            image: "123",
-            msgTypeOfImage: false
-          },
-          timesStamp: 1580824870000,
-          recUid: "123",
-          sendUid: "sec99",
-          readState: "12"
-        }
+        // {
+        //   content: {
+        //     text: "2",
+        //     image: "123",
+        //     msgTypeOfImage: false
+        //   },
+        //   timesStamp: 1580824870000,
+        //   recUid: "123",
+        //   sendUid: "sec99",
+        //   readState: "12"
+        // }
       ],
       sendBtn: false //控制发送键显示
     };
   },
   mounted() {
-    this.toId = this.$store.state.contactInfo.contactObj.toId;
+    this.toId = this.$route.query.toId; //接收者id
     this.title = `与 ${this.toId} 会话`;
-    this.nickName = this.$store.state.userInfo.uid;
-    this.userImg = this.$store.state.contactInfo.contactObj.toUidImgUrl;
+    this.userId = this.$store.state.userInfo.uid; //发送者id
+    this.userImg = this.$store.state.userInfo.uidImgUrl; //发送者头像
+    this.toUserImg = this.$route.query.toUserImgUrl; //接受者头像
+    var message = {
+      content: {
+        text: this.$route.query.message,
+        image: "123",
+        msgTypeOfImage: false
+      },
+      timesStamp: this.$route.query.timesStamp,
+      recUid: this.toId,
+      sendUid: this.userId,
+      readState: "1"
+    };
+    this.messageList.push(message);
+    console.log(this.messageList);
     this.$socket.connect();
   },
   sockets: {
@@ -219,7 +243,7 @@ export default {
         },
         timesStamp: this.initTime(),
         recUid: this.toId,
-        sendUid: this.nickName,
+        sendUid: this.userId,
         readState: 1
       };
       this.messageObj.push(msg);
@@ -235,7 +259,7 @@ export default {
         },
         timesStamp: this.initTime(),
         recUid: this.toId,
-        sendUid: this.nickName,
+        sendUid: this.userId,
         readState: 0
       };
       this.sms = "";
@@ -256,6 +280,7 @@ export default {
       });
       this.messageObj = [];
       // 发送完信息 向服务器发送最后通讯时间
+      // funciton
     },
     showSendBtn(e) {
       console.log(e);
@@ -362,7 +387,6 @@ export default {
 .message {
   max-width: calc(100vw / 2 - 20px);
   padding: 10px;
-  background-color: cadetblue;
   border-radius: 10px;
   overflow: hidden;
   word-wrap: break-word;
@@ -370,6 +394,14 @@ export default {
     width: 150px;
     height: 200px;
   }
+}
+
+.message-right {
+  background-color: cadetblue;
+}
+
+.message-left {
+  background-color: white;
 }
 
 .log img {

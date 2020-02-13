@@ -6,7 +6,7 @@ Vue.use(Vuex);
 const userInfo = {
   state: {
     uid: "sec99",
-    uidImgUrl: "http://1t.click/bsFE"
+    uidImgUrl: "http://pic.wangez.cn/markdown/2.jpg"
   },
   mutations: {},
   actions: {},

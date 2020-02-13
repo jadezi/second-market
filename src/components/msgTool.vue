@@ -1,6 +1,6 @@
 <template>
-  <div v-if="isDisplay" class="time-stamp-bg">
-    <div id="time-stamp">
+  <div class="time-stamp-bg">
+    <div id="time-stamp" :class="timeStyleFun()">
       <span>{{ msgTimeStamp | dateFilters }}</span>
     </div>
   </div>
@@ -8,21 +8,23 @@
 <script>
 import { formatDate } from "@/assets/js/date.js";
 export default {
-  props: ["msgTimeStamp"],
-  data() {
-    return {
-      isDisplay: true
-    };
-  },
-  mounted() {
-    this.msgIsEnable();
+  props: ["msgTimeStamp", "timeStyle"],
+  methods: {
+    timeStyleFun() {
+      if (this.timeStyle == "right") {
+        return "timeRightStyle";
+      } else {
+        return "timeleftStyle";
+      }
+    }
   },
   filters: {
     dateFilters: function(timeStamp) {
+      console.log(timeStamp);
       var nowDateStamp = new Date();
       var timeStampObj = new Date(timeStamp);
       var day = nowDateStamp.getDate() - timeStampObj.getDate();
-      if (day > 3 && day < 7) {
+      if (day > 3 && day < 20) {
         return formatDate(timeStamp, "MM-dd hh:mm");
       } else if (day == 2) {
         return "前天 " + formatDate(timeStamp, "hh:mm");
@@ -35,17 +37,6 @@ export default {
         return formatDate(timeStamp, "yyyy-MM-dd hh:mm");
       }
     }
-  },
-  methods: {
-    msgIsEnable() {
-      var nowDateStamp = new Date();
-      var timeStampObj = new Date(this.msgTimeStamp);
-      var minutes = nowDateStamp.getMinutes() - timeStampObj.getMinutes();
-      console.log(minutes);
-      if (minutes < 3) {
-        this.isDisplay = false;
-      }
-    }
   }
 };
 </script>
@@ -55,7 +46,6 @@ export default {
 }
 #time-stamp {
   display: flex;
-  justify-content: center;
   span {
     height: 20px;
     font-size: 14px;
@@ -65,5 +55,11 @@ export default {
     color: #7a7a7a;
     text-align: center;
   }
+}
+.timeRightStyle {
+  justify-content: flex-end;
+}
+.timeleftStyle {
+  justify-content: flex-start;
 }
 </style>

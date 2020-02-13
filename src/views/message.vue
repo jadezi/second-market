@@ -35,7 +35,9 @@
                   <div class="sale-info">
                     <div class="sale-name">{{ item.toId }}</div>
                     <div class="laster-message">{{ item.message }}</div>
-                    <div class="laster-time">{{ item.timesStamp }}</div>
+                    <div class="laster-time">
+                      {{ item.timesStamp | timestampFormat }}
+                    </div>
                   </div>
                   <div class="shop-image">
                     <img :src="item.shopImgUrl" />
@@ -78,6 +80,7 @@ import activity from "../../public/img/activity.jpg";
 import inform from "../../public/img/inform.gif";
 import message from "../../public/img/message.jpg";
 import tar from "@/components/tar.vue";
+import { formatDate } from "@/assets/js/date.js";
 export default {
   name: "message",
   data() {
@@ -113,6 +116,11 @@ export default {
   },
   mounted() {
     this.getMessage();
+  },
+  filters: {
+    timestampFormat: function(timesStamp) {
+      return formatDate(timesStamp, "yyyy-MM-dd hh:mm");
+    }
   },
   watch: {
     messageFlag: function() {
@@ -157,7 +165,15 @@ export default {
       this.messageFlag = !this.messageFlag;
     },
     openContact(item) {
-      this.$router.push({ path: "/user/message/contacts" });
+      this.$router.push({
+        path: "/user/message/contacts",
+        query: {
+          toId: item.toId,
+          toUserImgUrl: item.toUidImgUrl,
+          message: item.message,
+          timesStamp: item.timesStamp
+        }
+      });
       this.$store.commit("setInfo", item);
     }
   },
