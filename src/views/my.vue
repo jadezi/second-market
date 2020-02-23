@@ -23,16 +23,52 @@
     <div class="history">
       <van-tabs>
         <van-tab title="在售中">
-          <van-grid :gutter="10" :column-num="2">
-            <van-grid-item v-for="value in 8" :key="value">
-              <div slot="default">
-                <div class="shopImg">
-                  <img src="http://pic.wangez.cn/second-market/userbg.jpeg" @load="resizeImg($event, 80, 150)">
-                </div>
-                <div class="desc"></div>
-              </div>
-            </van-grid-item>
-          </van-grid>
+          <div class="border">
+            <div class="img">
+              <img
+                class="img2"
+                src="http://pic.wangez.cn/second-market/userbg.jpeg"
+              />
+            </div>
+            <div class="title">123123142afasdfas</div>
+            <div class="price"></div>
+          </div>
+          <div class="border">
+            <div class="img">
+              <img
+                class="img2"
+                src="http://pic.wangez.cn/second-market/userbg.jpeg"
+              />
+            </div>
+            <div class="title">
+              风景照风景照风景照风景照风景照风景照风景照风景照风景照
+            </div>
+            <div class="price">￥ 20</div>
+          </div>
+          <div class="border">
+            <div class="img">
+              <img
+                class="img2"
+                src="http://pic.wangez.cn/second-market/userbg.jpeg"
+              />
+            </div>
+            <div class="title">
+              风景照风景照风景照风景照风景照风景照风景照风景照风景照
+            </div>
+            <div class="price">￥ 20</div>
+          </div>
+          <div class="border">
+            <div class="img">
+              <img
+                class="img2"
+                src="http://pic.wangez.cn/second-market/userbg.jpeg"
+              />
+            </div>
+            <div class="title">
+              132
+            </div>
+            <div class="price">￥ 20</div>
+          </div>
         </van-tab>
         <van-tab title="已卖出">
           <van-grid :gutter="10">
@@ -45,15 +81,13 @@
         </van-tab>
       </van-tabs>
     </div>
-    <tar></tar>
   </div>
 </template>
 
 <script>
-import tar from "@/components/tar.vue";
+import md5 from "js-md5";
 export default {
   name: "my",
-  components: { tar },
   data() {
     return {
       title: "个人中心",
@@ -64,9 +98,15 @@ export default {
   mounted() {
     this.bgimg = this.$store.state.userInfo.uidBgUrl;
     this.userImg = this.$store.state.userInfo.uidImgUrl;
-    console.log(this.bgimg);
+    //console.log(this.bgimg);
+    this.imgCache();
   },
   methods: {
+    imgCache() {
+      //let timestamp = Date.parse(new Date());
+      let imgMd5 = md5("wange" + 123);
+      console.log(imgMd5);
+    },
     setup() {
       console.log("设置");
     },
@@ -134,10 +174,43 @@ export default {
   }
 }
 .history {
+  .van-tab__pane {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    height: 100%;
+  }
+  .van-tabs__content {
+    margin: 10px auto;
+    padding-bottom: 40px;
+  }
   .shopImg {
     overflow: hidden;
     width: 150px;
     height: 200px;
+  }
+  .border {
+    overflow: hidden;
+    border-radius: 7px;
+    width: 47%;
+    margin-top: 8px;
+    background-color: #f2f2f2;
+    height: max-content;
+    .img2 {
+      width: 100%;
+      height: 200px;
+    }
+    .price {
+      color: red;
+      margin-top: 15px;
+    }
+    .title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
   }
 }
 </style>
