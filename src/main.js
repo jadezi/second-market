@@ -44,9 +44,11 @@ import {
   AddressEdit,
   AddressList,
   Panel,
+  Image,
   SubmitBar
 } from "vant";
 
+Vue.use(Image);
 Vue.use(Grid).use(GridItem);
 Vue.use(DropdownMenu).use(DropdownItem);
 Vue.use(Search);
