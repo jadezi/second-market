@@ -19,6 +19,7 @@
 
 <script>
 export default {
+  name: "showblock",
   props: ["item", "index"],
   data() {
     return {};
@@ -31,7 +32,10 @@ export default {
   overflow: hidden;
   border-radius: 7px;
   margin-top: 8px;
-  background-color: #f2f2f2;
+  background-color: white;
+  -moz-page-break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  break-inside: avoid;
   .img2 {
     width: 100%;
   }

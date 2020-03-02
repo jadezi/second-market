@@ -11,7 +11,7 @@ import OrderInfo from "@/views/orderInfo.vue";
 import addressEdit from "@/views/addressEdit.vue";
 import address from "@/views/address.vue";
 import Contacts from "@/views/contacts.vue";
-import My from "@/views/my.vue";
+import userUI from "@/views/userUI.vue";
 import "nprogress/nprogress.css";
 
 Vue.use(VueRouter);
@@ -28,9 +28,9 @@ const routes = [
     component: searchBar
   },
   {
-    path: "/my",
-    name: "my",
-    component: My
+    path: "/userui/:uid",
+    name: "userUI",
+    component: userUI
   },
   {
     path: "/user/message",

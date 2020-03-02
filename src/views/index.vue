@@ -20,18 +20,29 @@
             </div>
           </div>
         </div>
-        <van-tabs background="#f2f2f2f2" swipeable>
-          <van-tab v-for="index in shopItem" :key="index" :title="index">
-            <div class="tab-pannel">
-              <van-grid :gutter="10" :column-num="2">
-                <van-grid-item
-                  v-for="value in 8"
-                  :key="value"
-                  icon="photo-o"
-                  text="文字"
-                />
-              </van-grid>
-            </div>
+        <van-tabs sticky swipeable>
+          <van-tab
+            v-for="titleItem in shopItems"
+            :key="titleItem"
+            :title="titleItem"
+          >
+            <van-list
+              v-model="listLoading"
+              :finished="finished"
+              finished-text="没有更多了"
+              error-text="请求失败，点击重新加载"
+              :error.sync="error"
+              @load="onLoad"
+            >
+              <div>
+                <div
+                  v-for="(item, index) in contentItems(titleItem)"
+                  :key="index"
+                >
+                  <showblock :item="item" :index="index"></showblock>
+                </div>
+              </div>
+            </van-list>
           </van-tab>
         </van-tabs>
       </van-pull-refresh>
@@ -49,29 +60,78 @@
 
 <script>
 import search from "@/components/search.vue";
+import axios from "axios";
 import searchBar from "@/views/searchBar.vue";
 import tar from "@/components/tar.vue";
+import showblock from "@/components/showblock.vue";
 export default {
   data() {
     return {
       count: 0,
+      listLoading: false,
+      finished: false,
       isLoading: false,
       searchFlag: false,
-      shopItem: [" 书籍 ", " 数码 ", "考研资料", "等级考试", "教资资料"]
+      shoplist: [],
+      shopItems: ["书籍", "数码", "考研资料", "等级考试", "教资资料"],
+      error: false
     };
   },
   components: {
     search,
     searchBar,
+    showblock,
     tar
   },
+  mounted() {
+    this.getShopList();
+  },
   methods: {
+    contentItems(title) {
+      var comment = this.shoplist.filter(item => {
+        return item.title == title;
+      });
+      return comment;
+    },
     onRefresh() {
       setTimeout(() => {
         this.$toast("刷新成功");
         this.isLoading = false;
         this.count++;
       }, 500);
+    },
+    // 上滑加载
+    onLoad() {
+      // 下拉加载 参数为1，首次加载为0
+      this.getShopList(1);
+    },
+    getShopList(flag) {
+      axios
+        .get("http://127.0.0.1:7300/mock/5dde29b78eecd44600ce5be8/sec/shoplist")
+        .then(response => {
+          let status = response.data.status;
+          let data = response.data.data;
+          if (status) {
+            if (this.shoplist.length >= 10) {
+              this.finished = true;
+            }
+            if (flag == 1) {
+              for (let i = 0; i < 5; i++) {
+                this.shoplist.push(data[this.shoplist.length + i]);
+              }
+              console.log(this.shoplist);
+            } else {
+              for (let i = 0; i < 5; i++) {
+                this.shoplist.push(data[i]);
+              }
+              console.log(this.shoplist);
+            }
+          }
+        })
+        .catch(request => {
+          console.log(request);
+          this.error = true;
+        });
     },
     showSearch() {
       this.searchFlag = !this.searchFlag;
@@ -80,6 +140,17 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+// 选项卡内边距
+.van-tab__pane {
+  margin-top: 10px;
+  padding-bottom: 15px;
+  -moz-column-count: 2; /* Firefox */
+  -webkit-column-count: 2; /* Safari 和 Chrome */
+  column-count: 2;
+  -moz-column-gap: 1em;
+  -webkit-column-gap: 1em;
+  column-gap: 1em;
+}
 .bg {
   background-color: #f2f2f2f2;
   padding-bottom: 75px;

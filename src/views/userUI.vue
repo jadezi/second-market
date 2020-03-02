@@ -13,7 +13,7 @@
     </div>
     <div class="head">
       <div class="bg">
-        <img :src="bgimg" @load="resizeImg($event, getClientWidth(), 150)" />
+        <van-image width="100%" lazy-load :src="bgimg" />
       </div>
       <div class="user">
         <div class="userImg">
@@ -46,8 +46,8 @@
 <script>
 import md5 from "js-md5";
 import showBlock from "@/components/showblock.vue";
-import Vue from 'vue';
-import { Lazyload } from 'vant';
+import Vue from "vue";
+import { Lazyload } from "vant";
 
 Vue.use(Lazyload);
 export default {
@@ -174,9 +174,10 @@ export default {
   }
 }
 .history {
+  background-color: #f2f2f2;
   .van-tab__pane {
     margin-top: 10px;
-    margin-bottom: 15px;
+    padding-bottom: 15px;
     -moz-column-count: 2; /* Firefox */
     -webkit-column-count: 2; /* Safari 和 Chrome */
     column-count: 2;

@@ -45,10 +45,12 @@ import {
   AddressList,
   Panel,
   Image,
-  SubmitBar
+  SubmitBar,
+  List
 } from "vant";
 
 Vue.use(Image);
+Vue.use(List);
 Vue.use(Grid).use(GridItem);
 Vue.use(DropdownMenu).use(DropdownItem);
 Vue.use(Search);
