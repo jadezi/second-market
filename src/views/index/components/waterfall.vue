@@ -25,7 +25,9 @@
 import showblock from '@/components/showblock.vue'
 export default {
   name: 'waterfall',
-  props: ['data'],
+  props: {
+    data: Array
+  },
   components: {
     showblock
   },
@@ -34,6 +36,16 @@ export default {
       shopListLeft: [],
       shopListRight: []
     }
+  },
+  watch: {
+    data(newVal) {
+      this.data = newVal
+      this.resetList()
+      this.dataHandle()
+    }
+  },
+  created() {
+    this.dataHandle()
   },
   methods: {
     dataHandle() {
@@ -44,6 +56,10 @@ export default {
           this.shopListRight.push(item)
         }
       })
+    },
+    resetList() {
+      this.shopListLeft = []
+      this.shopListRight = []
     }
   }
 }
@@ -53,6 +69,7 @@ export default {
 .tab-pane {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 .tab-pane-item {
   margin-top: 10px;
@@ -60,8 +77,5 @@ export default {
   flex-wrap: wrap;
   flex-direction: column;
   width: 48%;
-}
-.tab-pane-item:last-child {
-  margin-left: 13px;
 }
 </style>

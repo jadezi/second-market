@@ -35,27 +35,12 @@
               @load="getShopList()"
               :immediate-check="false"
             >
-              <div class="tab-pane">
-                <div class="tab-pane-item">
-                  <template class="demo2-t">
-                    <showblock
-                      v-for="(item, index) in shopListLeft"
-                      :key="index"
-                      :item="item"
-                      :index="index"
-                    ></showblock>
-                  </template>
-                </div>
-                <div class="tab-pane-item">
-                  <template class="demo2-t">
-                    <showblock
-                      v-for="(item, index) in shopListRight"
-                      :key="index"
-                      :item="item"
-                    ></showblock>
-                  </template>
-                </div>
-              </div>
+              <keep-alive>
+                <waterfall
+                  :data="shopList"
+                  v-if="shopList.length != 0"
+                ></waterfall>
+              </keep-alive>
             </van-list>
           </van-tab>
         </van-tabs>
@@ -76,7 +61,7 @@
 import search from '@/components/search.vue'
 import searchBar from '@/views/searchBar.vue'
 import tar from '@/components/tar.vue'
-import showblock from '@/components/showblock.vue'
+import waterfall from './components/waterfall.vue'
 export default {
   data() {
     return {
@@ -90,8 +75,8 @@ export default {
       // 搜索栏打开状态
       searchFlag: false,
       // 商品列表
-      shopListLeft: [],
-      shopListRight: [],
+      shopList: [],
+      // 商品分类标签页列表
       shopTitleItems: [],
       // 上拉加载错误状态
       error: false,
@@ -106,7 +91,8 @@ export default {
   components: {
     search,
     searchBar,
-    showblock,
+    waterfall,
+    // showblock,
     tar
   },
   mounted() {
@@ -135,8 +121,9 @@ export default {
           this.selectTabItem = item.param
           this.listSize = 0
           this.finished = false
-          this.shopListLeft = []
-          this.shopListRight = []
+          this.shopList = []
+          // this.shopListLeft = []
+          // this.shopListRight = []
           this.getShopList()
           return
         }
@@ -149,11 +136,10 @@ export default {
       return comment
     },
     onRefresh() {
-      setTimeout(() => {
-        this.$toast('刷新成功')
-        this.isLoading = false
-        this.count++
-      }, 500)
+      this.getShopList()
+      this.$toast('刷新成功')
+      this.isLoading = false
+      this.count++
     },
     async getShopList() {
       try {
@@ -166,27 +152,30 @@ export default {
             }
           }
         )
+
         if (res.meta.status !== 200) {
+          this.error = true
           return this.$toast('服务器异常')
         }
-        if (res.data.length === 0) {
+        if (res.data.arr.length == 0) {
+          console.log('185 hang')
           this.finished = true
           return
         }
-        const length = this.shopListLeft.length + this.shopListRight.length
+        // // 当前商品列表长度
+        var length = this.shopList.length
+
         if (res.data.length === length) {
+          console.log('196 hang')
           this.finished = true
           return
         }
-        res.data.arr.forEach((item, index) => {
-          if ((index + 1) % 2 !== 0) {
-            this.shopListLeft.push(item)
-          } else {
-            this.shopListRight.push(item)
-          }
+
+        res.data.arr.forEach(item => {
+          this.shopList.push(item)
         })
-        this.listSize = this.shopListLeft.length + this.shopListRight.length
-        //加载状态结束
+        this.listSize = this.shopList.length
+        // //加载状态结束
         this.listLoading = false
       } catch (err) {
         this.listLoading = false
@@ -202,28 +191,17 @@ export default {
 </script>
 <style lang="scss" scoped>
 // 选项卡内边距
-.tab-pane {
-  // margin-top: 10px;
-  // padding-bottom: 15px;
-  // -moz-column-count: 2; /* Firefox */
-  // -webkit-column-count: 2; /* Safari 和 Chrome */
-  // column-count: 2;
-  // -moz-column-gap: 1em;
-  // -webkit-column-gap: 1em;
-  // column-gap: 1em;
-  display: flex;
-  flex-wrap: wrap;
-}
-.tab-pane-item {
-  margin-top: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  width: 48%;
-}
-.tab-pane-item:last-child {
-  margin-left: 13px;
-}
+// .tab-pane {
+//   display: flex;
+//   flex-wrap: wrap;
+// }
+// .tab-pane-item {
+//   margin-top: 10px;
+//   display: flex;
+//   flex-wrap: wrap;
+//   flex-direction: column;
+//   width: 48%;
+// }
 .bg {
   background-color: #f2f2f2f2;
   padding-bottom: 75px;

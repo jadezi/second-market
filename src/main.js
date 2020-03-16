@@ -94,7 +94,8 @@ Vue.use(ContactCard)
 Vue.use(SubmitBar)
 Vue.config.productionTip = false
 
-axios.defaults.baseURL = 'http://127.0.0.1:7300/mock/5dde29b78eecd44600ce5be8/sec'
+axios.defaults.baseURL =
+  'http://127.0.0.1:7300/mock/5dde29b78eecd44600ce5be8/sec'
 axios.defaults.timeout = 3000
 Vue.prototype.$http = axios
 
