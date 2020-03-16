@@ -19,9 +19,9 @@
         </div>
         <div class="identity">
           <van-icon name="award-o" size="1.7em" color="#40E0D0" />
-          <van-button plain type="info" size="mini" color="#40E0D0"
-            >实名认证</van-button
-          >
+          <van-button plain type="info" size="mini" color="#40E0D0">
+            实名认证
+          </van-button>
         </div>
       </div>
       <van-divider />
@@ -54,8 +54,9 @@
               style="height:40px"
               round
               color="linear-gradient(to right, #fc9114, #ff2222)"
-              >想&nbsp;要</van-button
             >
+              想&nbsp;要
+            </van-button>
           </div>
         </div>
         <!-- </transition>
@@ -78,8 +79,9 @@
               v-bind:disabled="replyContent.length == 0"
               round
               type="primary"
-              >留&nbsp;言</van-button
             >
+              留&nbsp;言
+            </van-button>
           </div>
         </div>
       </transition>
@@ -88,49 +90,49 @@
 </template>
 
 <script>
-import { ImagePreview } from "vant";
-import cmtParent from "@/views/cmtParent.vue";
-import axios from "axios";
+import { ImagePreview } from 'vant'
+import cmtParent from '@/views/cmtParent.vue'
+import axios from 'axios'
 export default {
-  name: "ShopDetail",
+  name: 'ShopDetail',
   data() {
     return {
-      replyContent: "",
+      replyContent: '',
       isReply: true,
       isKeyBroad: false,
-      replyMessage: ""
-    };
+      replyMessage: ''
+    }
   },
   components: {
     cmtParent
   },
   methods: {
     sendReplyContent() {
-      axios.post("http://localhost:3000");
+      axios.post('http://localhost:3000')
     },
     onClickLeft() {
-      console.log("ok");
+      console.log('ok')
     },
     replyBtn() {
-      this.isReply = !this.isReply;
-      this.isKeyBroad = !this.isKeyBroad;
+      this.isReply = !this.isReply
+      this.isKeyBroad = !this.isKeyBroad
     },
     showImage(pos) {
       ImagePreview({
         images: [
-          "http://pic.wangez.cn/markdown/2.jpg",
-          "https://img.yzcdn.cn/2.jpg",
-          "http://pic.wangez.cn/markdown/2.jpg"
+          'http://pic.wangez.cn/markdown/2.jpg',
+          'https://img.yzcdn.cn/2.jpg',
+          'http://pic.wangez.cn/markdown/2.jpg'
         ],
         startPosition: pos,
         loop: false,
         onClose() {
           // do something
         }
-      });
+      })
     }
   }
-};
+}
 </script>
 
 <style scoped lang="scss">

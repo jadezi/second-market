@@ -39,21 +39,19 @@
 export default {
   data() {
     return {
-      name: "",
-      tel: "",
-      address: "",
+      name: '',
+      tel: '',
+      address: '',
       checked: false
-    };
+    }
   },
-  mounted() {
-    
-  },
+  mounted() {},
   methods: {
     postAddressInfo() {
       // 保存数据接口
     }
-  },
-};
+  }
+}
 </script>
 <style lang="scss" scoped>
 .addressEdit-bg {

@@ -72,9 +72,9 @@ span {
 </style>
 <script>
 export default {
-  name: "tabbar",
+  name: 'tabbar',
   data() {
-    return {};
+    return {}
   }
-};
+}
 </script>

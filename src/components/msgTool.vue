@@ -6,39 +6,39 @@
   </div>
 </template>
 <script>
-import { formatDate } from "@/assets/js/date.js";
+import { formatDate } from '@/assets/js/date.js'
 export default {
-  props: ["msgTimeStamp", "timeStyle"],
+  props: ['msgTimeStamp', 'timeStyle'],
   methods: {
     timeStyleFun() {
-      if (this.timeStyle == "right") {
-        return "timeRightStyle";
+      if (this.timeStyle == 'right') {
+        return 'timeRightStyle'
       } else {
-        return "timeleftStyle";
+        return 'timeleftStyle'
       }
     }
   },
   filters: {
     dateFilters: function(timeStamp) {
-      console.log(timeStamp);
-      var nowDateStamp = new Date();
-      var timeStampObj = new Date(timeStamp);
-      var day = nowDateStamp.getDate() - timeStampObj.getDate();
+      console.log(timeStamp)
+      var nowDateStamp = new Date()
+      var timeStampObj = new Date(timeStamp)
+      var day = nowDateStamp.getDate() - timeStampObj.getDate()
       if (day > 3 && day < 20) {
-        return formatDate(timeStamp, "MM-dd hh:mm");
+        return formatDate(timeStamp, 'MM-dd hh:mm')
       } else if (day == 2) {
-        return "前天 " + formatDate(timeStamp, "hh:mm");
+        return '前天 ' + formatDate(timeStamp, 'hh:mm')
       } else if (day == 1) {
-        return "昨天 " + formatDate(timeStamp, "hh:mm");
+        return '昨天 ' + formatDate(timeStamp, 'hh:mm')
       } else if (day == 0) {
-        return formatDate(timeStamp, "hh:mm");
+        return formatDate(timeStamp, 'hh:mm')
       } else {
-        console.log(timeStamp);
-        return formatDate(timeStamp, "yyyy-MM-dd hh:mm");
+        console.log(timeStamp)
+        return formatDate(timeStamp, 'yyyy-MM-dd hh:mm')
       }
     }
   }
-};
+}
 </script>
 <style scoped lang="scss">
 .time-stamp-bg {

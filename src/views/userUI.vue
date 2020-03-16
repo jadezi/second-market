@@ -7,9 +7,8 @@
         @click-right="setup"
         left-arrow
         fixed
-        :z-index = 99
-      >
-      </van-nav-bar>
+        :z-index="99"
+      ></van-nav-bar>
     </div>
     <div class="head">
       <div class="bg">
@@ -44,88 +43,88 @@
 </template>
 
 <script>
-import md5 from "js-md5";
-import showBlock from "@/components/showblock.vue";
-import Vue from "vue";
-import { Lazyload } from "vant";
+import md5 from 'js-md5'
+import showBlock from '@/components/showblock.vue'
+import Vue from 'vue'
+import { Lazyload } from 'vant'
 
-Vue.use(Lazyload);
+Vue.use(Lazyload)
 export default {
-  name: "my",
+  name: 'my',
   components: { showBlock },
   data() {
     return {
-      title: "个人中心",
-      bgimg: "",
-      userImg: "",
+      title: '个人中心',
+      bgimg: '',
+      userImg: '',
       titelAutoHide: false,
       items: [
         {
-          img: "http://pic.wangez.cn/second-market/userbg.jpeg",
-          desc: "123",
-          price: "12"
+          img: 'http://pic.wangez.cn/second-market/userbg.jpeg',
+          desc: '123',
+          price: '12'
         },
         {
-          img: "http://pic.wangez.cn/second-market/userbg.jpeg",
-          desc: "234",
-          price: "13"
+          img: 'http://pic.wangez.cn/second-market/userbg.jpeg',
+          desc: '234',
+          price: '13'
         },
         {
-          img: "http://pic.wangez.cn/second-market/shop-logo.jpg",
-          desc: "412",
-          price: "14"
+          img: 'http://pic.wangez.cn/second-market/shop-logo.jpg',
+          desc: '412',
+          price: '14'
         },
         {
-          img: "http://pic.wangez.cn/second-market/userbg.jpeg",
-          desc: "123",
-          price: "16"
+          img: 'http://pic.wangez.cn/second-market/userbg.jpeg',
+          desc: '123',
+          price: '16'
         }
       ]
-    };
+    }
   },
   mounted() {
-    this.bgimg = this.$store.state.userInfo.uidBgUrl;
-    this.userImg = this.$store.state.userInfo.uidImgUrl;
-    window.addEventListener("scroll", this.scrollHandle);
-    this.imgCache();
+    this.bgimg = this.$store.state.userInfo.uidBgUrl
+    this.userImg = this.$store.state.userInfo.uidImgUrl
+    window.addEventListener('scroll', this.scrollHandle)
+    this.imgCache()
   },
   methods: {
     scrollHandle(e) {
-      var top = e.srcElement.scrollingElement.scrollTop;
+      var top = e.srcElement.scrollingElement.scrollTop
       if (top == 0) {
-        return (this.titelAutoHide = false);
+        return (this.titelAutoHide = false)
       }
-      return (this.titelAutoHide = true);
+      return (this.titelAutoHide = true)
     },
     imgCache() {
       //let timestamp = Date.parse(new Date());
-      let imgMd5 = md5("wange" + 123);
-      console.log(imgMd5);
+      let imgMd5 = md5('wange' + 123)
+      console.log(imgMd5)
     },
     setup() {
-      console.log("设置");
+      console.log('设置')
     },
     getClientWidth() {
-      return document.body.clientWidth;
+      return document.body.clientWidth
     },
     resizeImg(ev, w, h) {
-      console.log(w);
-      var img = ev.target;
+      console.log(w)
+      var img = ev.target
       var scalebox = w / h,
-        shifting = 0;
-      var scaleImg = img.width / img.height;
+        shifting = 0
+      var scaleImg = img.width / img.height
       if (scalebox > scaleImg) {
-        img.width = w;
-        shifting = parseInt((img.height - h) / 2);
-        img.style.marginTop = 0 - shifting + "px";
+        img.width = w
+        shifting = parseInt((img.height - h) / 2)
+        img.style.marginTop = 0 - shifting + 'px'
       } else {
-        img.height = h;
-        shifting = parseInt((img.width - w) / 2);
-        img.style.marginLeft = 0 - shifting + "px";
+        img.height = h
+        shifting = parseInt((img.width - w) / 2)
+        img.style.marginLeft = 0 - shifting + 'px'
       }
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

@@ -1,94 +1,94 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import searchBar from "@/views/searchBar.vue";
-import index from "@/views/index.vue";
-import Message from "@/views/message.vue";
-import NProgress from "nprogress";
-import Add from "@/views/add.vue";
-import Comment from "@/views/cmtParent.vue";
-import ShopDetail from "@/views/shopDetail.vue";
-import OrderInfo from "@/views/orderInfo.vue";
-import addressEdit from "@/views/addressEdit.vue";
-import address from "@/views/address.vue";
-import Contacts from "@/views/contacts.vue";
-import userUI from "@/views/userUI.vue";
-import "nprogress/nprogress.css";
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import searchBar from '@/views/searchBar.vue'
+import index from '@/views/index/index.vue'
+import Message from '@/views/message.vue'
+import NProgress from 'nprogress'
+import Add from '@/views/add.vue'
+import Comment from '@/views/cmtParent.vue'
+import ShopDetail from '@/views/shopDetail.vue'
+import OrderInfo from '@/views/orderInfo.vue'
+import addressEdit from '@/views/addressEdit.vue'
+import address from '@/views/address.vue'
+import Contacts from '@/views/contacts.vue'
+import userUI from '@/views/userUI.vue'
+import 'nprogress/nprogress.css'
 
-Vue.use(VueRouter);
+Vue.use(VueRouter)
 
 const routes = [
   {
-    path: "/",
-    name: "index",
+    path: '/',
+    name: 'index',
     component: index
   },
   {
-    path: "/search",
-    name: "search",
+    path: '/search',
+    name: 'search',
     component: searchBar
   },
   {
-    path: "/userui/:uid",
-    name: "userUI",
+    path: '/user/:uid/index',
+    name: 'userUI',
     component: userUI
   },
   {
-    path: "/user/message",
-    name: "message",
+    path: '/user/message',
+    name: 'message',
     component: Message
   },
   {
-    path: "/user/message/contacts",
-    name: "contacts",
+    path: '/user/message/contacts',
+    name: 'contacts',
     component: Contacts
   },
   {
-    path: "/user/add",
-    name: "add",
+    path: '/user/add',
+    name: 'add',
     component: Add
   },
   {
-    path: "/user/comment",
-    name: "comment",
+    path: '/user/comment',
+    name: 'comment',
     component: Comment
   },
   {
-    path: "/user/shop/:userId/:shopId",
-    name: "shopDetail",
+    path: '/user/shop/:userId/:shopId',
+    name: 'shopDetail',
     component: ShopDetail
   },
   {
-    path: "/user/shop/:userId/:shopId/order",
-    name: "orderInfo",
+    path: '/user/shop/:userId/:shopId/order',
+    name: 'orderInfo',
     component: OrderInfo
   },
   {
-    path: "/user/shop/:userId/:shopId/order/addressEdit",
-    name: "addressEdit",
+    path: '/user/shop/:userId/:shopId/order/addressEdit',
+    name: 'addressEdit',
     component: addressEdit
   },
   {
-    path: "/user/address",
-    name: "address",
+    path: '/user/address',
+    name: 'address',
     component: address
   }
-];
+]
 
 const router = new VueRouter({
-  mode: "hash",
+  mode: 'hash',
   base: process.env.BASE_URL,
   routes
-});
+})
 
-NProgress.configure({ showSpinner: false });
+NProgress.configure({ showSpinner: false })
 
 router.beforeEach((to, from, next) => {
-  NProgress.start();
-  next();
-});
+  NProgress.start()
+  next()
+})
 
 router.afterEach(() => {
-  NProgress.done();
-});
+  NProgress.done()
+})
 
-export default router;
+export default router

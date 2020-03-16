@@ -10,7 +10,11 @@
       >
         <div slot="label">
           <van-dropdown-menu>
-            <van-dropdown-item v-model="selected" :options="searchOption" title-class="search-item"/>
+            <van-dropdown-item
+              v-model="selected"
+              :options="searchOption"
+              title-class="search-item"
+            />
           </van-dropdown-menu>
         </div>
       </van-search>
@@ -20,23 +24,23 @@
 
 <script>
 export default {
-  name: "search-content",
+  name: 'search-content',
   data() {
     return {
-      searchVoc: "123",
+      searchVoc: '123',
       selected: 0,
       searchOption: [
-        { text: "宝贝", value: 0 },
-        { text: "用户", value: 1 }
+        { text: '宝贝', value: 0 },
+        { text: '用户', value: 1 }
       ]
-    };
+    }
   },
   methods: {
     OnCancel() {
-      this.$emit("closeSearch");
+      this.$emit('closeSearch')
     }
   }
-};
+}
 </script>
 <style scoped>
 .van-cell__title span {

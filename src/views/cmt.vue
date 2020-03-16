@@ -81,22 +81,22 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios'
 export default {
-  props: ["commentChild", "comment"],
+  props: ['commentChild', 'comment'],
   data() {
     return {
-      reply: "",
-      repayName: "",
+      reply: '',
+      repayName: '',
       popup: false,
       isMore: true,
       fabulousList: [],
       commentList: this.commentChild,
       item: this.comment
-    };
+    }
   },
   mounted() {
-    this.createFabulousList();
+    this.createFabulousList()
   },
   methods: {
     // 评论按照日期排序
@@ -104,106 +104,106 @@ export default {
       for (let i = 0; i < arr.length; i++) {
         for (let index = 0; index < arr.length; index++) {
           if (arr[i].createTime < arr[index].createTime) {
-            let tmp = arr[i];
-            arr[i] = arr[index];
-            arr[index] = tmp;
+            let tmp = arr[i]
+            arr[i] = arr[index]
+            arr[index] = tmp
           }
         }
       }
-      return arr;
+      return arr
     },
     // 获取二次回复的评论
     getChildCommentList(obj) {
       var commentChild = this.commentList.filter(item => {
-        return item.commentFloorId == obj;
-      }, obj);
-      return this.commentSort(commentChild);
+        return item.commentFloorId == obj
+      }, obj)
+      return this.commentSort(commentChild)
     },
     // 增加点赞数
     addFabulous(item) {
-      let arr = this.fabulousList;
+      let arr = this.fabulousList
       for (let i = 0; i < arr.length; i++) {
         if (
           arr[i].fabulous == false &&
           arr[i].createTime == item.createTime &&
           arr[i].objectId == item.objectId
         ) {
-          item.fabulous += 1;
-          arr[i].fabulous = true;
+          item.fabulous += 1
+          arr[i].fabulous = true
         } else if (
           arr[i].fabulous == true &&
           arr[i].createTime == item.createTime &&
           arr[i].objectId == item.objectId
         ) {
-          item.fabulous -= 1;
-          arr[i].fabulous = false;
+          item.fabulous -= 1
+          arr[i].fabulous = false
         }
       }
     },
     // 点赞后更改样式
     zanActive(item) {
-      let arr = this.fabulousList;
+      let arr = this.fabulousList
       for (let index = 0; index < arr.length; index++) {
         if (
           arr[index].objectId == item.objectId &&
           arr[index].createTime == item.createTime
         ) {
-          return arr[index].fabulous;
+          return arr[index].fabulous
         }
       }
-      return false;
+      return false
     },
     // 创建点赞关键信息列表
     createFabulousList() {
-      var arr = [];
-      var commentList = this.commentList;
-      let obj = {};
-      obj.objectId = this.item.objectId;
-      obj.fabulous = false;
-      obj.createTime = this.item.createTime;
-      arr.push(obj);
+      var arr = []
+      var commentList = this.commentList
+      let obj = {}
+      obj.objectId = this.item.objectId
+      obj.fabulous = false
+      obj.createTime = this.item.createTime
+      arr.push(obj)
       for (let index = 0; index < commentList.length; index++) {
-        let obj = {};
-        obj.objectId = commentList[index].objectId;
-        obj.fabulous = false;
-        obj.createTime = commentList[index].createTime;
-        arr.push(obj);
+        let obj = {}
+        obj.objectId = commentList[index].objectId
+        obj.fabulous = false
+        obj.createTime = commentList[index].createTime
+        arr.push(obj)
       }
-      this.fabulousList = arr;
+      this.fabulousList = arr
     },
     // 提交最新点赞记录
     updateCommentList() {
       axios
-        .post("http://127.0.0.1:8080/usr/comment", this.commentList)
+        .post('http://127.0.0.1:8080/usr/comment', this.commentList)
         .then(response => {
-          console.log(response);
+          console.log(response)
         })
         .catch(error => {
-          console.log(error);
-        });
+          console.log(error)
+        })
     },
     // 获取评论列表
     toGetNewCommentList() {
       axios
-        .post("http://127.0.0.1:8080/usr/comment")
+        .post('http://127.0.0.1:8080/usr/comment')
         .then(data => {
-          this.commentList = data;
-          this.backupCommentList = data;
+          this.commentList = data
+          this.backupCommentList = data
         })
         .catch(error => {
-          this.$toast(error);
-        });
+          this.$toast(error)
+        })
     },
     //回复
     showPopup(name) {
-      this.repayName = `@${name} `;
-      this.popup = true;
+      this.repayName = `@${name} `
+      this.popup = true
     },
     isMoreEnable() {
-      this.isMore = false;
+      this.isMore = false
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .content {

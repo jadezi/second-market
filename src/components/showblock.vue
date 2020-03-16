@@ -1,30 +1,32 @@
 <template>
   <div class="demo2">
-    <div v-if="index == 0" class="border" style="margin-top:0px">
-      <div class="img">
-        <van-image width="100%" lazy-load :src="item.img" />
+    <a :href="item.href">
+      <div v-if="index == 0" class="border" style="margin-top:0px">
+        <div class="img">
+          <van-image width="100%" lazy-load :src="item.src" />
+        </div>
+        <div class="desc">{{ item.desc }}</div>
+        <div class="price">￥ {{ item.price }}</div>
       </div>
-      <div class="desc">{{ item.desc }}</div>
-      <div class="price">￥ {{ item.price }}</div>
-    </div>
-    <div v-else class="border">
-      <div class="img">
-        <van-image width="100%" lazy-load :src="item.img" />
+      <div v-else class="border">
+        <div class="img">
+          <van-image width="100%" lazy-load :src="item.src" />
+        </div>
+        <div class="desc">{{ item.desc }}</div>
+        <div class="price">￥ {{ item.price }}</div>
       </div>
-      <div class="desc">{{ item.desc }}</div>
-      <div class="price">￥ {{ item.price }}</div>
-    </div>
+    </a>
   </div>
 </template>
 
 <script>
 export default {
-  name: "showblock",
-  props: ["item", "index"],
+  name: 'showblock',
+  props: ['item', 'index'],
   data() {
-    return {};
+    return {}
   }
-};
+}
 </script>
 
 <style scoped lang="scss">

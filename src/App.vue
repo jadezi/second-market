@@ -22,29 +22,29 @@ export default {
     return {
       count: 0,
       isLoading: false
-    };
+    }
   },
   methods: {
     onRefresh() {
       setTimeout(() => {
-        this.$toast("刷新成功");
-        this.isLoading = false;
-        this.count++;
-      }, 500);
+        this.$toast('刷新成功')
+        this.isLoading = false
+        this.count++
+      }, 500)
     },
     backChange() {
-      history.pushState(null, null, document.URL);
+      history.pushState(null, null, document.URL)
       setTimeout(() => {
         this.$dialog
           .confirm({
-            title: "提示",
-            message: "确认离开吗？"
+            title: '提示',
+            message: '确认离开吗？'
           })
           .then(() => {})
           .catch(() => {
-            history.pushState(null, null, document.URL);
-          });
-      }, 100);
+            history.pushState(null, null, document.URL)
+          })
+      }, 100)
     }
   },
   mounted() {
@@ -59,6 +59,6 @@ export default {
   destroyed() {
     // window.removeEventListener("popstate", this.backChange, false); //false阻止默认事件
   }
-};
+}
 </script>
 <style scoped></style>

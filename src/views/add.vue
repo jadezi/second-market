@@ -90,104 +90,104 @@
   </div>
 </template>
 <script>
-import area from "../assets/js/address.js";
+import area from '@/assets/js/address.js'
 export default {
-  name: "add",
+  name: 'add',
   data() {
     return {
-      inputNum: "",
-      priceAgo: "",
-      priceNow: "",
-      freight: "",
+      inputNum: '',
+      priceAgo: '',
+      priceNow: '',
+      freight: '',
       priceInputDistinguish: false,
       priceAction: false,
-      checkRadio: "0",
-      city: "宁波鄞州区",
-      message: "",
+      checkRadio: '0',
+      city: '宁波鄞州区',
+      message: '',
       cityShow: false,
       fileList: [],
       areaList: area,
       shopList: {
-        buyPrice: "",
-        salePrice: "",
-        timeStamp: "",
-        uploadFile: "",
-        description: "",
-        original: "",
-        more: ""
+        buyPrice: '',
+        salePrice: '',
+        timeStamp: '',
+        uploadFile: '',
+        description: '',
+        original: '',
+        more: ''
       }
-    };
+    }
   },
   methods: {
     showMore() {
-      this.cityShow = !this.cityShow;
+      this.cityShow = !this.cityShow
     },
     getAddress(e) {
-      this.city = `发货地：${e[1].name}${e[2].name}`;
-      this.cityShow = !this.cityShow;
+      this.city = `发货地：${e[1].name}${e[2].name}`
+      this.cityShow = !this.cityShow
     },
     showPrice() {
-      this.priceAction = !this.priceAction;
+      this.priceAction = !this.priceAction
     },
     hidePriceAction() {
-      this.priceAction = false;
+      this.priceAction = false
     },
     onClickLeft() {
-      this.$router.replace("/");
+      this.$router.replace('/')
     },
     getInput(key) {
-      var input = "";
-      var isZero = /^￥0+/;
-      input = this.priceInputDistinguish ? this.priceAgo : this.priceNow;
-      if (input.indexOf("￥") == -1) {
-        input += "￥";
+      var input = ''
+      var isZero = /^￥0+/
+      input = this.priceInputDistinguish ? this.priceAgo : this.priceNow
+      if (input.indexOf('￥') == -1) {
+        input += '￥'
       }
-      input += key;
+      input += key
       if (
-        input.indexOf(".") !== input.lastIndexOf(".") ||
-        (input.indexOf(".") != -1 && input.length - input.indexOf(".") > 3) ||
+        input.indexOf('.') !== input.lastIndexOf('.') ||
+        (input.indexOf('.') != -1 && input.length - input.indexOf('.') > 3) ||
         isZero.test(input)
       ) {
-        input = input.substring(0, input.length - 1);
+        input = input.substring(0, input.length - 1)
       }
       if (this.priceInputDistinguish) {
-        this.priceAgo = input;
+        this.priceAgo = input
       } else {
-        this.priceNow = input;
+        this.priceNow = input
       }
     },
     onDelete() {
-      var input = "";
-      input = this.priceInputDistinguish ? this.priceAgo : this.priceNow;
-      input = input.substring(0, input.length - 1);
-      if (input.indexOf("￥") != -1 && input.length == 1) {
-        input = "";
+      var input = ''
+      input = this.priceInputDistinguish ? this.priceAgo : this.priceNow
+      input = input.substring(0, input.length - 1)
+      if (input.indexOf('￥') != -1 && input.length == 1) {
+        input = ''
       }
       if (this.priceInputDistinguish) {
-        this.priceAgo = input;
+        this.priceAgo = input
       } else {
-        this.priceNow = input;
+        this.priceNow = input
       }
     },
     onFocus(key) {
       key === 1
         ? (this.priceInputDistinguish = true)
-        : (this.priceInputDistinguish = false);
+        : (this.priceInputDistinguish = false)
     },
     onClose() {
-      var timestamp = Date.parse(new Date());
-      this.shopList.buyPrice = this.priceAgo;
-      this.shopList.salePrice = this.priceNow;
-      this.shopList.uploadFile = this.fileList;
-      this.shopList.timeStamp = timestamp;
-      this.priceAction = false;
-      console.log(this.shopList);
+      var timestamp = Date.parse(new Date())
+      this.shopList.buyPrice = this.priceAgo
+      this.shopList.salePrice = this.priceNow
+      this.shopList.uploadFile = this.fileList
+      this.shopList.timeStamp = timestamp
+      this.priceAction = false
+      console.log(this.shopList)
     },
     release() {
-      console.log(this.fileList);
+      console.log(this.fileList)
     }
   }
-};
+}
 </script>
 <style scoped>
 .upload-image,

@@ -102,8 +102,9 @@
                   style="height:40px"
                   type="primary"
                   @click="handleMessage()"
-                  >发送</van-button
                 >
+                  发送
+                </van-button>
               </template>
             </div>
           </template>
@@ -134,23 +135,23 @@
   </div>
 </template>
 <script>
-const appData = require("@/assets/emojis.json");
-import { ImagePreview } from "vant";
-import msgTool from "@/components/msgTool.vue";
+const appData = require('@/assets/emojis.json')
+import { ImagePreview } from 'vant'
+import msgTool from '@/components/msgTool.vue'
 export default {
-  name: "contact",
+  name: 'contact',
   components: {
     msgTool
   },
   data() {
     return {
-      title: "",
-      toId: "", // 接受者id
-      userId: "", // 发送者id
-      userImg: "", // 发送者头像路径
-      toUserImg: "", // 收信人头像路径
-      sms: "",
-      imgSrc: "",
+      title: '',
+      toId: '', // 接受者id
+      userId: '', // 发送者id
+      userImg: '', // 发送者头像路径
+      toUserImg: '', // 收信人头像路径
+      sms: '',
+      imgSrc: '',
       faceList: [],
       fileList: [],
       faceShow: false,
@@ -171,67 +172,67 @@ export default {
         // }
       ],
       sendBtn: false //控制发送键显示
-    };
+    }
   },
   mounted() {
-    this.toId = this.$route.query.toId; //接收者id
-    this.title = `与 ${this.toId} 会话`;
-    this.userId = this.$store.state.userInfo.uid; //发送者id
-    this.userImg = this.$store.state.userInfo.uidImgUrl; //发送者头像
-    this.toUserImg = this.$route.query.toUserImgUrl; //接受者头像
+    this.toId = this.$route.query.toId //接收者id
+    this.title = `与 ${this.toId} 会话`
+    this.userId = this.$store.state.userInfo.uid //发送者id
+    this.userImg = this.$store.state.userInfo.uidImgUrl //发送者头像
+    this.toUserImg = this.$route.query.toUserImgUrl //接受者头像
     var message = {
       content: {
         text: this.$route.query.message,
-        image: "123",
+        image: '123',
         msgTypeOfImage: false
       },
       timesStamp: this.$route.query.timesStamp,
       recUid: this.toId,
       sendUid: this.userId,
-      readState: "1"
-    };
-    this.messageList.push(message);
-    console.log(this.messageList);
-    this.$socket.connect();
+      readState: '1'
+    }
+    this.messageList.push(message)
+    console.log(this.messageList)
+    this.$socket.connect()
   },
   sockets: {
     connect: function() {
       //查看socket是否渲染成功
-      console.log("链接成功");
+      console.log('链接成功')
     },
     disconnect() {
       //检测socket断开链接
-      console.log("断开链接");
+      console.log('断开链接')
     },
     reconnect() {
-      console.log("重新链接");
+      console.log('重新链接')
     },
     //客户端接收后台传输的socket事件
     message(data) {
       this.$notify({
-        title: "新消息",
-        message: "新",
-        type: "warning",
+        title: '新消息',
+        message: '新',
+        type: 'warning',
         duration: 500
-      });
+      })
       this.$nextTick(function() {
-        var content = this.$refs.contentBox;
-        content.scrollTop = content.scrollHeight;
-      });
-      this.messageList.push(data[0]);
+        var content = this.$refs.contentBox
+        content.scrollTop = content.scrollHeight
+      })
+      this.messageList.push(data[0])
       //接收的消息// 接受完信息 向服务器发送最后通讯时间
     }
   },
   methods: {
     initTime() {
-      return Date.parse(new Date());
+      return Date.parse(new Date())
     },
     onClickLeft() {
-      this.$router.replace("/user/message");
+      this.$router.replace('/user/message')
     },
     onClickRight() {
-      this.$toast("按钮");
-      console.log(this.messageList);
+      this.$toast('按钮')
+      console.log(this.messageList)
     },
     // 发送含有图片文件信息
     handleImageMessage(e) {
@@ -245,80 +246,80 @@ export default {
         recUid: this.toId,
         sendUid: this.userId,
         readState: 1
-      };
-      this.messageObj.push(msg);
-      this.send();
+      }
+      this.messageObj.push(msg)
+      this.send()
     },
     // 输入文本信息
     handleMessage() {
       var msg = {
         content: {
           text: this.sms,
-          image: "",
+          image: '',
           msgTypeOfImage: false
         },
         timesStamp: this.initTime(),
         recUid: this.toId,
         sendUid: this.userId,
         readState: 0
-      };
-      this.sms = "";
-      this.messageObj.push(msg);
-      console.log(this.messageObj);
-      this.sendBtn = false;
-      this.send();
+      }
+      this.sms = ''
+      this.messageObj.push(msg)
+      console.log(this.messageObj)
+      this.sendBtn = false
+      this.send()
     },
     send() {
       // 发送信息
-      this.faceShow = false;
-      this.otherFunShow = false;
-      this.$socket.emit("send", this.messageObj);
-      this.messageList.push(this.messageObj[0]);
+      this.faceShow = false
+      this.otherFunShow = false
+      this.$socket.emit('send', this.messageObj)
+      this.messageList.push(this.messageObj[0])
       this.$nextTick(function() {
-        var content = this.$refs.contentBox;
-        content.scrollTop = content.scrollHeight;
-      });
-      this.messageObj = [];
+        var content = this.$refs.contentBox
+        content.scrollTop = content.scrollHeight
+      })
+      this.messageObj = []
       // 发送完信息 向服务器发送最后通讯时间
       // funciton
     },
     showSendBtn(e) {
-      console.log(e);
-      if (e != "" || this.sms != "") {
-        this.sendBtn = true;
+      console.log(e)
+      if (e != '' || this.sms != '') {
+        this.sendBtn = true
       } else {
-        this.sendBtn = false;
+        this.sendBtn = false
       }
     },
     showFaceContent() {
-      this.otherFunShow = false;
-      this.faceShow = !this.faceShow;
+      this.otherFunShow = false
+      this.faceShow = !this.faceShow
       if (this.faceShow == true) {
         for (let i in appData) {
-          this.faceList.push(appData[i].char);
+          this.faceList.push(appData[i].char)
         }
       } else {
-        this.faceList = [];
+        this.faceList = []
       }
     },
     showOtherPanel() {
-      this.faceShow = false;
-      this.otherFunShow = !this.otherFunShow;
+      this.faceShow = false
+      this.otherFunShow = !this.otherFunShow
     },
     getBrow(index) {
       for (let i in this.faceList) {
         if (index == i) {
-          this.sms += this.faceList[index];
+          this.sms += this.faceList[index]
         }
       }
-      this.sendBtn = true;
-      console.log(this.sms);
+      this.sendBtn = true
+      console.log(this.sms)
     },
     showImage(url) {
-      ImagePreview(url);
+      ImagePreview(url)
     }
   }
-};
+}
 </script>
 <style scoped lang="scss">
 .contact-main {

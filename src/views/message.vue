@@ -74,18 +74,17 @@
 </template>
 
 <script>
-import axios from "axios";
 //import contact from "@/views/contacts.vue";
-import activity from "../../public/img/activity.jpg";
-import inform from "../../public/img/inform.gif";
-import message from "../../public/img/message.jpg";
-import tar from "@/components/tar.vue";
-import { formatDate } from "@/assets/js/date.js";
+import activity from '../../public/img/activity.jpg'
+import inform from '../../public/img/inform.gif'
+import message from '../../public/img/message.jpg'
+import tar from '@/components/tar.vue'
+import { formatDate } from '@/assets/js/date.js'
 export default {
-  name: "message",
+  name: 'message',
   data() {
     return {
-      isScroll: "Scroll",
+      isScroll: 'Scroll',
       messageFlag: false,
       isLoading: false,
       rightWidth: 80,
@@ -94,94 +93,92 @@ export default {
       chat: [],
       systemImage: [
         {
-          name: "活动消息",
+          name: '活动消息',
           img: activity,
           status: false,
           id: 0
         },
         {
-          name: "通知消息",
+          name: '通知消息',
           img: inform,
           status: false,
           id: 1
         },
         {
-          name: "互动消息",
+          name: '互动消息',
           img: message,
           status: false,
           id: 2
         }
       ]
-    };
+    }
   },
   mounted() {
-    this.getMessage();
+    this.getMessage()
   },
   filters: {
     timestampFormat: function(timesStamp) {
-      return formatDate(timesStamp, "yyyy-MM-dd hh:mm");
+      return formatDate(timesStamp, 'yyyy-MM-dd hh:mm')
     }
   },
   watch: {
     messageFlag: function() {
-      this.isScroll = this.messageFlag ? "noScroll" : "Scroll";
+      this.isScroll = this.messageFlag ? 'noScroll' : 'Scroll'
     },
     circularLoading: function() {
-      this.isScroll = this.circularLoading ? "noScroll" : "Scroll";
+      this.isScroll = this.circularLoading ? 'noScroll' : 'Scroll'
     }
   },
   methods: {
     setDotStyle(objectId) {
       for (var i = 0; i < this.systemImage.length; i++) {
         if (this.systemImage[i].id == objectId) {
-          this.systemImage[i].status = !this.systemImage[i].status;
+          this.systemImage[i].status = !this.systemImage[i].status
         }
       }
       //this.loading = !this.loading;
     },
     getMessage() {
-      this.circularLoading = true;
-      axios
-        .get(
-          "http://127.0.0.1:7300/mock/5dde29b78eecd44600ce5be8/sec/usr/message"
-        )
+      this.circularLoading = true
+      this.$http
+        .get('user/message')
         .then(response => {
-          this.chat = response.data.data.chat;
-          this.loading = false;
-          this.circularLoading = false;
-          this.isLoading = false;
+          this.chat = response.data.data.chat
+          this.loading = false
+          this.circularLoading = false
+          this.isLoading = false
         })
         .catch(error => {
-          this.circularLoading = false;
-          this.isLoading = false;
-          this.$toast("加载失败:" + error);
-        });
+          this.circularLoading = false
+          this.isLoading = false
+          this.$toast('加载失败:' + error)
+        })
     },
     onRefresh() {
-      this.getMessage();
+      this.getMessage()
       //this.circularLoading = true;
     },
     showMessage() {
-      this.messageFlag = !this.messageFlag;
+      this.messageFlag = !this.messageFlag
     },
     openContact(item) {
       this.$router.push({
-        path: "/user/message/contacts",
+        path: '/user/message/contacts',
         query: {
           toId: item.toId,
           toUserImgUrl: item.toUidImgUrl,
           message: item.message,
           timesStamp: item.timesStamp
         }
-      });
-      this.$store.commit("setInfo", item);
+      })
+      this.$store.commit('setInfo', item)
     }
   },
   components: {
     //acontact,
     tar
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

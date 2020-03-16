@@ -10,8 +10,7 @@
         shape="round"
         clearable
         @focus="toSearchDetail"
-      >
-      </van-search>
+      ></van-search>
     </div>
     <div class="qrcode">扫码</div>
   </div>
@@ -38,17 +37,17 @@
 </style>
 <script>
 export default {
-  name: "search",
+  name: 'search',
   data() {
     return {
-      value: "热搜"
-    };
+      value: '热搜'
+    }
   },
   methods: {
     toSearchDetail() {
       //this.$router.replace("/search");
-      this.$emit("openSearch");
+      this.$emit('openSearch')
     }
   }
-};
+}
 </script>
