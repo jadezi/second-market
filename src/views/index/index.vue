@@ -52,7 +52,6 @@
                       v-for="(item, index) in shopListRight"
                       :key="index"
                       :item="item"
-                      :index="index"
                     ></showblock>
                   </template>
                 </div>
@@ -135,6 +134,10 @@ export default {
         if (item.id == index) {
           this.selectTabItem = item.param
           this.listSize = 0
+          this.finished = false
+          this.shopListLeft = []
+          this.shopListRight = []
+          this.getShopList()
           return
         }
       })
@@ -154,30 +157,35 @@ export default {
     },
     async getShopList() {
       try {
-        const res = await this.$http.get(`shoplist/${this.selectTabItem}`, {
-          params: {
-            listAddNum: this.listAddNum,
-            listSize: this.listSize
+        const { data: res } = await this.$http.get(
+          `shoplist/${this.selectTabItem}`,
+          {
+            params: {
+              listAddNum: this.listAddNum,
+              listSize: this.listSize
+            }
+          }
+        )
+        if (res.meta.status !== 200) {
+          return this.$toast('服务器异常')
+        }
+        if (res.data.length === 0) {
+          this.finished = true
+          return
+        }
+        const length = this.shopListLeft.length + this.shopListRight.length
+        if (res.data.length === length) {
+          this.finished = true
+          return
+        }
+        res.data.arr.forEach((item, index) => {
+          if ((index + 1) % 2 !== 0) {
+            this.shopListLeft.push(item)
+          } else {
+            this.shopListRight.push(item)
           }
         })
-        console.log(res)
-        //this.listLoading = false
-        this.finished = true
-        // if (res.meta.status !== 200) {
-        //   return this.$toast('网络错误')
-        // }
-        // const length = this.shopListLeft.length + this.shopListRight.length
-        // if (res.data.length === length) {
-        //   this.finished = true
-        //   return
-        // }
-        // res.data.forEach((item, index) => {
-        //   if ((index + 1) % 2 !== 0) {
-        //     this.shopListLeft.push(item)
-        //   } else {
-        //     this.shopListRight.push(item)
-        //   }
-        // })
+        this.listSize = this.shopListLeft.length + this.shopListRight.length
         //加载状态结束
         this.listLoading = false
       } catch (err) {

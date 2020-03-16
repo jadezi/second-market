@@ -1,14 +1,7 @@
 <template>
   <div class="demo2">
     <a :href="item.href">
-      <div v-if="index == 0" class="border" style="margin-top:0px">
-        <div class="img">
-          <van-image width="100%" lazy-load :src="item.src" />
-        </div>
-        <div class="desc">{{ item.desc }}</div>
-        <div class="price">￥ {{ item.price }}</div>
-      </div>
-      <div v-else class="border">
+      <div class="border">
         <div class="img">
           <van-image width="100%" lazy-load :src="item.src" />
         </div>
@@ -22,7 +15,7 @@
 <script>
 export default {
   name: 'showblock',
-  props: ['item', 'index'],
+  props: ['item'],
   data() {
     return {}
   }
