@@ -45,7 +45,7 @@
 
 <script>
 import axios from 'axios'
-import cmt from '@/views/cmt.vue'
+import cmt from './components/cmt.vue'
 export default {
   data() {
     return {

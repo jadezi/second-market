@@ -75,9 +75,9 @@
 
 <script>
 //import contact from "@/views/contacts.vue";
-import activity from '../../public/img/activity.jpg'
-import inform from '../../public/img/inform.gif'
-import message from '../../public/img/message.jpg'
+import activity from '../../../public/img/activity.jpg'
+import inform from '../../../public/img/inform.gif'
+import message from '../../../public/img/message.jpg'
 import tar from '@/components/tar.vue'
 import { formatDate } from '@/assets/js/date.js'
 export default {

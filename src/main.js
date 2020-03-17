@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-
+import 'vant/lib/icon/local.css'
 import '@/assets/resetVant.scss'
 import VueSocketIO from 'vue-socket.io'
 import SocketIO from 'socket.io-client'

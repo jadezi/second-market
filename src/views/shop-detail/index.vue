@@ -11,7 +11,7 @@
     <div class="info">
       <div class="userInfo">
         <div class="userImg">
-          <img src="../assets/img/th.jpg" href="#" />
+          <img src="../../assets/img/th.jpg" href="#" />
         </div>
         <div>
           <div class="userName">123</div>
@@ -33,9 +33,9 @@
       <div class="shopContent">
         <div class="shopText">1</div>
         <div class="shopImage">
-          <img @click="showImage(1)" src="../assets/img/th.jpg" href="#" />
-          <img @click="showImage(2)" src="../assets/img/th.jpg" href="#" />
-          <img @click="showImage(3)" src="../assets/img/th.jpg" href="#" />
+          <img @click="showImage(1)" src="../../assets/img/th.jpg" href="#" />
+          <img @click="showImage(2)" src="../../assets/img/th.jpg" href="#" />
+          <img @click="showImage(3)" src="../../assets/img/th.jpg" href="#" />
         </div>
       </div>
     </div>
@@ -91,8 +91,8 @@
 
 <script>
 import { ImagePreview } from 'vant'
-import cmtParent from '@/views/cmtParent.vue'
-import axios from 'axios'
+import cmtParent from '@/views/user-comment/index.vue'
+//import axios from 'axios'
 export default {
   name: 'ShopDetail',
   data() {
@@ -108,7 +108,8 @@ export default {
   },
   methods: {
     sendReplyContent() {
-      axios.post('http://localhost:3000')
+      //axios.post('http://localhost:3000')
+      // 打开指定聊天界面
     },
     onClickLeft() {
       console.log('ok')

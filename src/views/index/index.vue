@@ -29,11 +29,10 @@
             <van-list
               v-model="listLoading"
               :finished="finished"
-              finished-text="没有更多了"
+              finished-text="我也是有底线滴~~~"
               :error.sync="error"
               error-text="请求失败，点击重新加载"
               @load="getShopList()"
-              :immediate-check="false"
             >
               <keep-alive>
                 <waterfall
@@ -59,9 +58,9 @@
 
 <script>
 import search from '@/components/search.vue'
-import searchBar from '@/views/searchBar.vue'
+import searchBar from './components/searchBar.vue'
 import tar from '@/components/tar.vue'
-import waterfall from './components/waterfall.vue'
+import waterfall from '@/components/waterfall.vue'
 export default {
   data() {
     return {
@@ -97,7 +96,6 @@ export default {
   },
   mounted() {
     this.getTabList()
-    this.getShopList()
   },
   methods: {
     // 获取标签栏标题

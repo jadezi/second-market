@@ -137,7 +137,7 @@
 <script>
 const appData = require('@/assets/emojis.json')
 import { ImagePreview } from 'vant'
-import msgTool from '@/components/msgTool.vue'
+import msgTool from './components/msgTool.vue'
 export default {
   name: 'contact',
   components: {
