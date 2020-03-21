@@ -1,0 +1,37 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "120032",
+      "name": "链接",
+      "font_class": "lianjie",
+      "unicode": "e69e",
+      "unicode_decimal": 59038
+    },
+    {
+      "icon_id": "11782958",
+      "name": "分享 转发 发送至 箭头 圆形 shar",
+      "font_class": "fenxiangzhuanfafasongzhijiantouyuanxingshar",
+      "unicode": "e539",
+      "unicode_decimal": 58681
+    },
+    {
+      "icon_id": "12879478",
+      "name": "点赞",
+      "font_class": "zan",
+      "unicode": "fd10",
+      "unicode_decimal": 64784
+    },
+    {
+      "icon_id": "13116059",
+      "name": "评论",
+      "font_class": "pinglun",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    }
+  ]
+}

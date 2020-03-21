@@ -12,6 +12,7 @@ import addressEdit from '@/views/user-address/addressEdit.vue'
 import address from '@/views/user-address/address.vue'
 import Contacts from '@/views/user-chat/contacts.vue'
 import userUI from '@/views/user-index/index.vue'
+import BBS from '@/views/user-bbs/index.vue'
 import 'nprogress/nprogress.css'
 
 Vue.use(VueRouter)
@@ -71,6 +72,11 @@ const routes = [
     path: '/user/address',
     name: 'address',
     component: address
+  },
+  {
+    path: '/bbs',
+    name: 'bbs',
+    component: BBS
   }
 ]
 
