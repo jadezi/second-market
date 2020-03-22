@@ -135,7 +135,7 @@
   </div>
 </template>
 <script>
-const appData = require('@/assets/emojis.json')
+import appData from '@/assets/js/emojis.json'
 import { ImagePreview } from 'vant'
 import msgTool from './components/msgTool.vue'
 export default {

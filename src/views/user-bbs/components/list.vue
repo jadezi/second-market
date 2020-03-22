@@ -9,11 +9,7 @@
       @load="getInfo"
     >
       <keep-alive>
-        <dynamic
-          :infos="item"
-          v-for="(item, index) in article"
-          :key="index"
-        ></dynamic>
+        <dynamic :info="article" v-if="article.length > 0"></dynamic>
       </keep-alive>
     </van-list>
   </div>
@@ -52,7 +48,8 @@ export default {
         summary: {
           description: '',
           cover: '',
-          url: ''
+          url: '',
+          author: ''
         },
         forward: 0,
         // 评论数目

@@ -52,7 +52,8 @@ import {
   Panel,
   Image,
   SubmitBar,
-  List
+  List,
+  Overlay
 } from 'vant'
 
 Vue.use(Image)
@@ -93,10 +94,11 @@ Vue.use(SwitchCell)
 Vue.use(AddressEdit)
 Vue.use(ContactCard)
 Vue.use(SubmitBar)
+Vue.use(Overlay)
 Vue.config.productionTip = false
 
 axios.defaults.baseURL =
-  'http://127.0.0.1:7300/mock/5dde29b78eecd44600ce5be8/sec'
+  'http://192.168.43.170:7300/mock/5dde29b78eecd44600ce5be8/sec'
 axios.defaults.timeout = 3000
 Vue.prototype.$http = axios
 

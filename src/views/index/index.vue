@@ -26,7 +26,11 @@
             :key="titleItem.id"
             :title="titleItem.title"
           >
-            <van-list
+            <shop-list
+              ref="shopload"
+              :selectTabItem="selectTabItem"
+            ></shop-list>
+            <!-- <van-list
               v-model="listLoading"
               :finished="finished"
               finished-text="我也是有底线滴~~~"
@@ -40,7 +44,7 @@
                   v-if="shopList.length != 0"
                 ></waterfall>
               </keep-alive>
-            </van-list>
+            </van-list> -->
           </van-tab>
         </van-tabs>
       </van-pull-refresh>
@@ -60,38 +64,37 @@
 import search from '@/components/search.vue'
 import searchBar from './components/searchBar.vue'
 import tar from '@/components/tar.vue'
-import waterfall from '@/components/waterfall.vue'
+import shopList from '@/components/shopList.vue'
 export default {
   data() {
     return {
       count: 0,
       // 列表加载状态
-      listLoading: false,
-      // 列表加载是否结束
-      finished: false,
-      // 下拉加载状态
+      // listLoading: false,
+      // // 列表加载是否结束
+      // finished: false,
+      // // 下拉加载状态
       isLoading: false,
       // 搜索栏打开状态
       searchFlag: false,
       // 商品列表
-      shopList: [],
+      // shopList: [],
       // 商品分类标签页列表
       shopTitleItems: [],
       // 上拉加载错误状态
-      error: false,
+      // error: false,
       // 当前选中的标签栏
-      selectTabItem: 'books',
-      // 每次上拉增加加载数量
-      listAddNum: 4,
-      // 已加载卡片数量
-      listSize: 0
+      selectTabItem: 'books'
+      // // 每次上拉增加加载数量
+      // listAddNum: 4,
+      // // 已加载卡片数量
+      // listSize: 0
     }
   },
   components: {
     search,
     searchBar,
-    waterfall,
-    // showblock,
+    shopList,
     tar
   },
   mounted() {
@@ -117,12 +120,6 @@ export default {
         console.log(item.id)
         if (item.id == index) {
           this.selectTabItem = item.param
-          this.listSize = 0
-          this.finished = false
-          this.shopList = []
-          // this.shopListLeft = []
-          // this.shopListRight = []
-          this.getShopList()
           return
         }
       })
@@ -134,52 +131,10 @@ export default {
       return comment
     },
     onRefresh() {
-      this.getShopList()
+      this.$refs.shopload.this.getShopList()
       this.$toast('刷新成功')
       this.isLoading = false
       this.count++
-    },
-    async getShopList() {
-      try {
-        const { data: res } = await this.$http.get(
-          `shoplist/${this.selectTabItem}`,
-          {
-            params: {
-              listAddNum: this.listAddNum,
-              listSize: this.listSize
-            }
-          }
-        )
-
-        if (res.meta.status !== 200) {
-          this.error = true
-          return this.$toast('服务器异常')
-        }
-        if (res.data.arr.length == 0) {
-          console.log('185 hang')
-          this.finished = true
-          return
-        }
-        // // 当前商品列表长度
-        var length = this.shopList.length
-
-        if (res.data.length === length) {
-          console.log('196 hang')
-          this.finished = true
-          return
-        }
-
-        res.data.arr.forEach(item => {
-          this.shopList.push(item)
-        })
-        this.listSize = this.shopList.length
-        // //加载状态结束
-        this.listLoading = false
-      } catch (err) {
-        this.listLoading = false
-        this.error = true
-        this.$toast('加载失败:' + err)
-      }
     },
     showSearch() {
       this.searchFlag = !this.searchFlag
@@ -188,18 +143,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-// 选项卡内边距
-// .tab-pane {
-//   display: flex;
-//   flex-wrap: wrap;
-// }
-// .tab-pane-item {
-//   margin-top: 10px;
-//   display: flex;
-//   flex-wrap: wrap;
-//   flex-direction: column;
-//   width: 48%;
-// }
 .bg {
   background-color: #f2f2f2f2;
   padding-bottom: 75px;
