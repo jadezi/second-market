@@ -185,7 +185,7 @@ export default {
   sockets: {
     connect() {
       //查看socket是否渲染成功
-      this.$socket.emit('online', this.toId)
+      this.$socket.emit('online', this.userId)
       console.log('链接成功')
     },
     disconnect() {
@@ -203,6 +203,8 @@ export default {
         type: 'warning',
         duration: 500
       })
+      console.log('-------')
+      console.log(data)
       this.$nextTick(function() {
         var content = this.$refs.contentBox
         content.scrollTop = content.scrollHeight
@@ -262,13 +264,12 @@ export default {
       this.faceShow = false
       this.otherFunShow = false
       this.$socket.emit('send', this.messageObj)
-      this.messageList.push(this.messageObj[0])
+      //this.messageList.push(this.messageObj[0])
       this.$nextTick(function() {
         var content = this.$refs.contentBox
         content.scrollTop = content.scrollHeight
       })
       this.messageObj = []
-      // 发送完信息 向服务器发送最后通讯时间
       // funciton
     },
     showSendBtn(e) {
