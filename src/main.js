@@ -110,7 +110,7 @@ Vue.use(
       actionPrefix: 'SOCKET_',
       mutationPrefix: 'SOCKET_'
     },
-    options: { path: '/' }
+    options: { path: '/socket' }
   })
 )
 
