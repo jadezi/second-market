@@ -157,20 +157,7 @@ export default {
       faceShow: false,
       otherFunShow: false,
       messageObj: [],
-      messageList: [
-        // 消息对象
-        // {
-        //   content: {
-        //     text: "2",
-        //     image: "123",
-        //     msgTypeOfImage: false
-        //   },
-        //   timesStamp: 1580824870000,
-        //   recUid: "123",
-        //   sendUid: "sec99",
-        //   readState: "12"
-        // }
-      ],
+      messageList: [],
       sendBtn: false //控制发送键显示
     }
   },
@@ -196,8 +183,9 @@ export default {
     this.$socket.connect()
   },
   sockets: {
-    connect: function() {
+    connect() {
       //查看socket是否渲染成功
+      this.$socket.emit('online', this.toId)
       console.log('链接成功')
     },
     disconnect() {

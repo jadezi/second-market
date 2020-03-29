@@ -98,13 +98,13 @@ Vue.use(Overlay)
 Vue.config.productionTip = false
 
 axios.defaults.baseURL =
-  'http://192.168.43.170:7300/mock/5dde29b78eecd44600ce5be8/sec'
+  'http://127.0.0.1:7300/mock/5dde29b78eecd44600ce5be8/sec'
 axios.defaults.timeout = 3000
 Vue.prototype.$http = axios
 
 Vue.use(
   new VueSocketIO({
-    connection: SocketIO('http://127.0.0.1:3000/'),
+    connection: SocketIO('http://127.0.0.1:5000'),
     vuex: {
       store,
       actionPrefix: 'SOCKET_',
