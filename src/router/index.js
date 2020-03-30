@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import { getToken } from '@/util/auth'
 import searchBar from '@/views/index/components/searchBar.vue'
 import index from '@/views/index/index.vue'
 import Message from '@/views/user-chat/index.vue'
@@ -11,8 +12,11 @@ import OrderInfo from '@/views/shop-order/index.vue'
 import addressEdit from '@/views/user-address/addressEdit.vue'
 import address from '@/views/user-address/address.vue'
 import Contacts from '@/views/user-chat/contacts.vue'
+import login from '@/views/user-login/login.vue'
+import register from '@/views/user-register/register.vue'
 import userUI from '@/views/user-index/index.vue'
 import BBS from '@/views/user-bbs/index.vue'
+import My from '@/views/user-my/my.vue'
 import 'nprogress/nprogress.css'
 
 Vue.use(VueRouter)
@@ -36,17 +40,26 @@ const routes = [
   {
     path: '/user/message',
     name: 'message',
-    component: Message
+    component: Message,
+    meta: {
+      requireAuth: true
+    }
   },
   {
     path: '/user/message/contacts',
     name: 'contacts',
-    component: Contacts
+    component: Contacts,
+    meta: {
+      requireAuth: true
+    }
   },
   {
     path: '/user/add',
     name: 'add',
-    component: Add
+    component: Add,
+    meta: {
+      requireAuth: true
+    }
   },
   {
     path: '/user/comment',
@@ -77,6 +90,24 @@ const routes = [
     path: '/bbs',
     name: 'bbs',
     component: BBS
+  },
+  {
+    path: '/my',
+    name: 'my',
+    component: My,
+    meta: {
+      requireAuth: true
+    }
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: login
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: register
   }
 ]
 
@@ -90,7 +121,25 @@ NProgress.configure({ showSpinner: false })
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  next()
+  if (to.matched.some(record => record.meta.requireAuth)) {
+    // 判断该路由是否需要登录权限
+    if (getToken()) {
+      // 判断当前的token是否存在 ； 登录存入的token
+      if (to.path === '/login') {
+        // removeToken()
+        window.location.reload()
+      } else {
+        next()
+      }
+    } else {
+      next({
+        path: '/login',
+        query: { type: 'pwd', redirect: to.fullPath } // 将跳转的路由path作为参数，登录成功后跳转到该路由
+      })
+    }
+  } else {
+    next()
+  }
 })
 
 router.afterEach(() => {

@@ -51,8 +51,10 @@ import {
   AddressList,
   Panel,
   Image,
+  Form,
   SubmitBar,
   List,
+  CountDown,
   Overlay
 } from 'vant'
 
@@ -95,11 +97,21 @@ Vue.use(AddressEdit)
 Vue.use(ContactCard)
 Vue.use(SubmitBar)
 Vue.use(Overlay)
+Vue.use(CountDown)
+Vue.use(Form)
 Vue.config.productionTip = false
 
-axios.defaults.baseURL =
-  'http://127.0.0.1:7300/mock/5dde29b78eecd44600ce5be8/sec'
-axios.defaults.timeout = 3000
+// axios.defaults.baseURL =
+//   'http://127.0.0.1:7300/mock/5dde29b78eecd44600ce5be8/sec'
+// var token = this.$store.state.userInfo.token
+axios.defaults.baseURL = 'http://localhost:8088/api/'
+axios.interceptors.request.use(config => {
+  config.headers['authorization'] = sessionStorage.getItem('market-token')
+  return config
+})
+
+axios.defaults.timeout = 6000
+
 Vue.prototype.$http = axios
 
 Vue.use(

@@ -1,12 +1,7 @@
 <template>
   <div class="bbs">
     <div class="head-tar">
-      <van-tabs
-        v-model="activeTitle"
-        sticky
-        swipeable
-        @click="setTabChecked"
-      >
+      <van-tabs v-model="activeTitle" sticky swipeable @click="setTabChecked">
         <van-tab
           v-for="(titleItem, index) in titleGroup"
           :key="index"
