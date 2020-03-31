@@ -30,21 +30,6 @@
               ref="shopload"
               :selectTabItem="selectTabItem"
             ></shop-list>
-            <!-- <van-list
-              v-model="listLoading"
-              :finished="finished"
-              finished-text="我也是有底线滴~~~"
-              :error.sync="error"
-              error-text="请求失败，点击重新加载"
-              @load="getShopList()"
-            >
-              <keep-alive>
-                <waterfall
-                  :data="shopList"
-                  v-if="shopList.length != 0"
-                ></waterfall>
-              </keep-alive>
-            </van-list> -->
           </van-tab>
         </van-tabs>
       </van-pull-refresh>
@@ -131,10 +116,15 @@ export default {
       return comment
     },
     onRefresh() {
-      this.$refs.shopload.this.getShopList()
-      this.$toast('刷新成功')
-      this.isLoading = false
-      this.count++
+      // this.$refs.shopload.this.getShopList()
+      // this.$toast('刷新成功')
+      // this.isLoading = false
+      // this.count++
+      setTimeout(() => {
+        this.$toast('刷新成功')
+        this.isLoading = false
+        this.count++
+      }, 1000)
     },
     showSearch() {
       this.searchFlag = !this.searchFlag

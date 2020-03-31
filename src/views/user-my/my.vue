@@ -1,21 +1,32 @@
 <template>
   <div>
-    <van-button type="permiary" @click="test">ceshi</van-button>
+    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      123
+    </van-pull-refresh>
+    <tar></tar>
   </div>
 </template>
 <script>
+import tar from '@/components/tar.vue'
 export default {
   name: 'my',
-  components: {},
+  components: {
+    tar
+  },
   props: {},
   data() {
-    return {}
+    return {
+      isLoading: false
+    }
   },
   computed: {},
   watch: {},
   created() {},
   mounted() {},
   methods: {
+    onRefresh() {
+      
+    },
     async test() {
       const re = await this.$http.get('/private/v1/users/getuserinfo', {
         params: {

@@ -52,9 +52,11 @@ import {
   Panel,
   Image,
   Form,
+  Progress,
   SubmitBar,
   List,
   CountDown,
+  DatetimePicker,
   Overlay
 } from 'vant'
 
@@ -99,6 +101,8 @@ Vue.use(SubmitBar)
 Vue.use(Overlay)
 Vue.use(CountDown)
 Vue.use(Form)
+Vue.use(Progress)
+Vue.use(DatetimePicker)
 Vue.config.productionTip = false
 
 // axios.defaults.baseURL =

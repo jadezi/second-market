@@ -17,6 +17,7 @@ import register from '@/views/user-register/register.vue'
 import userUI from '@/views/user-index/index.vue'
 import BBS from '@/views/user-bbs/index.vue'
 import My from '@/views/user-my/my.vue'
+import Setting from '@/views/user-setting/setting.vue'
 import 'nprogress/nprogress.css'
 
 Vue.use(VueRouter)
@@ -89,12 +90,23 @@ const routes = [
   {
     path: '/bbs',
     name: 'bbs',
-    component: BBS
+    component: BBS,
+    meta: {
+      requireAuth: true
+    }
   },
   {
     path: '/my',
     name: 'my',
     component: My,
+    meta: {
+      requireAuth: true
+    }
+  },
+  {
+    path: '/user/setting',
+    name: 'setting',
+    component: Setting,
     meta: {
       requireAuth: true
     }

@@ -5,13 +5,12 @@
     text-align: center;
   }
   //下拉刷新组件样式修改
-  .van-pull-refresh,
-  .van-pull-refresh__track {
+  .van-pull-refresh {
     min-height: calc(100vh - 55px);
     height: auto;
   }
   .van-pull-refresh__head {
-    top: -55px;
+    top: 0px;
     height: 40px;
     line-height: 40px;
   }
