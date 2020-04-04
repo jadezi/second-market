@@ -47,8 +47,8 @@ export default {
   mounted() {},
   methods: {
     async getTitleGroup() {
-      const { data: res } = await this.$http.get('/bbs/navtitle')
-      if (res.meta.status !== 200) {
+      const { data: res } = await this.$http.get('public/v1/title/index')
+      if (res.code !== 200) {
         return this.$toast('网络故障，无法显示')
       }
       this.titleGroup = res.data
@@ -56,8 +56,7 @@ export default {
     setTabChecked(index, name) {
       console.log(name)
       this.titleGroup.forEach(item => {
-        console.log(item.id)
-        if (item.id == index) {
+        if (item.index == index) {
           this.selectTabItem = item.param
           // this.listSize = 0
           // this.finished = false

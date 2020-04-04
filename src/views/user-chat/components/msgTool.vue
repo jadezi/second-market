@@ -21,20 +21,22 @@ export default {
   filters: {
     dateFilters: function(timeStamp) {
       console.log(timeStamp)
+      var t = Number(timeStamp)
+      console.log(timeStamp)
       var nowDateStamp = new Date()
-      var timeStampObj = new Date(timeStamp)
+      var timeStampObj = new Date(t)
       var day = nowDateStamp.getDate() - timeStampObj.getDate()
       if (day > 3 && day < 20) {
-        return formatDate(timeStamp, 'MM-dd hh:mm')
+        return formatDate(t, 'MM-dd hh:mm')
       } else if (day == 2) {
-        return '前天 ' + formatDate(timeStamp, 'hh:mm')
+        return '前天 ' + formatDate(t, 'hh:mm')
       } else if (day == 1) {
-        return '昨天 ' + formatDate(timeStamp, 'hh:mm')
+        return '昨天 ' + formatDate(t, 'hh:mm')
       } else if (day == 0) {
-        return formatDate(timeStamp, 'hh:mm')
+        return formatDate(t, 'hh:mm')
       } else {
         console.log(timeStamp)
-        return formatDate(timeStamp, 'yyyy-MM-dd hh:mm')
+        return formatDate(t, 'yyyy-MM-dd hh:mm')
       }
     }
   }

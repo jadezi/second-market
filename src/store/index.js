@@ -6,11 +6,19 @@ Vue.use(Vuex)
 const userInfo = {
   state: {
     uid: '',
-    uidImgUrl: '',
-    uidBgUrl: '',
+    name: '',
+    avatar: '',
+    bgImg: '',
     token: ''
   },
-  mutations: {},
+  mutations: {
+    setUserInfo(state, payload) {
+      state.uid = payload._id
+      state.name = payload.name
+      state.avatar = payload.avatar
+      state.bgImg = payload.setting.bgImg
+    }
+  },
   actions: {},
   getters: {},
   modules: {}
@@ -113,13 +121,13 @@ const userInfo = {
 const contactInfo = {
   state: {
     contactObj: {
-      uid: '1',
-      toId: '3',
-      toUidImgUrl: '2',
-      readState: '1',
-      shopImgUrl: '1',
-      message: '嗯',
-      timesStamp: '2019-01-01'
+      uid: '',
+      toId: '',
+      toUidImgUrl: '',
+      readState: '',
+      shopImgUrl: '',
+      message: '',
+      timesStamp: 0
     }
   },
   mutations: {

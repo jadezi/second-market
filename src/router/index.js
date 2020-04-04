@@ -18,6 +18,8 @@ import userUI from '@/views/user-index/index.vue'
 import BBS from '@/views/user-bbs/index.vue'
 import My from '@/views/user-my/my.vue'
 import Setting from '@/views/user-setting/setting.vue'
+import VueSocketIO from 'vue-socket.io'
+import SocketIO from 'socket.io-client'
 import 'nprogress/nprogress.css'
 
 Vue.use(VueRouter)
@@ -142,6 +144,12 @@ router.beforeEach((to, from, next) => {
         window.location.reload()
       } else {
         next()
+        Vue.use(
+          new VueSocketIO({
+            connection: SocketIO('http://127.0.0.1:5000'),
+            debug: true
+          })
+        )
       }
     } else {
       next({

@@ -4,10 +4,24 @@
       <search @openSearch="showSearch">
         <div slot="left">测试</div>
       </search>
-      <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-        <div slot="loosing" scoped-slot="{distance: 10}">
-          释放刷新
-        </div>
+      <van-pull-refresh v-model="isLoading" @refresh="onRefresh" :head-height="130">
+        <template #pulling="props">
+          <img
+            class="doge"
+            src="../../../public/img/loadingindex.gif"
+            :style="{ transform: `scale(${props.distance / 80})` }"
+          />
+        </template>
+
+        <!-- 释放提示 -->
+        <template #loosing>
+          <img class="doge" src="../../../public/img/loadingindex.gif" />
+        </template>
+
+        <!-- 加载提示 -->
+        <template #loading>
+          <img class="doge" src="../../../public/img/loadingindex.gif" />
+        </template>
         <div class="content">
           <div class="classify">
             <div class="half">
@@ -23,7 +37,7 @@
         <van-tabs sticky swipeable @click="setTabChecked">
           <van-tab
             v-for="titleItem in shopTitleItems"
-            :key="titleItem.id"
+            :key="titleItem.index"
             :title="titleItem.title"
           >
             <shop-list
@@ -89,8 +103,8 @@ export default {
     // 获取标签栏标题
     async getTabList() {
       try {
-        const { data: res } = await this.$http.get('navtitle')
-        if (res.meta.status !== 200) {
+        const { data: res } = await this.$http.get('public/v1/title/index')
+        if (res.code !== 200) {
           return this.$toast('网络错误')
         }
         this.shopTitleItems = res.data
@@ -102,8 +116,7 @@ export default {
     setTabChecked(index, name) {
       console.log(name)
       this.shopTitleItems.forEach(item => {
-        console.log(item.id)
-        if (item.id == index) {
+        if (item.index == index) {
           this.selectTabItem = item.param
           return
         }
@@ -134,8 +147,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .bg {
-  background-color: #f2f2f2f2;
+  background-color: #f9f9fb;
   padding-bottom: 75px;
+}
+.doge {
+  width: 70px;
+  margin-top: 8px;
 }
 .search {
   width: 200px;

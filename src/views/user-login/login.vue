@@ -11,7 +11,7 @@
       <div class="title">
         <h3>账户登陆</h3>
       </div>
-      <div v-if="type === 'pwd'" class="userPwd">
+      <div v-if="type == 'pwd'" class="userPwd">
         <van-cell-group>
           <van-field v-model="sn" placeholder="请输入学号" />
           <van-field v-model="password" placeholder="密码" />
@@ -65,7 +65,7 @@ export default {
       password: '',
       sms: '',
       time: 60 * 1000,
-      type: '',
+      type: 'pwd',
       attcode: true, //点击获取验证码按钮判断
       showbtn: true, // 展示获取验证码或倒计时按钮判断
       yzcode: '',
@@ -87,15 +87,19 @@ export default {
   },
   created() {
     if (window.sessionStorage.getItem('market-token')) {
-      this.$router.push(this.$route.query.redirect)
+      this.type = this.$route.query.type
+      console.log(this.type)
+      if (this.$route.query.redirect) {
+        this.$router.push(this.$route.query.redirect)
+      } else {
+        this.$router.push('/')
+      }
     }
-    this.type = this.$route.query.type
   },
   mounted() {},
   methods: {
     back() {
       // this.$router.push('/')
-      console.log(this.$route)
     },
     toPhoneLogin() {
       this.type = 'sms'
@@ -109,13 +113,14 @@ export default {
           sn: this.sn,
           password: this.password
         })
-        if (re.code === 200) {
-          window.sessionStorage.setItem('market-token', 'Bearer ' + re.data)
-          // this.$store.commit('setToken', re.data)
-          this.$router.push(this.$route.query.redirect)
-        } else {
+        if (re.code !== 200) {
           this.$toast(re.errorCode + ':' + re.message)
         }
+        window.sessionStorage.setItem('market-token', 'Bearer ' + re.data.token)
+        window.sessionStorage.setItem('market-uid', JSON.stringify(re.data))
+        this.$store.commit('setUserInfo', re.data)
+        console.log(re)
+        this.$router.push(this.$route.query.redirect)
       } else {
         this.$toast('请输入账户密码')
       }

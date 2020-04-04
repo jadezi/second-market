@@ -1,10 +1,31 @@
 <template>
-  <div>
+  <div class="chat-bg">
     <div :class="isScroll">
       <div class="title">
         <span>消息</span>
       </div>
-      <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <van-pull-refresh
+        v-model="isLoading"
+        @refresh="onRefresh"
+        :head-height="130"
+      >
+        <template #pulling="props">
+          <img
+            class="doge"
+            src="../../../public/img/loadingindex.gif"
+            :style="{ transform: `scale(${props.distance / 80})` }"
+          />
+        </template>
+
+        <!-- 释放提示 -->
+        <template #loosing>
+          <img class="doge" src="../../../public/img/loadingindex.gif" />
+        </template>
+
+        <!-- 加载提示 -->
+        <template #loading>
+          <img class="doge" src="../../../public/img/loadingindex.gif" />
+        </template>
         <div class="inform">
           <div
             v-for="(item, key) in systemImage"
@@ -33,10 +54,10 @@
                     <img :src="item.toUidImgUrl" />
                   </div>
                   <div class="sale-info">
-                    <div class="sale-name">{{ item.toId }}</div>
+                    <div class="sale-name">{{ item.toId.name }}</div>
                     <div class="laster-message">{{ item.message }}</div>
                     <div class="laster-time">
-                      {{ item.timesStamp | timestampFormat }}
+                      {{ item.timeStamp | timestampFormat }}
                     </div>
                   </div>
                   <div class="shop-image">
@@ -84,6 +105,7 @@ export default {
   name: 'message',
   data() {
     return {
+      id: '',
       isScroll: 'Scroll',
       messageFlag: false,
       isLoading: false,
@@ -114,11 +136,24 @@ export default {
     }
   },
   mounted() {
+    this.id = JSON.parse(window.sessionStorage.getItem('market-uid'))._id
+    console.log(this.id)
+    if (!this.id) {
+      window.sessionStorage.removeItem('market-token')
+      window.sessionStorage.removeItem('market-uid')
+      let path = this.$route.path
+      this.$toast('请重新登陆')
+      this.$router.push({
+        path: '/login',
+        query: { type: 'pwd', redirect: path }
+      })
+      return
+    }
     this.getMessage()
   },
   filters: {
-    timestampFormat: function(timesStamp) {
-      return formatDate(timesStamp, 'yyyy-MM-dd hh:mm')
+    timestampFormat: function(timeStamp) {
+      return formatDate(Number(timeStamp), 'yyyy-MM-dd hh:mm')
     }
   },
   watch: {
@@ -138,21 +173,35 @@ export default {
       }
       //this.loading = !this.loading;
     },
-    getMessage() {
-      this.circularLoading = true
-      this.$http
-        .get('user/message')
-        .then(response => {
-          this.chat = response.data.data.chat
-          this.loading = false
+    async getMessage() {
+      try {
+        console.log(this.id)
+        this.circularLoading = true
+        const { data: re } = await this.$http.get(
+          'private/v1/messagelist/getall',
+          {
+            params: {
+              id: this.id
+            }
+          }
+        )
+        console.log(re)
+        if (re.code !== 200) {
           this.circularLoading = false
           this.isLoading = false
-        })
-        .catch(error => {
-          this.circularLoading = false
-          this.isLoading = false
-          this.$toast('加载失败:' + error)
-        })
+          this.$toast('加载失败:' + re.mesage)
+          return
+        }
+        console.log(re)
+        this.chat = re.data
+        this.loading = false
+        this.circularLoading = false
+        this.isLoading = false
+      } catch (error) {
+        this.circularLoading = false
+        this.isLoading = false
+        this.$toast('加载失败:' + error)
+      }
     },
     onRefresh() {
       this.getMessage()
@@ -165,10 +214,12 @@ export default {
       this.$router.push({
         path: '/user/message/contacts',
         query: {
-          toId: item.toId,
+          session: item._id,
+          toId: item.toId._id,
+          name: item.toId.name,
           toUserImgUrl: item.toUidImgUrl,
           message: item.message,
-          timesStamp: item.timesStamp
+          timeStamp: item.timeStamp
         }
       })
       this.$store.commit('setInfo', item)
@@ -185,6 +236,13 @@ export default {
 * {
   margin: 0px;
   padding: 0px;
+}
+.chat-bg {
+  background-color: #f9f9fb;
+}
+.doge {
+  width: 70px;
+  margin-top: 8px;
 }
 .dot {
   width: 8px;

@@ -5,8 +5,7 @@ import store from './store'
 import 'vant/lib/icon/local.css'
 import '@/assets/resetVant.scss'
 import '@/assets/css/iconfont/iconfont.css'
-import VueSocketIO from 'vue-socket.io'
-import SocketIO from 'socket.io-client'
+
 import axios from 'axios'
 import {
   PullRefresh,
@@ -118,17 +117,7 @@ axios.defaults.timeout = 6000
 
 Vue.prototype.$http = axios
 
-Vue.use(
-  new VueSocketIO({
-    connection: SocketIO('http://127.0.0.1:5000'),
-    vuex: {
-      store,
-      actionPrefix: 'SOCKET_',
-      mutationPrefix: 'SOCKET_'
-    },
-    options: { path: '/socket' }
-  })
-)
+
 
 new Vue({
   router,

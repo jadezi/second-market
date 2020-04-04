@@ -114,6 +114,7 @@ export default {
       } else {
         this.leftText = '注册'
         this.telFlag = true
+        this.loading = false
       }
     },
     getyzcode() {
@@ -141,11 +142,15 @@ export default {
         lastLoginAt: new Date()
       })
       console.log(re)
-      if (re.code === 201) {
-        window.sessionStorage.setItem('market-token', 'Bearer ' + re.data)
+      if (re.code !== 201) {
         this.$toast(re.message)
-        this.loading = false
       }
+      window.sessionStorage.setItem('market-token', 'Bearer ' + re.data)
+      window.sessionStorage.setItem('market-uid', re.data._id)
+      this.$store.commit('setUserInfo', re.data)
+      this.$toast(re.message)
+      this.loading = false
+      this.$router.push(this.$route.query.redirect)
     },
     next() {
       if (!this.sn) {

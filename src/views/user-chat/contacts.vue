@@ -20,7 +20,7 @@
                 <img :src="userImg" />
               </div>
               <div class="son son-right">
-                <div class="title title-right">{{ item.sendUid }}</div>
+                <div class="title title-right">{{ name }}</div>
                 <div class="message message-right">
                   <div>
                     <template v-if="!item.content.msgTypeOfImage">
@@ -38,7 +38,7 @@
                 </div>
                 <div>
                   <msgTool
-                    :msgTimeStamp="item.timesStamp"
+                    :msgTimeStamp="item.timeStamp"
                     :timeStyle="'right'"
                   ></msgTool>
                 </div>
@@ -53,7 +53,7 @@
                 <img :src="toUserImg" />
               </div>
               <div class="son son-left">
-                <div class="title title">{{ item.sendUid }}</div>
+                <div class="title title">{{ toName }}</div>
                 <div class="message message-left">
                   <div>
                     <template v-if="!item.content.msgTypeOfImage">
@@ -70,7 +70,7 @@
                   </div>
                 </div>
                 <msgTool
-                  :msgTimeStamp="item.timesStamp"
+                  :msgTimeStamp="item.timeStamp"
                   :timeStyle="'left'"
                 ></msgTool>
               </div>
@@ -146,7 +146,10 @@ export default {
   data() {
     return {
       title: '',
+      session: '', //会话id
       toId: '', // 接受者id
+      toName: '',
+      name: '', // 发送者name
       userId: '', // 发送者id
       userImg: '', // 发送者头像路径
       toUserImg: '', // 收信人头像路径
@@ -162,34 +165,52 @@ export default {
     }
   },
   mounted() {
-    this.toId = this.$route.query.toId //接收者id
-    this.title = `与 ${this.toId} 会话`
-    this.userId = this.$store.state.userInfo.uid //发送者id
-    this.userImg = this.$store.state.userInfo.uidImgUrl //发送者头像
+    this.toName = this.$route.query.name //接收者id
+    this.title = `与 ${this.toName} 会话`
+    this.toId = this.$route.query.toId
+    this.session = this.$route.query.session
     this.toUserImg = this.$route.query.toUserImgUrl //接受者头像
+    let user = JSON.parse(window.sessionStorage.getItem('market-uid'))
+    this.userId = user._id //发送者id
+    this.name = user.name
+    this.userImg = user.avatar //发送者头像
+
+    // if (!id) {
+    //   window.sessionStorage.removeItem('market-token')
+    //   window.sessionStorage.removeItem('market-uid')
+    //   let path = this.$route.path
+    //   this.$toast('请重新登陆')
+    //   this.$router.push({
+    //     path: '/login',
+    //     query: { type: 'pwd', redirect: path }
+    //   })
+    //   return
+    // }
     var message = {
+      session: this.session,
       content: {
         text: this.$route.query.message,
         image: '123',
         msgTypeOfImage: false
       },
-      timesStamp: this.$route.query.timesStamp,
+      timeStamp: this.$route.query.timeStamp,
       recUid: this.toId,
       sendUid: this.userId,
       readState: '1'
     }
     this.messageList.push(message)
     console.log(this.messageList)
-    this.$socket.connect()
+    this.$socket.emit('connect')
   },
   sockets: {
     connect() {
       //查看socket是否渲染成功
-      this.$socket.emit('online', this.toId)
-      console.log('链接成功')
+      this.$socket.emit('online', this.userId)
+      console.log('链接成功2')
     },
     disconnect() {
       //检测socket断开链接
+      this.$socket.emit('underline', this.userId)
       console.log('断开链接')
     },
     reconnect() {
@@ -203,11 +224,25 @@ export default {
         type: 'warning',
         duration: 500
       })
+      console.log(this)
       this.$nextTick(function() {
         var content = this.$refs.contentBox
         content.scrollTop = content.scrollHeight
       })
-      this.messageList.push(data[0])
+      console.log(data[0])
+      if (data[0].sendUid == this.toId && data[0].recUid == this.userId) {
+        this.messageList.push(data[0])
+      } else if (
+        data[0].sendUid == this.userId &&
+        data[0].recUid == this.toId
+      ) {
+        this.messageList.push(data[0])
+      } else {
+        console.log(this.toId)
+        console.log(this.userId)
+        console.log('消息错误')
+      }
+
       //接收的消息// 接受完信息 向服务器发送最后通讯时间
     }
   },
@@ -225,12 +260,13 @@ export default {
     // 发送含有图片文件信息
     handleImageMessage(e) {
       var msg = {
+        session: this.session,
         content: {
           text: this.sms,
           image: e.content,
           msgTypeOfImage: true
         },
-        timesStamp: this.initTime(),
+        timeStamp: this.initTime(),
         recUid: this.toId,
         sendUid: this.userId,
         readState: 1
@@ -241,19 +277,19 @@ export default {
     // 输入文本信息
     handleMessage() {
       var msg = {
+        session: this.session,
         content: {
           text: this.sms,
           image: '',
           msgTypeOfImage: false
         },
-        timesStamp: this.initTime(),
+        timeStamp: this.initTime(),
         recUid: this.toId,
         sendUid: this.userId,
         readState: 0
       }
       this.sms = ''
       this.messageObj.push(msg)
-      console.log(this.messageObj)
       this.sendBtn = false
       this.send()
     },
@@ -262,7 +298,7 @@ export default {
       this.faceShow = false
       this.otherFunShow = false
       this.$socket.emit('send', this.messageObj)
-      this.messageList.push(this.messageObj[0])
+      //this.messageList.push(this.messageObj[0])
       this.$nextTick(function() {
         var content = this.$refs.contentBox
         content.scrollTop = content.scrollHeight
