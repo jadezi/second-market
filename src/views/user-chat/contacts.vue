@@ -11,74 +11,87 @@
         <van-icon name="user-o" slot="right" />
       </van-nav-bar>
     </div>
-    <div ref="contentBox" class="content">
-      <div v-for="(item, index) in messageList" :key="index">
-        <template v-if="item.sendUid == userId">
-          <div>
-            <div class="father father-right">
-              <div class="log">
-                <img :src="userImg" />
-              </div>
-              <div class="son son-right">
-                <div class="title title-right">{{ name }}</div>
-                <div class="message message-right">
+    <div class="hide" style="padding-top:55px"></div>
+    <van-list
+      v-model="loading"
+      :error.sync="error"
+      :finished="finished"
+      finished-text="没有更多了"
+      error-text="请求失败，点击重新加载"
+      @load="onLoad"
+      offset="400"
+      direction="up"
+    >
+      <div ref="contentBox" class="content">
+        <div v-for="(item, index) in messageList" :key="index">
+          <template v-if="item.sendUid == userId">
+            <div>
+              <div class="father father-right">
+                <div class="log">
+                  <img :src="userImg" />
+                </div>
+                <div class="son son-right">
+                  <div class="title title-right">{{ name }}</div>
+                  <div class="message message-right">
+                    <div>
+                      <template v-if="!item.content.msgTypeOfImage">
+                        <div>{{ item.content.text }}</div>
+                      </template>
+                      <template v-else>
+                        <div>
+                          <img
+                            :src="item.content.image"
+                            @click="showImage(item.content.index)"
+                          />
+                        </div>
+                      </template>
+                    </div>
+                  </div>
                   <div>
-                    <template v-if="!item.content.msgTypeOfImage">
-                      <div>{{ item.content.text }}</div>
-                    </template>
-                    <template v-else>
-                      <div>
-                        <img
-                          :src="item.content.image"
-                          @click="showImage(item.content.image)"
-                        />
-                      </div>
-                    </template>
+                    <msgTool
+                      :msgTimeStamp="item.timeStamp"
+                      :timeStyle="'right'"
+                    ></msgTool>
                   </div>
                 </div>
-                <div>
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <div>
+              <div class="father father-left">
+                <div class="log">
+                  <img :src="toUserImg" />
+                </div>
+                <div class="son son-left">
+                  <div class="title title">{{ toName }}</div>
+                  <div class="message message-left">
+                    <div>
+                      <template v-if="!item.content.msgTypeOfImage">
+                        <div>{{ item.content.text }}</div>
+                      </template>
+                      <template v-else>
+                        <div>
+                          <img
+                            :src="item.content.image"
+                            @click="showImage(item.content.index)"
+                          />
+                        </div>
+                      </template>
+                    </div>
+                  </div>
                   <msgTool
                     :msgTimeStamp="item.timeStamp"
-                    :timeStyle="'right'"
+                    :timeStyle="'left'"
                   ></msgTool>
                 </div>
               </div>
             </div>
-          </div>
-        </template>
-        <template v-else>
-          <div>
-            <div class="father father-left">
-              <div class="log">
-                <img :src="toUserImg" />
-              </div>
-              <div class="son son-left">
-                <div class="title title">{{ toName }}</div>
-                <div class="message message-left">
-                  <div>
-                    <template v-if="!item.content.msgTypeOfImage">
-                      <div>{{ item.content.text }}</div>
-                    </template>
-                    <template v-else>
-                      <div>
-                        <img
-                          :src="item.content.image"
-                          @click="showImage(item.content.image)"
-                        />
-                      </div>
-                    </template>
-                  </div>
-                </div>
-                <msgTool
-                  :msgTimeStamp="item.timeStamp"
-                  :timeStyle="'left'"
-                ></msgTool>
-              </div>
-            </div>
-          </div>
-        </template>
+          </template>
+        </div>
       </div>
-    </div>
+    </van-list>
+
     <div class="action">
       <van-cell-group title="">
         <van-field
@@ -146,6 +159,9 @@ export default {
   data() {
     return {
       title: '',
+      error: false,
+      loading: false,
+      finished: false,
       session: '', //会话id
       toId: '', // 接受者id
       toName: '',
@@ -156,7 +172,8 @@ export default {
       sms: '',
       imgSrc: '',
       faceList: [],
-      fileList: [],
+      imageList: [],
+      indexPos: -1, // 图片索引
       faceShow: false,
       otherFunShow: false,
       messageObj: [],
@@ -191,7 +208,9 @@ export default {
       content: {
         text: this.$route.query.message,
         image: '123',
-        msgTypeOfImage: false
+        msgTypeOfImage: false,
+        src: '',
+        index: 0
       },
       timeStamp: this.$route.query.timeStamp,
       recUid: this.toId,
@@ -205,7 +224,14 @@ export default {
   sockets: {
     connect() {
       //查看socket是否渲染成功
-      this.$socket.emit('online', this.userId)
+      var u = { sendUid: this.userId, recUid: this.toId }
+      this.$socket.emit('online', u)
+      this.$notify({
+        title: '新消息',
+        message: '发送成功',
+        type: 'warning',
+        duration: 1000
+      })
       console.log('链接成功2')
     },
     disconnect() {
@@ -218,32 +244,54 @@ export default {
     },
     //客户端接收后台传输的socket事件
     message(data) {
-      this.$notify({
-        title: '新消息',
-        message: '新',
-        type: 'warning',
-        duration: 500
-      })
-      console.log(this)
+      var d
       this.$nextTick(function() {
         var content = this.$refs.contentBox
         content.scrollTop = content.scrollHeight
       })
-      console.log(data[0])
-      if (data[0].sendUid == this.toId && data[0].recUid == this.userId) {
-        this.messageList.push(data[0])
-      } else if (
-        data[0].sendUid == this.userId &&
-        data[0].recUid == this.toId
-      ) {
-        this.messageList.push(data[0])
-      } else {
-        console.log(this.toId)
-        console.log(this.userId)
-        console.log('消息错误')
-      }
-
-      //接收的消息// 接受完信息 向服务器发送最后通讯时间
+      data.forEach(msg => {
+        if (msg.sendUid == this.toId && msg.recUid == this.userId) {
+          d = this.filterImage(msg)
+          this.messageList.push(d)
+        } else if (msg.sendUid == this.userId && msg.recUid == this.toId) {
+          d = this.filterImage(msg)
+          this.messageList.push(d)
+          console.log(this.imageList)
+          // this.messageList.push(msg)
+        } else if (msg.recUid == this.userId) {
+          this.$notify({
+            message: '有一条新消息',
+            type: 'warning',
+            duration: 1000
+          })
+          var config
+          if (msg.content.msgTypeOfImage) {
+            config = {
+              body: '是一张图片', //正文内容
+              dir: 'auto', //文本显示方向 auto ,ltr,rtl
+              icon:
+                'https://koala-1253612635.cos.ap-shanghai.myqcloud.com/markdown/th.png'
+            }
+          } else {
+            config = {
+              body: msg.content.text, //正文内容
+              dir: 'auto', //文本显示方向 auto ,ltr,rtl
+              icon:
+                'https://koala-1253612635.cos.ap-shanghai.myqcloud.com/markdown/th.png'
+            }
+          }
+          if (window.Notification) {
+            if (Notification.permission === 'granted') {
+              var notification = new Notification('收到一条消息', config)
+              console.log(notification)
+              //delete notification;
+            } else {
+              Notification.requestPermission()
+            }
+          }
+        }
+      })
+      //接收的消息
     }
   },
   methods: {
@@ -264,7 +312,9 @@ export default {
         content: {
           text: this.sms,
           image: e.content,
-          msgTypeOfImage: true
+          msgTypeOfImage: true,
+          src: '',
+          index: 0
         },
         timeStamp: this.initTime(),
         recUid: this.toId,
@@ -281,7 +331,9 @@ export default {
         content: {
           text: this.sms,
           image: '',
-          msgTypeOfImage: false
+          msgTypeOfImage: false,
+          src: '',
+          index: 0
         },
         timeStamp: this.initTime(),
         recUid: this.toId,
@@ -293,6 +345,7 @@ export default {
       this.sendBtn = false
       this.send()
     },
+    // 发送
     send() {
       // 发送信息
       this.faceShow = false
@@ -307,6 +360,7 @@ export default {
       // 发送完信息 向服务器发送最后通讯时间
       // funciton
     },
+    // 展示发送按钮
     showSendBtn(e) {
       console.log(e)
       if (e != '' || this.sms != '') {
@@ -315,6 +369,7 @@ export default {
         this.sendBtn = false
       }
     },
+    // 展示表情面板
     showFaceContent() {
       this.otherFunShow = false
       this.faceShow = !this.faceShow
@@ -339,8 +394,55 @@ export default {
       this.sendBtn = true
       console.log(this.sms)
     },
-    showImage(url) {
-      ImagePreview(url)
+    showImage(index) {
+      ImagePreview({
+        images: this.imageList,
+        startPosition: index,
+        onClose() {
+          // do something
+        }
+      })
+    },
+    // 过滤消息中图片url
+    filterImage(msg) {
+      if (msg.content.msgTypeOfImage) {
+        this.imageList.push(msg.content.src)
+        this.indexPos++
+        msg.content.index = this.indexPos
+      }
+      return msg
+    },
+    // 下拉加载
+    onLoad() {
+      console.log('上拉加载ing')
+      var msg = {
+        session: this.session,
+        content: {
+          text: '测试ig',
+          image: '',
+          msgTypeOfImage: false,
+          src: '',
+          index: 0
+        },
+        timeStamp: this.initTime(),
+        recUid: this.toId,
+        sendUid: this.userId,
+        readState: 0
+      }
+      setTimeout(() => {
+        for (let i = 0; i < 10; i++) {
+          this.messageList.splice(0, 0, msg)
+        }
+
+        // 加载状态结束
+        this.loading = false
+
+        // 数据全部加载完成
+        if (this.messageList.length >= 40) {
+          this.finished = true
+        }
+      }, 2000)
+      console.log(this.messageList.length)
     }
   }
 }
@@ -349,7 +451,7 @@ export default {
 .contact-main {
   position: absolute;
   top: 0;
-  z-index: 99999;
+  z-index: 200;
   width: 100%;
   height: calc(100vh);
 }

@@ -157,12 +157,12 @@ export default {
     }
   },
   watch: {
-    messageFlag: function() {
-      this.isScroll = this.messageFlag ? 'noScroll' : 'Scroll'
-    },
-    circularLoading: function() {
-      this.isScroll = this.circularLoading ? 'noScroll' : 'Scroll'
-    }
+    // messageFlag: function() {
+    //   this.isScroll = this.messageFlag ? 'noScroll' : 'Scroll'
+    // },
+    // circularLoading: function() {
+    //   this.isScroll = this.circularLoading ? 'noScroll' : 'Scroll'
+    // }
   },
   methods: {
     setDotStyle(objectId) {
@@ -319,14 +319,14 @@ export default {
   font-weight: bold;
 }
 // 底层
-.noScroll {
-  overflow-y: hidden;
-  height: calc(100vh);
-}
-.Scroll {
-  overflow-y: auto;
-  height: auto;
-}
+// .noScroll {
+//   overflow-y: hidden;
+//   height: calc(100vh);
+// }
+// .Scroll {
+//   overflow-y: auto;
+//   height: auto;
+// }
 // 遮罩层
 .main {
   display: flex;

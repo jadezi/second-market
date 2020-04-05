@@ -8,6 +8,7 @@
         <van-nav-bar
           :title="title"
           @click-right="setup"
+          @click-left="back"
           safe-area-inset-top
           fixed
           :border="false"
@@ -34,16 +35,16 @@
     </transition>
     <div class="head">
       <div class="bg">
-        <van-image width="100%" lazy-load :src="userInfo.bgImg" />
+        <van-image width="100%" lazy-load :src="userInfo.setting.bgImg" />
       </div>
       <div class="user">
         <div class="userImg">
           <img :src="userInfo.avatar" @load="resizeImg($event, 100, 100)" />
         </div>
-        <div class="username">{{ userInfo.uname }}</div>
-        <div class="label">{{ userInfo.signature }}</div>
+        <div class="username">{{ userInfo.name }}</div>
+        <div class="label">{{ userInfo.setting.signature }}</div>
         <div class="tags">
-          <van-tag type="warning" size="large">{{ userInfo.city }}</van-tag>
+          <van-tag type="warning" size="large">{{ userInfo.setting.city }}</van-tag>
         </div>
       </div>
     </div>
@@ -243,16 +244,22 @@ export default {
       }
     },
     async getUserInfo() {
-      const { data: res } = await this.$http.get(`user/`, {
-        params: {
-          uid: this.uid
+      const { data: res } = await this.$http.get(
+        `private/v1/users/getuserinfo`,
+        {
+          params: {
+            id: this.uid
+          }
         }
-      })
-      if (res.meta.status !== 200) {
-        return
+      )
+      if (res.code !== 200) {
+        return this.$toast('加载失败')
       }
       this.userInfo = res.data
       console.log(this.userInfo)
+    },
+    back() {
+      this.$router.push(this.$route.query.redirect)
     }
   }
 }
@@ -269,7 +276,7 @@ export default {
 }
 .hehe-enter-active,
 .hehe-leave-active {
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 }
 .title {
   .van-nav-bar__title {

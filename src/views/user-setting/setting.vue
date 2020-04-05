@@ -50,7 +50,7 @@ export default {
       this.userInfoControl = true
     },
     onClickLeft() {
-      this.$router.push('/my')
+      this.$emit('close')
     }
   }
 }

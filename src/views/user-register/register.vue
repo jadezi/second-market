@@ -138,15 +138,15 @@ export default {
         password: this.pwd1,
         tel: this.mobile,
         email: '',
-        createAt: new Date(),
-        lastLoginAt: new Date()
+        createAt: Date.now(),
+        lastLoginAt: Date.now()
       })
       console.log(re)
       if (re.code !== 201) {
         this.$toast(re.message)
       }
       window.sessionStorage.setItem('market-token', 'Bearer ' + re.data)
-      window.sessionStorage.setItem('market-uid', re.data._id)
+      window.sessionStorage.setItem('market-uid', JSON.stringify(re.data))
       this.$store.commit('setUserInfo', re.data)
       this.$toast(re.message)
       this.loading = false
