@@ -14,6 +14,13 @@
       </div>
       <div class="userPwd">
         <van-cell-group>
+          <div class="cell" @click="showSchoolPopup">
+            <div class="left">选择学校</div>
+            <div class="right">
+              <div class="value">{{ college }}</div>
+              <van-icon name="arrow" />
+            </div>
+          </div>
           <van-field v-model="sn" placeholder="请输入学号" />
           <van-field v-model="pwd1" placeholder="请输入密码" />
           <van-field v-model="pwd2" placeholder="请确认密码" />
@@ -66,9 +73,21 @@
         size="large"
       />
     </div>
+
+    <!-- 学校选择 -->
+    <van-popup v-model="schoolShow" position="bottom">
+      <van-area
+        :area-list="areaList"
+        :columns-num="1"
+        value="110102"
+        @cancel="showSchoolPopup"
+        @confirm="getSchool"
+      />
+    </van-popup>
   </div>
 </template>
 <script>
+import school from '@/assets/js/school.js'
 export default {
   name: 'register',
   components: {},
@@ -80,8 +99,11 @@ export default {
       pwd2: '',
       loading: false,
       telFlag: true,
+      areaList: school,
+      schoolShow: false,
       mobile: '',
       sms: '',
+      college: '',
       leftText: '注册',
       attcode: true, //点击获取验证码按钮判断
       showbtn: true, // 展示获取验证码或倒计时按钮判断
@@ -130,6 +152,14 @@ export default {
         }
       }, 1000)
     },
+    getSchool(obj) {
+      console.log(obj)
+      this.college = obj[0].name
+      this.schoolShow = false
+    },
+    showSchoolPopup() {
+      this.schoolShow = !this.schoolShow
+    },
     async reg() {
       this.loading = true
       const { data: re } = await this.$http.post('/public/v1/users/reg', {
@@ -139,20 +169,26 @@ export default {
         tel: this.mobile,
         email: '',
         createAt: Date.now(),
-        lastLoginAt: Date.now()
+        lastLoginAt: Date.now(),
+        setting: {
+          college: this.college
+        }
       })
       console.log(re)
       if (re.code !== 201) {
         this.$toast(re.message)
       }
       window.sessionStorage.setItem('market-token', 'Bearer ' + re.data)
-      window.sessionStorage.setItem('market-uid', JSON.stringify(re.data))
-      this.$store.commit('setUserInfo', re.data)
+      //window.sessionStorage.setItem('market-uid', JSON.stringify(re.data))
+      // this.$store.commit('setUserInfo', re.data)
       this.$toast(re.message)
       this.loading = false
       this.$router.push(this.$route.query.redirect)
     },
     next() {
+      if (!this.college) {
+        return this.$toast('请选择学校！')
+      }
       if (!this.sn) {
         return this.$toast('请输入学号')
       }
@@ -187,6 +223,36 @@ export default {
   .van-icon-arrow-left {
     color: #696969;
     font-size: 1rem;
+  }
+}
+.cell-group {
+  border-radius: 10px;
+  background-color: #ffffff;
+  margin-top: 4px;
+  margin-bottom: 10px;
+}
+.cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  .left {
+    display: flex;
+    align-items: center;
+    .van-icon {
+      font-size: 20px;
+      color: red;
+      margin-right: 6px;
+    }
+  }
+  .right {
+    color: #8e8e8e;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .value {
+      margin-right: 8px;
+    }
   }
 }
 </style>

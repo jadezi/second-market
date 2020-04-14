@@ -104,9 +104,6 @@ Vue.use(Progress)
 Vue.use(DatetimePicker)
 Vue.config.productionTip = false
 
-// axios.defaults.baseURL =
-//   'http://127.0.0.1:7300/mock/5dde29b78eecd44600ce5be8/sec'
-// var token = this.$store.state.userInfo.token
 axios.defaults.baseURL = 'http://localhost:8088/api/'
 axios.interceptors.request.use(config => {
   config.headers['authorization'] = sessionStorage.getItem('market-token')
@@ -116,8 +113,6 @@ axios.interceptors.request.use(config => {
 axios.defaults.timeout = 6000
 
 Vue.prototype.$http = axios
-
-
 
 new Vue({
   router,

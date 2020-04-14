@@ -117,7 +117,7 @@ export default {
       console.log(name)
       this.shopTitleItems.forEach(item => {
         if (item.index == index) {
-          this.selectTabItem = item.param
+          this.selectTabItem = item.title
           return
         }
       })
@@ -129,10 +129,6 @@ export default {
       return comment
     },
     onRefresh() {
-      // this.$refs.shopload.this.getShopList()
-      // this.$toast('刷新成功')
-      // this.isLoading = false
-      // this.count++
       setTimeout(() => {
         this.$toast('刷新成功')
         this.isLoading = false

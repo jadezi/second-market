@@ -13,8 +13,15 @@
       </div>
       <div v-if="type == 'pwd'" class="userPwd">
         <van-cell-group>
-          <van-field v-model="sn" placeholder="请输入学号" />
-          <van-field v-model="password" placeholder="密码" />
+          <div class="cell" @click="showSchoolPopup">
+            <div class="left">学校</div>
+            <div class="right">
+              <div class="value">{{ college }}</div>
+              <van-icon name="arrow" />
+            </div>
+          </div>
+          <van-field v-model="sn" label="学号" placeholder="请输入学号" />
+          <van-field v-model="password" label="密码" placeholder="密码" />
         </van-cell-group>
         <van-button class="login" type="primary" block round @click="pwdLogin">
           登陆
@@ -23,11 +30,12 @@
         <div class="phone-login" @click="toPhoneLogin">使用手机号快速登陆</div>
       </div>
       <div v-else class="msm">
-        <van-field v-model="mobile" placeholder="请输入手机号" />
+        <van-field v-model="mobile" label="手机号" placeholder="请输入手机号" />
         <van-field
           v-model="sms"
           center
           clearable
+          label="验证码"
           placeholder="请输入短信验证码"
           label-class="label-left"
         >
@@ -51,9 +59,20 @@
       </div>
       <div class="titps" @click="toRegister">没有账户？注册一个</div>
     </div>
+
+    <van-popup v-model="schoolShow" position="bottom">
+      <van-area
+        :area-list="areaList"
+        :columns-num="1"
+        value="110102"
+        @cancel="showSchoolPopup"
+        @confirm="getSchool"
+      />
+    </van-popup>
   </div>
 </template>
 <script>
+import school from '@/assets/js/school.js'
 export default {
   name: 'login',
   components: {},
@@ -64,6 +83,9 @@ export default {
       sn: '',
       password: '',
       sms: '',
+      areaList: school,
+      college: '',
+      schoolShow: false,
       time: 60 * 1000,
       type: 'pwd',
       attcode: true, //点击获取验证码按钮判断
@@ -99,7 +121,7 @@ export default {
   mounted() {},
   methods: {
     back() {
-      // this.$router.push('/')
+      this.$router.push('/')
     },
     toPhoneLogin() {
       this.type = 'sms'
@@ -111,10 +133,36 @@ export default {
       if (this.sn && this.password) {
         const { data: re } = await this.$http.post('public/v1/users/login', {
           sn: this.sn,
-          password: this.password
+          password: this.password,
+          college: this.college
         })
+        if (!re.data.permission) {
+          // 需要验证
+          var banStartTime = parseInt(re.data.banStartTime)
+          if (re.data.banTime === 999) {
+            return this.$toast('账号违规，无法登陆')
+          }
+          var now = Date.now()
+          var time = banStartTime + re.data.banTime * 3600 * 1000 - now
+          if (time > 0) {
+            let leavel = time % (24 * 3600 * 1000)
+            var leave2 = leavel % (3600 * 1000)
+            let hours = Math.floor(leavel / (3600 * 1000))
+            let minutes = Math.floor(leave2 / (60 * 1000))
+            return this.$toast(
+              '账户被封禁：' +
+                re.data.banTime +
+                '小时\n' +
+                '还剩下' +
+                hours +
+                '小时' +
+                minutes +
+                '分钟'
+            )
+          }
+        }
         if (re.code !== 200) {
-          this.$toast(re.errorCode + ':' + re.message)
+          return this.$toast(re.errorCode + ': ' + re.message)
         }
         window.sessionStorage.setItem('market-token', 'Bearer ' + re.data.token)
         window.sessionStorage.setItem('market-uid', JSON.stringify(re.data))
@@ -143,6 +191,14 @@ export default {
         path: '/register',
         query: { redirect: this.$route.query.redirect }
       })
+    },
+    getSchool(obj) {
+      console.log(obj)
+      this.college = obj[0].name
+      this.schoolShow = false
+    },
+    showSchoolPopup() {
+      this.schoolShow = !this.schoolShow
     }
   }
 }
@@ -176,5 +232,29 @@ export default {
 }
 .label-left span {
   padding: 0px;
+}
+.cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px;
+  .left {
+    display: flex;
+    align-items: center;
+    .van-icon {
+      font-size: 20px;
+      color: red;
+      margin-right: 6px;
+    }
+  }
+  .right {
+    color: #8e8e8e;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .value {
+      margin-right: 8px;
+    }
+  }
 }
 </style>

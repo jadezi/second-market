@@ -3,8 +3,8 @@
     <div class="tab-pane-item">
       <template class="demo2-t">
         <showblock
-          v-for="(item, index) in shopListLeft"
-          :key="index"
+          v-for="item in shopListLeft"
+          :key="item._id"
           :item="item"
         ></showblock>
       </template>
@@ -12,8 +12,8 @@
     <div class="tab-pane-item">
       <template class="demo2-t">
         <showblock
-          v-for="(item, index) in shopListRight"
-          :key="index"
+          v-for="item in shopListRight"
+          :key="item._id"
           :item="item"
         ></showblock>
       </template>

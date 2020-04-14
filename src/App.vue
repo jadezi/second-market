@@ -61,4 +61,8 @@ export default {
   }
 }
 </script>
-<style scoped></style>
+<style>
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+</style>

@@ -7,8 +7,8 @@
             <img :src="infos.author.avatar" />
           </div>
           <div class="desc">
-            <div class="name">{{ infos.author.name }}</div>
-            <div class="time">{{ infos.time | timeFilter }}</div>
+            <div class="name">{{ infos.author.setting.name }}</div>
+            <div class="time">{{ infos.createAt | timeFilter }}</div>
           </div>
         </div>
         <div class="report">
@@ -32,7 +32,7 @@
         <div class="features">
           <div class="like">
             <span class="iconfont icon-zan"></span>
-            <div class="count">{{ infos.like | featuresFilter }}</div>
+            <div class="count">{{ infos.like.amount | featuresFilter }}</div>
           </div>
           <div class="review">
             <span class="iconfont icon-pinglun"></span>
@@ -136,8 +136,7 @@ export default {
     },
     timeFilter(time) {
       const now = Date.parse(new Date())
-      const differ = differDateFormat(time, now)
-      console.log(differ)
+      const differ = differDateFormat(parseInt(time), now)
       if (differ.day === 0) {
         if (differ.hour === 0) {
           return differ.minute + '分钟前发布'

@@ -412,7 +412,7 @@ export default {
       }
       return msg
     },
-    // 下拉加载
+    // 下拉加载，还存在问题
     onLoad() {
       console.log('上拉加载ing')
       var msg = {

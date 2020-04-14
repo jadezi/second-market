@@ -28,68 +28,38 @@ export default {
       finished: false,
       listLoading: false,
       error: false,
-      article: {
-        _id: '',
-        article_url: '',
-        author: {
-          _id: '',
-          avatar: '',
-          name: ''
-        },
-        content: {
-          text: '',
-          imgGroup: [],
-          forward_summary: {
-            description: '',
-            cover: '',
-            url: ''
-          }
-        },
-        summary: {
-          description: '',
-          cover: '',
-          url: '',
-          author: ''
-        },
-        forward: 0,
-        // 评论数目
-        review: {
-          _id: '',
-          amount: 0
-        },
-        // 点赞数目
-        like: 0,
-        // 发布时间
-        time: ''
-      }
+      id: '',
+      article: []
     }
   },
   computed: {},
   watch: {},
-  created() {},
+  created() {
+    this.id = JSON.parse(window.sessionStorage.getItem('market-uid'))._id
+  },
   mounted() {},
   methods: {
     async getInfo() {
-      console.log('--开始获取--')
       try {
-        const { data: res } = await this.$http.get('/article', {
+        const { data: res } = await this.$http.get('private/v1/dynamic/get', {
           params: {
-            title: this.title
+            id: this.id
           }
         })
         this.loading = false
-        if (res.meta.status !== 200) {
+        console.log(res)
+        if (res.code !== 200) {
           this.error = true
           return this.$toast('网络错误')
         }
-        console.log(res.data)
+        console.log(res)
         this.article = res.data
         // this.listLoading = false
         this.finished = true
         console.log('--获取结束--')
       } catch (error) {
         console.log('--获取出现错误--')
-        this.listLoading = true
+        this.listLoading = false
         this.error = true
       }
     }

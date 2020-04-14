@@ -3,10 +3,10 @@
     <a :href="item.href">
       <div class="border">
         <div class="img">
-          <van-image width="100%" lazy-load :src="item.src" />
+          <van-image width="100%" lazy-load :src="item.summary.cover" />
         </div>
-        <div class="desc">{{ item.desc }}</div>
-        <div class="price">￥ {{ item.price }}</div>
+        <div class="desc">{{ item.summary.desc }}</div>
+        <div class="price">￥ {{ item.summary.price }}</div>
       </div>
     </a>
   </div>

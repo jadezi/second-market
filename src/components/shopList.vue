@@ -37,9 +37,9 @@ export default {
       // 下拉加载状态
       shopList: [],
       // 每次上拉增加加载数量
-      listAddNum: 4,
+      size: 1,
       // 已加载卡片数量
-      listSize: 0
+      pageSize: 0
     }
   },
   computed: {},
@@ -58,38 +58,35 @@ export default {
         console.log('-----获取标题-----')
         console.log(this.selectTabItem)
         console.log('-----获取结束-----')
-        const { data: res } = await this.$http.get(
-          `shoplist/${this.selectTabItem}`,
-          {
-            params: {
-              listAddNum: this.listAddNum,
-              listSize: this.listSize
-            }
+        const { data: res } = await this.$http.get('public/v1/goods/gettitle', {
+          params: {
+            title: this.selectTabItem,
+            size: this.size,
+            pageSize: this.pageSize
           }
-        )
-
-        if (res.meta.status !== 200) {
+        })
+        console.log(res)
+        if (res.code == 404) {
+          this.finished = true
+          return
+        }
+        if (res.code !== 200) {
           this.error = true
           return this.$toast('服务器异常')
         }
-        if (res.data.arr.length == 0) {
-          console.log('185 hang')
-          this.finished = true
-          return
-        }
         // // 当前商品列表长度
-        var length = this.shopList.length
+        //var length = this.shopList.length
 
-        if (res.data.length === length) {
-          console.log('196 hang')
-          this.finished = true
-          return
-        }
+        // if (res.data.length === length) {
+        //   console.log('196 hang')
+        //   this.finished = true
+        //   return
+        // }
 
-        res.data.arr.forEach(item => {
+        res.data.forEach(item => {
           this.shopList.push(item)
         })
-        this.listSize = this.shopList.length
+        this.pageSize++
         // //加载状态结束
         this.listLoading = false
       } catch (err) {

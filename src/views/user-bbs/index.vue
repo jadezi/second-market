@@ -47,7 +47,7 @@ export default {
   mounted() {},
   methods: {
     async getTitleGroup() {
-      const { data: res } = await this.$http.get('public/v1/title/index')
+      const { data: res } = await this.$http.get('public/v1/title/bbs')
       if (res.code !== 200) {
         return this.$toast('网络故障，无法显示')
       }
@@ -57,13 +57,7 @@ export default {
       console.log(name)
       this.titleGroup.forEach(item => {
         if (item.index == index) {
-          this.selectTabItem = item.param
-          // this.listSize = 0
-          // this.finished = false
-          // this.shopList = []
-          // this.shopListLeft = []
-          // this.shopListRight = []
-          //this.getShopList()
+          this.selectTabItem = item.title
           return
         }
       })

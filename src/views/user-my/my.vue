@@ -1,7 +1,7 @@
 <template>
   <div class="bg">
     <transition name="van-fade">
-      <nav-title v-show="titleVisible" :name="sn"></nav-title>
+      <nav-title v-show="titleVisible" :name="userInfo.sn"></nav-title>
     </transition>
     <van-pull-refresh
       v-model="isLoading"
@@ -11,17 +11,17 @@
       <template #pulling="props">
         <img
           class="doge"
-          src="../../../public/img/loading.gif"
+          src="../../../public/img/loadingindex.gif"
           :style="{ transform: `scale(${props.distance / 80})` }"
         />
       </template>
       <!-- 释放提示 -->
       <template #loosing>
-        <img class="doge" src="../../../public/img/loading.gif" />
+        <img class="doge" src="../../../public/img/loadingindex.gif" />
       </template>
       <!-- 加载提示 -->
       <template #loading>
-        <img class="doge" src="../../../public/img/loading.gif" />
+        <img class="doge" src="../../../public/img/loadingindex.gif" />
       </template>
       <div class="pure_top">
         <div class="top"></div>
@@ -32,12 +32,12 @@
                 width="100px"
                 height="100px"
                 fit="cover"
-                src="https://img.yzcdn.cn/vant/cat.jpeg"
+                :src="userInfo.avatar"
               />
             </div>
             <div class="userinfo">
-              <div class="sn">3180437010</div>
-              <div class="uname">昵称：{{ uname }}</div>
+              <div class="sn">{{ userInfo.sn }}</div>
+              <div class="uname">昵称：{{ userInfo.setting.name }}</div>
               <div class="index" @click="toIndex">
                 <div>个人主页</div>
                 <van-icon name="arrow" />
@@ -50,14 +50,19 @@
         </div>
       </div>
       <div class="friend">
-        <div class="follow">2</div>
+        <div class="follow">关注 {{ userInfo.friends | friendsFilter }}</div>
         |
-        <div class="fans">2</div>
+        <div class="fans">粉丝 {{ userInfo.fans | friendsFilter }}</div>
       </div>
-      <div class="deal">
-        <div class="buy">2</div>
+      <div class="deal" style="margin-top:45px">
+        <div class="buy">已卖出 2</div>
         |
-        <div class="sale">2</div>
+        <div class="sale">已购买 2</div>
+      </div>
+      <div class="deal" style="margin-top:45px">
+        <div class="buy">已卖出 2</div>
+        |
+        <div class="sale">已购买 2</div>
       </div>
     </van-pull-refresh>
     <transition name="van-slide-right">
@@ -87,23 +92,58 @@ export default {
       titleVisible: false,
       uname: 'wo',
       uid: '',
-      isLogin: true,
+      userInfo: {},
       settingControl: false
     }
   },
+  filters: {
+    friendsFilter(friends) {
+      return friends.length
+    }
+  },
   computed: {},
-  watch: {},
+  watch: {
+    userInfo: function(val) {
+      this.userInfo = val
+    }
+  },
   created() {
     window.addEventListener('scroll', this.scrollHandle)
-  },
-  mounted() {
-    this.id = JSON.parse(window.sessionStorage.getItem('market-uid'))._id
-    if (!this.id) {
-      this.isLogin = false
+    let token = window.sessionStorage.getItem('market-token')
+    if (!token) {
+      this.$router.push({
+        path: '/login',
+        query: {
+          redirect: this.$route.path
+        }
+      })
     }
-    console.log(this.id)
+    this.userInfo = JSON.parse(window.sessionStorage.getItem('market-uid'))
+    if (!this.userInfo._id) {
+      this.getUserInfoByToken()
+    }
+    console.log(this.userInfo._id)
   },
+  mounted() {},
   methods: {
+    async getUserInfoByToken() {
+      //const token = window.sessionStorage.getItem('market-token')
+      const { data: re } = await this.$http.get(
+        'private/v1/users/getuserinfo/token'
+      )
+      if (re.code !== 200) {
+        this.$toast('获取用户信息失败，请登陆')
+        this.$router.push({
+          path: '/login',
+          query: {
+            redirect: this.$route.path
+          }
+        })
+      }
+      window.sessionStorage.setItem('market-uid', JSON.stringify(re.data))
+      // this.userInfo = JSON.parse(window.sessionStorage.getItem('market-uid'))
+      this.userInfo = re.data
+    },
     scrollHandle(e) {
       var top = e.srcElement.scrollingElement.scrollTop
       if (top == 0) {
@@ -115,18 +155,33 @@ export default {
       this.titleVisible = true
       return
     },
-    onRefresh() {},
-    async test() {
-      const re = await this.$http.get('/private/v1/users/getuserinfo', {
-        params: {
-          name: 'asdfas'
+    async onRefresh() {
+      const { data: re } = await this.$http.get(
+        '/private/v1/users/getuserinfo',
+        {
+          params: {
+            id: this.userInfo._id
+          }
         }
-      })
+      )
       console.log(re)
+      if (re.code !== 200) {
+        this.isLoading = false
+        window.sessionStorage.removeItem('market-token')
+        window.sessionStorage.removeItem('market-uid')
+        this.$router.push({
+          path: '/login',
+          query: {
+            redirect: this.$route.path
+          }
+        })
+      }
+      this.isLoading = false
+      this.$toast('刷新成功')
     },
     toIndex() {
       this.$router.push({
-        path: `/user/${this.id}/index`,
+        path: `/user/${this.userInfo._id}/index`,
         query: {
           redirect: this.$route.path
         }
@@ -144,7 +199,7 @@ export default {
 </script>
 <style scoped lang="scss">
 .bg {
-  background-color: #f4f5f9;
+  background-color: #f9f9fb;
   position: relative;
   z-index: 1;
 }
@@ -227,7 +282,7 @@ export default {
   align-items: center;
   position: relative;
   top: -63px;
-  box-shadow: 0px 1px 8px 0px #00000030;
+  box-shadow: 0px 1px 5px 0px #00000030;
   .follow,
   .fans,
   .buy,

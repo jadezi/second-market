@@ -33,18 +33,20 @@
         </van-nav-bar>
       </div>
     </transition>
-    <div class="head">
-      <div class="bg">
-        <van-image width="100%" lazy-load :src="userInfo.setting.bgImg" />
+    <div class="head" v-if="Object.keys(this.userInfo).length != 0">
+      <div class=" pure_top">
+        <img width="100%" height="100%" :src="userInfo.setting.bgImg" />
       </div>
       <div class="user">
         <div class="userImg">
           <img :src="userInfo.avatar" @load="resizeImg($event, 100, 100)" />
         </div>
-        <div class="username">{{ userInfo.name }}</div>
+        <div class="username">{{ userInfo.setting.name }}</div>
         <div class="label">{{ userInfo.setting.signature }}</div>
         <div class="tags">
-          <van-tag type="warning" size="large">{{ userInfo.setting.city }}</van-tag>
+          <van-tag type="warning" size="large">
+            {{ userInfo.setting.city }}
+          </van-tag>
         </div>
       </div>
     </div>
@@ -77,7 +79,7 @@
 </template>
 
 <script>
-import md5 from 'js-md5'
+// import md5 from 'js-md5'
 // import showBlock from '@/components/showblock.vue'
 import waterfall from '@/components/waterfall.vue'
 import Vue from 'vue'
@@ -94,7 +96,7 @@ export default {
       title: '',
       uid: '',
       userInfo: {},
-      bgimg: '',
+      // bgimg: '',
       userImg: '',
       // 标题栏透明
       transparent: false,
@@ -127,25 +129,23 @@ export default {
       listSize: 0
     }
   },
-  mounted() {
+  created() {
     this.uid = this.$route.params.uid
+    console.log()
     this.getUserInfo()
-    //this.bgimg = this.$store.state.userInfo.uidBgUrl
-    //this.userImg = this.$store.state.userInfo.uidImgUrl
     window.addEventListener('scroll', this.scrollHandle)
     this.imgCache()
-    //this.scrollIsExisted()
   },
+  watch: {
+    userInfo: {
+      handler(newVal) {
+        this.userInfo = newVal
+      },
+      deep: true
+    }
+  },
+  mounted() {},
   methods: {
-    // scrollIsExisted() {
-    //   var scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight
-    //   var clientHeight = document.documentElement.clientHeight || document.body.clientHeight
-    //   if (scrollHeight <= clientHeight) {
-
-    //   }
-    //   console.log(scrollHeight)
-    //   console.log(document.body.clientHeight)
-    // },
     scrollHandle(e) {
       var top = e.srcElement.scrollingElement.scrollTop
       if (top == 0) {
@@ -159,8 +159,8 @@ export default {
     },
     imgCache() {
       //let timestamp = Date.parse(new Date());
-      let imgMd5 = md5('wange' + 123)
-      console.log(imgMd5)
+      // let imgMd5 = md5('wange' + 123)
+      // console.log(imgMd5)
     },
     setup() {
       console.log('设置')
@@ -252,11 +252,11 @@ export default {
           }
         }
       )
+      console.log(res)
       if (res.code !== 200) {
         return this.$toast('加载失败')
       }
       this.userInfo = res.data
-      console.log(this.userInfo)
     },
     back() {
       this.$router.push(this.$route.query.redirect)
@@ -266,18 +266,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.hehe-enter,
-.hehe-leave-to {
-  opacity: 0;
-}
-.hehe-enter-to,
-.hehe-leave {
-  opacity: 1;
-}
-.hehe-enter-active,
-.hehe-leave-active {
-  transition: all 0.3s ease;
-}
 .title {
   .van-nav-bar__title {
     color: #fff;
@@ -303,6 +291,24 @@ export default {
     background-color: #ffffff !important;
     color: #1989fa;
   }
+}
+.pure_top {
+  width: 100%;
+  height: 250px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pure_top::after {
+  content: '';
+  width: 140%;
+  height: 246px;
+  position: absolute;
+  left: -20%;
+  top: 0;
+  z-index: -1;
+  border-radius: 0 0 50% 50%;
+  background: #1496f1;
 }
 .bg {
   height: 200px;
