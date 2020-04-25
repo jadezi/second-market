@@ -51,10 +51,10 @@
               <template slot="default">
                 <div class="message" @click="openContact(item)">
                   <div class="shop-logo">
-                    <img :src="item.toUidImgUrl" />
+                    <img :src="item.toId.avatar" />
                   </div>
                   <div class="sale-info">
-                    <div class="sale-name">{{ item.toId.name }}</div>
+                    <div class="sale-name">{{ item.toId.setting.name }}</div>
                     <div class="laster-message">{{ item.message }}</div>
                     <div class="laster-time">
                       {{ item.timeStamp | timestampFormat }}
@@ -66,7 +66,7 @@
                 </div>
               </template>
               <template slot="right">
-                <div class="del-btn">删除</div>
+                <div class="del-btn" @click="del(item.toId._id)">删除</div>
               </template>
             </van-swipe-cell>
             <van-divider
@@ -165,6 +165,23 @@ export default {
     // }
   },
   methods: {
+    async del(toId) {
+      let { data: re } = await this.$http.delete(
+        '/private/v1/messagelist/delete',
+        {
+          data: {
+            uid: this.id,
+            toId: toId
+          }
+        }
+      )
+      console.log(re)
+      if (re.code !== 204) {
+        return this.$toast(re.message)
+      }
+      this.$toast(re.message)
+      this.getMessage()
+    },
     setDotStyle(objectId) {
       for (var i = 0; i < this.systemImage.length; i++) {
         if (this.systemImage[i].id == objectId) {
@@ -211,13 +228,14 @@ export default {
       this.messageFlag = !this.messageFlag
     },
     openContact(item) {
+      console.log(item)
       this.$router.push({
         path: '/user/message/contacts',
         query: {
           session: item._id,
           toId: item.toId._id,
-          name: item.toId.name,
-          toUserImgUrl: item.toUidImgUrl,
+          name: item.toId.setting.name,
+          toUserImgUrl: item.toId.avatar,
           message: item.message,
           timeStamp: item.timeStamp
         }

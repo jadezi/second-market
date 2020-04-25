@@ -56,7 +56,8 @@ import {
   List,
   CountDown,
   DatetimePicker,
-  Overlay
+  Overlay,
+  Empty
 } from 'vant'
 
 Vue.use(Image)
@@ -65,6 +66,7 @@ Vue.use(Grid).use(GridItem)
 Vue.use(DropdownMenu).use(DropdownItem)
 Vue.use(Search)
 Vue.use(Icon)
+Vue.use(Empty)
 Vue.use(Notify)
 Vue.use(PullRefresh)
 Vue.use(Toast)
@@ -105,9 +107,26 @@ Vue.use(DatetimePicker)
 Vue.config.productionTip = false
 
 axios.defaults.baseURL = 'http://localhost:8088/api/'
+
 axios.interceptors.request.use(config => {
-  config.headers['authorization'] = sessionStorage.getItem('market-token')
+  var pattern = new RegExp('public')
+  if (pattern.test(config.url)) {
+    config.headers['authorization'] = null
+  } else {
+    config.headers['authorization'] = sessionStorage.getItem('market-token')
+  }
+  console.log(config)
   return config
+})
+
+axios.interceptors.response.use(res => {
+  if (res.data.code == 401) {
+    window.sessionStorage.removeItem('market-token')
+    window.sessionStorage.removeItem('market-uid')
+    router.push('/login')
+  } else {
+    return res
+  }
 })
 
 axios.defaults.timeout = 6000

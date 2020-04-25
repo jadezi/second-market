@@ -6,7 +6,7 @@
           <van-image width="100%" lazy-load :src="item.summary.cover" />
         </div>
         <div class="desc">{{ item.summary.desc }}</div>
-        <div class="price">￥ {{ item.summary.price }}</div>
+        <div class="price">￥ {{ item.summary.saleOfPrice }}</div>
       </div>
     </a>
   </div>

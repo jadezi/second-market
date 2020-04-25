@@ -1,5 +1,14 @@
 <template>
+  <div>
+    <van-nav-bar
+      title="地址修改"
+      left-text="返回"
+      left-arrow
+      z-index="200"
+      @click-left="onClickLeft"
+    />
   <div class="addressEdit-bg">
+    
     <div class="user-Info">
       <div class="name">
         <van-cell-group>
@@ -34,8 +43,10 @@
       <van-button type="danger" round>保存</van-button>
     </div>
   </div>
+  </div>
 </template>
 <script>
+
 export default {
   data() {
     return {
@@ -49,6 +60,9 @@ export default {
   methods: {
     postAddressInfo() {
       // 保存数据接口
+    },
+    onClickLeft(){
+      this.$emit('closeAdd')
     }
   }
 }

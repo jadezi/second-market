@@ -12,7 +12,7 @@
       </van-nav-bar>
     </div>
     <div class="hide" style="padding-top:55px"></div>
-    <van-list
+    <!-- <van-list
       v-model="loading"
       :error.sync="error"
       :finished="finished"
@@ -21,76 +21,76 @@
       @load="onLoad"
       offset="400"
       direction="up"
-    >
-      <div ref="contentBox" class="content">
-        <div v-for="(item, index) in messageList" :key="index">
-          <template v-if="item.sendUid == userId">
-            <div>
-              <div class="father father-right">
-                <div class="log">
-                  <img :src="userImg" />
-                </div>
-                <div class="son son-right">
-                  <div class="title title-right">{{ name }}</div>
-                  <div class="message message-right">
-                    <div>
-                      <template v-if="!item.content.msgTypeOfImage">
-                        <div>{{ item.content.text }}</div>
-                      </template>
-                      <template v-else>
-                        <div>
-                          <img
-                            :src="item.content.image"
-                            @click="showImage(item.content.index)"
-                          />
-                        </div>
-                      </template>
-                    </div>
-                  </div>
-                  <div>
-                    <msgTool
-                      :msgTimeStamp="item.timeStamp"
-                      :timeStyle="'right'"
-                    ></msgTool>
-                  </div>
-                </div>
+    > -->
+    <div ref="contentBox" class="content">
+      <div v-for="(item, index) in messageList" :key="index">
+        <template v-if="item.sendUid == userId">
+          <div>
+            <div class="father father-right">
+              <div class="log">
+                <img :src="userImg" />
               </div>
-            </div>
-          </template>
-          <template v-else>
-            <div>
-              <div class="father father-left">
-                <div class="log">
-                  <img :src="toUserImg" />
-                </div>
-                <div class="son son-left">
-                  <div class="title title">{{ toName }}</div>
-                  <div class="message message-left">
-                    <div>
-                      <template v-if="!item.content.msgTypeOfImage">
-                        <div>{{ item.content.text }}</div>
-                      </template>
-                      <template v-else>
-                        <div>
-                          <img
-                            :src="item.content.image"
-                            @click="showImage(item.content.index)"
-                          />
-                        </div>
-                      </template>
-                    </div>
+              <div class="son son-right">
+                <div class="title title-right"></div>
+                <div class="message message-right">
+                  <div>
+                    <template v-if="!item.content.msgTypeOfImage">
+                      <div>{{ item.content.text }}</div>
+                    </template>
+                    <template v-else>
+                      <div>
+                        <img
+                          :src="item.content.image"
+                          @click="showImage(item.content.index)"
+                        />
+                      </div>
+                    </template>
                   </div>
+                </div>
+                <div>
                   <msgTool
                     :msgTimeStamp="item.timeStamp"
-                    :timeStyle="'left'"
+                    :timeStyle="'right'"
                   ></msgTool>
                 </div>
               </div>
             </div>
-          </template>
-        </div>
+          </div>
+        </template>
+        <template v-else>
+          <div>
+            <div class="father father-left">
+              <div class="log">
+                <img :src="toUserImg" />
+              </div>
+              <div class="son son-left">
+                <div class="title title"></div>
+                <div class="message message-left">
+                  <div>
+                    <template v-if="!item.content.msgTypeOfImage">
+                      <div>{{ item.content.text }}</div>
+                    </template>
+                    <template v-else>
+                      <div>
+                        <img
+                          :src="item.content.image"
+                          @click="showImage(item.content.index)"
+                        />
+                      </div>
+                    </template>
+                  </div>
+                </div>
+                <msgTool
+                  :msgTimeStamp="item.timeStamp"
+                  :timeStyle="'left'"
+                ></msgTool>
+              </div>
+            </div>
+          </div>
+        </template>
       </div>
-    </van-list>
+    </div>
+    <!-- </van-list> -->
 
     <div class="action">
       <van-cell-group title="">
@@ -203,22 +203,22 @@ export default {
     //   })
     //   return
     // }
-    var message = {
-      session: this.session,
-      content: {
-        text: this.$route.query.message,
-        image: '123',
-        msgTypeOfImage: false,
-        src: '',
-        index: 0
-      },
-      timeStamp: this.$route.query.timeStamp,
-      recUid: this.toId,
-      sendUid: this.userId,
-      readState: '1'
-    }
-    this.messageList.push(message)
-    console.log(this.messageList)
+    // var message = {
+    //   session: this.session,
+    //   content: {
+    //     text: this.$route.query.message,
+    //     image: '123',
+    //     msgTypeOfImage: false,
+    //     src: '',
+    //     index: 0
+    //   },
+    //   timeStamp: this.$route.query.timeStamp,
+    //   recUid: this.toId,
+    //   sendUid: this.userId,
+    //   readState: '1'
+    // }
+    // this.messageList.push(message)
+    // console.log(this.messageList)
     this.$socket.emit('connect')
   },
   sockets: {
@@ -226,13 +226,7 @@ export default {
       //查看socket是否渲染成功
       var u = { sendUid: this.userId, recUid: this.toId }
       this.$socket.emit('online', u)
-      this.$notify({
-        title: '新消息',
-        message: '发送成功',
-        type: 'warning',
-        duration: 1000
-      })
-      console.log('链接成功2')
+      console.log('链接成功')
     },
     disconnect() {
       //检测socket断开链接
@@ -245,6 +239,7 @@ export default {
     //客户端接收后台传输的socket事件
     message(data) {
       var d
+      console.log(data)
       this.$nextTick(function() {
         var content = this.$refs.contentBox
         content.scrollTop = content.scrollHeight
@@ -415,34 +410,34 @@ export default {
     // 下拉加载，还存在问题
     onLoad() {
       console.log('上拉加载ing')
-      var msg = {
-        session: this.session,
-        content: {
-          text: '测试ig',
-          image: '',
-          msgTypeOfImage: false,
-          src: '',
-          index: 0
-        },
-        timeStamp: this.initTime(),
-        recUid: this.toId,
-        sendUid: this.userId,
-        readState: 0
-      }
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.messageList.splice(0, 0, msg)
-        }
+      //   var msg = {
+      //     session: this.session,
+      //     content: {
+      //       text: '测试ig',
+      //       image: '',
+      //       msgTypeOfImage: false,
+      //       src: '',
+      //       index: 0
+      //     },
+      //     timeStamp: this.initTime(),
+      //     recUid: this.toId,
+      //     sendUid: this.userId,
+      //     readState: 0
+      //   }
+      //   setTimeout(() => {
+      //     for (let i = 0; i < 10; i++) {
+      //       this.messageList.splice(0, 0, msg)
+      //     }
 
-        // 加载状态结束
-        this.loading = false
+      //     // 加载状态结束
+      //     this.loading = false
 
-        // 数据全部加载完成
-        if (this.messageList.length >= 40) {
-          this.finished = true
-        }
-      }, 2000)
-      console.log(this.messageList.length)
+      //     // 数据全部加载完成
+      //     if (this.messageList.length >= 40) {
+      //       this.finished = true
+      //     }
+      //   }, 2000)
+      //   console.log(this.messageList.length)
     }
   }
 }

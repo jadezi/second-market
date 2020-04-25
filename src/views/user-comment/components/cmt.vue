@@ -3,11 +3,11 @@
     <div>
       <div class="content">
         <div class="user-log">
-          <img src="../../../assets/img/th.jpg" href="#" />
+          <img :src="item.uid.avatar" href="#" />
         </div>
         <div class="msg">
           <div class="msg-top">
-            <div class="title">{{ item.name }}</div>
+            <div class="title">{{ item.uid.setting.name }}</div>
             <div
               @click="addFabulous(item)"
               :class="zanActive(item) ? 'zan-active' : 'zan'"
@@ -18,10 +18,10 @@
               </div>
             </div>
           </div>
-          <div class="comment" @click="showPopup(item.name)">
+          <div class="comment" @click="showPopup(item.uid.setting.name)">
             {{ item.comment }}
           </div>
-          <div class="timeStamp">{{ item.createTime }}</div>
+          <div class="timeStamp">{{ item.createAt }}</div>
         </div>
       </div>
       <van-divider />
@@ -33,11 +33,11 @@
           <div v-show="indexC < 1 || !isMore">
             <div class="content">
               <div class="reply-user-log">
-                <img src="../../../assets/img/th.jpg" href="#" />
+                <img :src="itemC.uid.setting.avatar" href="#" />
               </div>
               <div class="msg">
                 <div class="msg-top">
-                  <div class="title">{{ itemC.name }}</div>
+                  <div class="title">{{ itemC.uid.setting.name }}</div>
                   <div
                     :class="zanActive(itemC) ? 'zan-active' : 'zan'"
                     @click="addFabulous(itemC)"
@@ -97,6 +97,7 @@ export default {
   },
   mounted() {
     this.createFabulousList()
+    console.log(this.commentList)
   },
   methods: {
     // 评论按照日期排序

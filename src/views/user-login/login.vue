@@ -136,7 +136,11 @@ export default {
           password: this.password,
           college: this.college
         })
-        if (!re.data.permission) {
+        console.log(re)
+        if (re.code == 400){
+          return this.$toast(re.message)
+        }
+        if (re.code == 403) {
           // 需要验证
           var banStartTime = parseInt(re.data.banStartTime)
           if (re.data.banTime === 999) {
@@ -162,7 +166,7 @@ export default {
           }
         }
         if (re.code !== 200) {
-          return this.$toast(re.errorCode + ': ' + re.message)
+          return this.$toast(re.message)
         }
         window.sessionStorage.setItem('market-token', 'Bearer ' + re.data.token)
         window.sessionStorage.setItem('market-uid', JSON.stringify(re.data))

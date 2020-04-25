@@ -111,6 +111,8 @@ export default {
     window.addEventListener('scroll', this.scrollHandle)
     let token = window.sessionStorage.getItem('market-token')
     if (!token) {
+      window.sessionStorage.removeItem('market-token')
+      window.sessionStorage.removeItem('market-uid')
       this.$router.push({
         path: '/login',
         query: {

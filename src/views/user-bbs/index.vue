@@ -8,7 +8,7 @@
           :title="titleItem.title"
         >
           <keep-alive>
-            <list v-if="index < 2"></list>
+            <list v-if="index < 2" :index="index"></list>
             <shop-list v-else :selectTabItem="selectTabItem"></shop-list>
           </keep-alive>
         </van-tab>
@@ -49,7 +49,7 @@ export default {
     async getTitleGroup() {
       const { data: res } = await this.$http.get('public/v1/title/bbs')
       if (res.code !== 200) {
-        return this.$toast('网络故障，无法显示')
+        return this.$toast(res.message)
       }
       this.titleGroup = res.data
     },

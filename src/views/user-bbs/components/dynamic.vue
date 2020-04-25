@@ -17,8 +17,32 @@
       </div>
       <div class="content">
         <div class="text">{{ infos.content.text }}</div>
-        <div class="summary"></div>
-        <div class="image">
+        <div class="summary" v-if="infos.content.forward_summary">
+          <a v-if="infos.summary.cover!=''" :href="infos.content.forward_summary.url" class="forward-summary">
+            <div class="cover">
+              <van-image
+                width="50"
+                height="50"
+                :src="infos.content.forward_summary.cover"
+              />
+            </div>
+            <div class="right-main">
+              <div class="author">@{{ infos.content.forward_summary.author.setting.name }}</div>
+              <div class="desc">
+                {{ infos.content.forward_summary.description }}
+              </div>
+            </div>
+          </a>
+          <a v-else :href="infos.content.forward_summary.url" class="forward-summary">
+            <div class="right-main">
+              <div class="author">@{{ infos.content.forward_summary.author.setting.name }}</div>
+              <div class="desc">
+                {{ infos.content.forward_summary.description }}
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="image" v-else>
           <van-image
             v-for="(img, index) in infos.content.imgGroup"
             :key="index"
@@ -38,7 +62,10 @@
             <span class="iconfont icon-pinglun"></span>
             <div class="count">{{ infos.review.amount | featuresFilter }}</div>
           </div>
-          <div class="forward" @click="showForwardPopup(infos.summary)">
+          <div
+            class="forward"
+            @click="showForwardPopup(infos.summary, infos.author.setting.name)"
+          >
             <span
               class="iconfont icon-fenxiangzhuanfafasongzhijiantouyuanxingshar"
             ></span>
@@ -85,12 +112,20 @@
             />
           </div>
           <div class="forward-footer" v-if="this.summary !== null">
-            <a :href="summary.url" class="forward-summary">
+            <a v-if="this.summary.cover == ''" :href="summary.url" class="forward-summary">
+              <div class="right-main">
+                <div class="author">@{{ name }}</div>
+                <div class="desc">
+                  {{ summary.description }}
+                </div>
+              </div>
+            </a>
+            <a v-else :href="summary.url" class="forward-summary">
               <div class="cover">
                 <van-image width="50" height="50" :src="summary.cover" />
               </div>
               <div class="right-main">
-                <div class="author">@{{ summary.author }}</div>
+                <div class="author">@{{ name }}</div>
                 <div class="desc">
                   {{ summary.description }}
                 </div>
@@ -117,6 +152,7 @@ export default {
     return {
       show: false,
       forwardShow: false,
+      id: '',
       uid: '',
       forwardValue: '',
       summary: {
@@ -124,7 +160,8 @@ export default {
         cover: '',
         url: '',
         author: ''
-      }
+      },
+      name: ''
     }
   },
   filters: {
@@ -155,7 +192,9 @@ export default {
       console.log(this.info)
     }
   },
-  created() {},
+  created() {
+    this.id = JSON.parse(window.sessionStorage.getItem('market-uid'))._id
+  },
   mounted() {},
   methods: {
     showImage(pos, imgGroup) {
@@ -168,9 +207,11 @@ export default {
       this.show = true
       this.uid = info._id
     },
-    showForwardPopup(summary) {
+    showForwardPopup(summary, name) {
       this.forwardShow = true
       this.summary = summary
+      this.name = name
+      console.log(this.summary)
     },
     report() {
       console.log('测试')
@@ -185,8 +226,20 @@ export default {
         background: '#f0f9eb'
       })
     },
-    push() {
-      console.log('success')
+    async push() {
+      let { data: re } = await this.$http.post('private/v1/dynamic/forward', {
+        author: this.id,
+        summary: this.summary,
+        text: this.forwardValue,
+        time: Date.now()
+      })
+      if (re.code !== 201) {
+        return this.$toast(re.message)
+      }
+      this.$toast(re.message)
+      this.forwardShow = false
+      this.summary = {}
+      this.$emit('update:info')
     },
     formatter(value) {
       // 过滤输入的数字
@@ -246,6 +299,15 @@ export default {
     margin-bottom: 6px;
     font-size: 14px;
     padding: 0 12px;
+  }
+  .forward-summary {
+    display: flex;
+    background-color: #f9f9fb;
+    margin: 10px;
+    padding: 10px;
+  }
+  .cover {
+    margin-right: 20px;
   }
   .image {
     text-align: center;
@@ -338,6 +400,7 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: space-around;
+        min-width: 55%;
         .desc {
           overflow: hidden;
           text-overflow: ellipsis;

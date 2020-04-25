@@ -4,7 +4,7 @@
     <div v-for="(item, index) in getCommentList" :key="index">
       <cmt
         v-show="index < 2 || !isMore"
-        :commentChild="getChildCommentList(item.objectId)"
+        :commentChild="getChildCommentList(item.uid)"
         :comment="item"
         ref="child"
       ></cmt>
@@ -55,87 +55,87 @@ export default {
       fabulousList: [],
       backupCommentList: [],
       commentList: [
-        {
-          articleId: '',
-          objectId: '123',
-          commentFloorId: '',
-          name: '1',
-          replyId: '',
-          comment: '第一层',
-          fabulous: 2,
-          createTime: 1
-        },
-        {
-          articleId: '',
-          objectId: '234',
-          commentFloorId: '123',
-          replyId: '123',
-          name: '2',
-          comment:
-            '123层回复1232313123124123122131232123层回复1232313123124123122131232123层回复1232313123124123122131232',
-          fabulous: 3,
-          createTime: 2
-        },
-        {
-          articleId: '',
-          commentFloorId: '123',
-          objectId: '345',
-          replyId: '234',
-          comment: '123层回复234',
-          name: '3',
-          fabulous: 4,
-          createTime: 4
-        },
-        {
-          articleId: '',
-          commentFloorId: '567',
-          objectId: '456',
-          replyId: '567',
-          comment: '567层回复567',
-          name: '4',
-          fabulous: 5,
-          createTime: 3
-        },
-        {
-          articleId: '',
-          commentFloorId: '',
-          objectId: '567',
-          name: '5',
-          replyId: '',
-          comment: '567',
-          fabulous: 2,
-          createTime: 2
-        },
-        {
-          articleId: '',
-          commentFloorId: '123',
-          objectId: '000',
-          replyId: '123',
-          name: '6',
-          comment: '123层回复234',
-          fabulous: 3,
-          createTime: 5
-        },
-        {
-          articleId: '',
-          commentFloorId: '567',
-          objectId: '789',
-          replyId: '456',
-          comment: '567层回复456',
-          name: '7',
-          fabulous: 4,
-          createTime: 1
-        },
-        {
-          articleId: '',
-          commentFloorId: '123',
-          objectId: '900',
-          replyId: '234',
-          comment: '123层回复234',
-          name: '8',
-          fabulous: 5,
-          createTime: 2
-        }
+        // {
+        //   articleId: '',
+        //   objectId: '123',
+        //   commentFloorId: '',
+        //   name: '1',
+        //   replyId: '',
+        //   comment: '第一层',
+        //   fabulous: 2,
+        //   createTime: 1
+        // },
+        // {
+        //   articleId: '',
+        //   objectId: '234',
+        //   commentFloorId: '123',
+        //   replyId: '123',
+        //   name: '2',
+        //   comment:
+        //     '123层回复1232313123124123122131232123层回复1232313123124123122131232123层回复1232313123124123122131232',
+        //   fabulous: 3,
+        //   createTime: 2
+        // },
+        // {
+        //   articleId: '',
+        //   commentFloorId: '123',
+        //   objectId: '345',
+        //   replyId: '234',
+        //   comment: '123层回复234',
+        //   name: '3',
+        //   fabulous: 4,
+        //   createTime: 4
+        // },
+        // {
+        //   articleId: '',
+        //   commentFloorId: '567',
+        //   objectId: '456',
+        //   replyId: '567',
+        //   comment: '567层回复567',
+        //   name: '4',
+        //   fabulous: 5,
+        //   createTime: 3
+        // },
+        // {
+        //   articleId: '',
+        //   commentFloorId: '',
+        //   objectId: '567',
+        //   name: '5',
+        //   replyId: '',
+        //   comment: '567',
+        //   fabulous: 2,
+        //   createTime: 2
+        // },
+        // {
+        //   articleId: '',
+        //   commentFloorId: '123',
+        //   objectId: '000',
+        //   replyId: '123',
+        //   name: '6',
+        //   comment: '123层回复234',
+        //   fabulous: 3,
+        //   createTime: 5
+        // },
+        // {
+        //   articleId: '',
+        //   commentFloorId: '567',
+        //   objectId: '789',
+        //   replyId: '456',
+        //   comment: '567层回复456',
+        //   name: '7',
+        //   fabulous: 4,
+        //   createTime: 1
+        // },
+        // {
+        //   articleId: '',
+        //   commentFloorId: '123',
+        //   objectId: '900',
+        //   replyId: '234',
+        //   comment: '123层回复234',
+        //   name: '8',
+        //   fabulous: 5,
+        //   createTime: 2
+        // }
       ]
     }
   },
@@ -143,7 +143,9 @@ export default {
     cmt
   },
   mounted() {
+    console.log(this.$route.params)
     this.hideChild()
+    this.toGetNewCommentList()
   },
   computed: {
     totalNumber() {
@@ -163,10 +165,10 @@ export default {
     }
   },
   methods: {
-    getChildCommentList(obj) {
+    getChildCommentList(uid) {
       var commentChild = this.commentList.filter(item => {
-        return item.commentFloorId == obj
-      }, obj)
+        return item.commentFloorId == uid
+      }, uid)
       return this.commentSort(commentChild)
     },
     // 评论按照日期排序
@@ -194,16 +196,18 @@ export default {
         })
     },
     // 获取评论列表
-    toGetNewCommentList() {
-      axios
-        .post('http://127.0.0.1:8080/usr/comment')
-        .then(data => {
-          this.commentList = data
-          this.backupCommentList = data
-        })
-        .catch(error => {
-          this.$toast(error)
-        })
+    async toGetNewCommentList() {
+      let {data:re} = await this.$http.get('private/v1/comment/all', {
+        params: {
+          did: this.$route.params.shopId
+        }
+      })
+      console.log(re)
+      if (re.code !== 200) {
+        this.commentList = []
+        return
+      }
+      this.commentList = re.data.content
     },
     //回复
     showPopup() {
@@ -213,8 +217,7 @@ export default {
       this.isMore = false
     },
     hideChild() {
-      this.$refs.child[1].isMoreEnable()
-      return true
+      //this.$refs.child[1].isMoreEnable()
     }
   }
 }

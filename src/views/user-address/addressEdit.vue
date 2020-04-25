@@ -4,6 +4,7 @@
       title="地址修改"
       left-text="返回"
       left-arrow
+      z-index="200"
       @click-left="onClickLeft"
     />
     <div>
@@ -42,7 +43,9 @@ export default {
         this.searchResult = []
       }
     },
-    onClickLeft() {}
+    onClickLeft() {
+      this.$emit('closeAdd')
+    }
   }
 }
 </script>

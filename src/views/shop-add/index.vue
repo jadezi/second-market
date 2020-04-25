@@ -20,7 +20,7 @@
       />
     </div>
     <div class="upload-image">
-      <van-uploader v-model="fileList" multiple :max-count="5" />
+      <van-uploader v-model="fileList" multiple :max-count="9" />
     </div>
     <div class="shipAddress">
       <van-button
@@ -30,7 +30,7 @@
         :text="city"
       ></van-button>
     </div>
-    <div class="tag">
+    <div class="tag" v-if="type == 'goods'">
       <van-cell
         title="价格"
         is-link
@@ -38,7 +38,7 @@
         icon="gold-coin-o"
         @click="showPrice"
       />
-      <van-cell title="更多信息" is-link value="更多信息" icon="more-o" />
+      <van-cell title="商品分类" @click="shopGroup" is-link :value="shoptitle" icon="more-o" />
     </div>
     <van-action-sheet v-model="priceAction" title="标题" :round="false">
       <div>
@@ -87,6 +87,15 @@
         @confirm="getAddress"
       />
     </van-popup>
+    <van-popup v-model="shoptitleShow" position="bottom">
+      <van-area
+        :area-list="titleList"
+        value="330211"
+        @cancel="showMore"
+        @confirm="getShopTitle"
+        :columns-num='1'
+      />
+    </van-popup>
   </div>
 </template>
 <script>
@@ -95,6 +104,9 @@ export default {
   name: 'add',
   data() {
     return {
+      id: '',
+      type: '',
+      url: '',
       inputNum: '',
       priceAgo: '',
       priceNow: '',
@@ -106,24 +118,46 @@ export default {
       message: '',
       cityShow: false,
       fileList: [],
+      shoptitle: '请选择商品分类',
+      shoptitleShow: false,
+      titleList: {
+        province_list: {
+          110000: '书籍',
+          120000: '数码',
+          130000: '考研资料',
+          140000: '教资资料',
+          150000: '等级考试'
+        }
+      },
       areaList: area,
       shopList: {
         buyPrice: '',
         salePrice: '',
         timeStamp: '',
-        uploadFile: '',
         description: '',
         original: '',
         more: ''
       }
     }
   },
+  created() {
+    this.type = this.$route.query.type
+    if (this.type == 'goods') {
+      this.url = 'private/v1/goods/add'
+    } else {
+      this.url = 'private/v1/dynamic/add'
+    }
+    this.id = JSON.parse(window.sessionStorage.getItem('market-uid'))._id
+  },
   methods: {
     showMore() {
       this.cityShow = !this.cityShow
     },
+    showShopTitle() {
+      this.shoptitleShow = true
+    },
     getAddress(e) {
-      this.city = `发货地：${e[1].name}${e[2].name}`
+      this.city = `城市：${e[1].name}${e[2].name}`
       this.cityShow = !this.cityShow
     },
     showPrice() {
@@ -169,6 +203,15 @@ export default {
         this.priceNow = input
       }
     },
+    shopGroup() {
+      this.shoptitleShow = !this.shoptitleShow
+    },
+    getShopTitle(e) {
+      console.log(e)
+      this.shoptitle = e[0].name
+      // console.log(this.shoptitle)
+      this.shoptitleShow = false
+    },
     onFocus(key) {
       key === 1
         ? (this.priceInputDistinguish = true)
@@ -176,15 +219,55 @@ export default {
     },
     onClose() {
       var timestamp = Date.parse(new Date())
-      this.shopList.buyPrice = this.priceAgo
-      this.shopList.salePrice = this.priceNow
+      this.shopList.buyPrice = this.priceAgo.substring(1, this.priceAgo.length)
+      this.shopList.salePrice = this.priceNow.substring(1, this.priceNow.length)
       this.shopList.uploadFile = this.fileList
       this.shopList.timeStamp = timestamp
       this.priceAction = false
       console.log(this.shopList)
     },
-    release() {
-      console.log(this.fileList)
+    async release() {
+      console.log(this.id)
+      let query
+      if (this.type != 'goods'){
+        query = {
+          author: this.id,
+          imggroup: this.fileList,
+          text: this.message,
+          time: Date.now()
+        }
+      } else {
+        if (this.message==''){
+          return this.$toast('请输入描述信息')
+        }
+        if(!this.priceAgo || !this.priceNow){
+          return this.$toast('请输入价格')
+        }
+        if (this.fileList.length==0){
+          return this.$toast('请上传图片')
+        }
+        if (this.shoptitle == '请选择商品分类'){
+          return this.$toast('请选择商品分类')
+        }
+        this.shopList.buyPrice = this.priceAgo.substring(1, this.priceAgo.length)
+        this.shopList.salePrice = this.priceNow.substring(1, this.priceNow.length)
+        console.log(this.shopList)
+        query = {
+          author: this.id,
+          imggroup: this.fileList,
+          text: this.message,
+          shop: this.shopList,
+          time: Date.now(),
+          title: this.shoptitle
+        }
+      }
+      let { data: re } = await this.$http.post(this.url, query)
+      console.log(re)
+      if (re.code !== 201) {
+        return this.$toast(re.message)
+      }
+      this.$toast(re.message)
+      this.onClickLeft()
     }
   }
 }

@@ -9,7 +9,7 @@
       @load="getInfo"
     >
       <keep-alive>
-        <dynamic :info="article" v-if="article.length > 0"></dynamic>
+        <dynamic :info="article" v-if="article.length > 0" @update:info="getInfo"></dynamic>
       </keep-alive>
     </van-list>
   </div>
@@ -21,7 +21,7 @@ export default {
   components: {
     dynamic
   },
-  props: {},
+  props: ['index'],
   data() {
     return {
       title: 'all',
@@ -49,8 +49,9 @@ export default {
         this.loading = false
         console.log(res)
         if (res.code !== 200) {
-          this.error = true
-          return this.$toast('网络错误')
+          this.error = false
+          this.finished = true
+          return this.$toast(res.message)
         }
         console.log(res)
         this.article = res.data

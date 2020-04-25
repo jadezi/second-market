@@ -17,6 +17,7 @@ import register from '@/views/user-register/register.vue'
 import userUI from '@/views/user-index/index.vue'
 import BBS from '@/views/user-bbs/index.vue'
 import My from '@/views/user-my/my.vue'
+import Deal from '@/views/user-deal/index.vue'
 import Setting from '@/views/user-setting/setting.vue'
 import VueSocketIO from 'vue-socket.io'
 import SocketIO from 'socket.io-client'
@@ -70,12 +71,17 @@ const routes = [
     component: Comment
   },
   {
-    path: '/user/shop/:userId/:shopId',
+    path: '/detail/:shopId',
     name: 'shopDetail',
     component: ShopDetail
   },
   {
-    path: '/user/shop/:userId/:shopId/order',
+    path: '/deal',
+    name: 'deal',
+    component: Deal
+  },
+  {
+    path: '/shop/:userId/:shopId/order',
     name: 'orderInfo',
     component: OrderInfo
   },

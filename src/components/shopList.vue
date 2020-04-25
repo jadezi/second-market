@@ -25,6 +25,9 @@ export default {
     selectTabItem: {
       type: String,
       default: 'books'
+    },
+    id: {
+      type: String
     }
   },
   data() {
@@ -37,9 +40,9 @@ export default {
       // 下拉加载状态
       shopList: [],
       // 每次上拉增加加载数量
-      size: 1,
+      pagenum: 1,
       // 已加载卡片数量
-      pageSize: 0
+      pageSize: 4
     }
   },
   computed: {},
@@ -49,9 +52,7 @@ export default {
     }
   },
   created() {},
-  mounted() {
-    console.log(this.selectTabItem)
-  },
+  mounted() {},
   methods: {
     async getShopList() {
       try {
@@ -60,9 +61,10 @@ export default {
         console.log('-----获取结束-----')
         const { data: res } = await this.$http.get('public/v1/goods/gettitle', {
           params: {
+            id: this.id,
             title: this.selectTabItem,
-            size: this.size,
-            pageSize: this.pageSize
+            pagenum: this.pagenum,
+            pagesize: this.pageSize
           }
         })
         console.log(res)
@@ -74,19 +76,10 @@ export default {
           this.error = true
           return this.$toast('服务器异常')
         }
-        // // 当前商品列表长度
-        //var length = this.shopList.length
-
-        // if (res.data.length === length) {
-        //   console.log('196 hang')
-        //   this.finished = true
-        //   return
-        // }
-
         res.data.forEach(item => {
           this.shopList.push(item)
         })
-        this.pageSize++
+        this.pagenum++
         // //加载状态结束
         this.listLoading = false
       } catch (err) {

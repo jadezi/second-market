@@ -2,9 +2,13 @@
   <div>
     <div class="bg">
       <search @openSearch="showSearch">
-        <div slot="left">测试</div>
+        <div slot="left">上新</div>
       </search>
-      <van-pull-refresh v-model="isLoading" @refresh="onRefresh" :head-height="130">
+      <van-pull-refresh
+        v-model="isLoading"
+        @refresh="onRefresh"
+        :head-height="130"
+      >
         <template #pulling="props">
           <img
             class="doge"
@@ -23,14 +27,27 @@
           <img class="doge" src="../../../public/img/loadingindex.gif" />
         </template>
         <div class="content">
+          <img class="activity" src="../../assets/img/haibao.jpg" />
           <div class="classify">
             <div class="half">
-              <div class="fen fen-top-left"></div>
-              <div class="fen fen-bottom-left"></div>
+              <div class="fen fen-top-left">
+                <div class="desc">送书</div>
+                <img class="avtivity-logo" src="../../assets/img/hd1.png" />
+              </div>
+              <div class="fen fen-bottom-left">
+                <div class="desc">衣物捐赠</div>
+                <img class="avtivity-logo"  src="../../assets/img/hd2.png" />
+              </div>
             </div>
             <div class="half">
-              <div class="fen fen-top-right">3</div>
-              <div class="fen fen-bottom-right">4</div>
+              <div class="fen fen-top-right">
+                <div class="desc">二手手机</div>
+                <img class="avtivity-logo" src="../../assets/img/hd3.png" />
+              </div>
+              <div class="fen fen-bottom-right">
+                <div class="desc">游戏交易</div>
+                <img class="avtivity-logo" src="../../assets/img/hd4.png" />
+              </div>
             </div>
           </div>
         </div>
@@ -83,7 +100,7 @@ export default {
       // 上拉加载错误状态
       // error: false,
       // 当前选中的标签栏
-      selectTabItem: 'books'
+      selectTabItem: '书籍'
       // // 每次上拉增加加载数量
       // listAddNum: 4,
       // // 已加载卡片数量
@@ -144,7 +161,7 @@ export default {
 <style lang="scss" scoped>
 .bg {
   background-color: #f9f9fb;
-  padding-bottom: 75px;
+  // padding-bottom: 75px;
 }
 .doge {
   width: 70px;
@@ -167,14 +184,27 @@ export default {
   display: flex;
   align-items: flex-end;
   padding-bottom: 10px;
+  .activity {
+    width: 100%;
+    height: 100%;
+  }
+  .avtivity-logo {
+    width: 50px;
+    height: 50px;
+  }
 }
 .classify {
   width: 90%;
-  height: 120px;
+  height: 130px;
   border: 1px #efefef solid;
-  border-radius: 7px;
+  border-radius: 38px;
+  overflow: hidden;
   margin: 0px auto;
   display: flex;
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  transform: translate(-50%, -5%);
 }
 .half {
   display: flex;
@@ -182,23 +212,13 @@ export default {
   justify-content: space-between;
   width: 50%;
 }
-.fen-top-left {
-  border-radius: 7px 0px 0px 0px;
-}
-.fen-top-right {
-  border-radius: 0px 7px 0px 0px;
-}
-.fen-bottom-left {
-  border-radius: 0 0 0 7px;
-}
-.fen-bottom-right {
-  border-radius: 0 0 7px 0;
-}
 .fen {
-  background-color: green;
+  background-color: white;
   padding: 8px 10px;
   display: flex;
   height: 120px;
+  justify-content: space-between;
+  align-items: center;
 }
 .main {
   background-color: white;
@@ -212,6 +232,6 @@ export default {
 }
 .main > div {
   margin: 0 auto;
-  width: 95%;
+  // width: 95%;
 }
 </style>

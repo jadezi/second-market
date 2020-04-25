@@ -34,18 +34,24 @@
       </div>
     </transition>
     <div class="head" v-if="Object.keys(this.userInfo).length != 0">
-      <div class=" pure_top">
-        <img width="100%" height="100%" :src="userInfo.setting.bgImg" />
-      </div>
+      <!-- <div class=" pure_top"> -->
+      <img width="100%" height="100%" :src="userInfo.setting.bgImg" />
+      <!-- </div> -->
       <div class="user">
         <div class="userImg">
           <img :src="userInfo.avatar" @load="resizeImg($event, 100, 100)" />
         </div>
-        <div class="username">{{ userInfo.setting.name }}</div>
+        <div class="extends">
+          <div class="username">{{ userInfo.setting.name }}</div>
+          <div class="follow"><van-button :loading="loading"  type="warning" :icon="icon" @click="follow">关注</van-button></div>
+        </div>
         <div class="label">{{ userInfo.setting.signature }}</div>
         <div class="tags">
           <van-tag type="warning" size="large">
             {{ userInfo.setting.city }}
+          </van-tag>
+          <van-tag type="success" size="large">
+            {{ userInfo.setting.college }}
           </van-tag>
         </div>
       </div>
@@ -57,21 +63,11 @@
           :key="index"
           :title="titleItem.title"
         >
-          <van-list
-            v-model="listLoading"
-            :finished="finished"
-            finished-text="我也是有底线滴~~~"
-            :error.sync="error"
-            error-text="请求失败，点击重新加载"
-            @load="getShopList"
-          >
-            <keep-alive>
-              <waterfall
-                :data="shopList"
-                v-if="shopList.length != 0"
-              ></waterfall>
-            </keep-alive>
-          </van-list>
+          <shop-list
+            ref="shopload"
+            :id="uid"
+            :selectTabItem="selectTabItem"
+          ></shop-list>
         </van-tab>
       </van-tabs>
     </div>
@@ -81,7 +77,7 @@
 <script>
 // import md5 from 'js-md5'
 // import showBlock from '@/components/showblock.vue'
-import waterfall from '@/components/waterfall.vue'
+import shopList from '@/components/shopList.vue'
 import Vue from 'vue'
 import { Lazyload } from 'vant'
 
@@ -89,7 +85,7 @@ Vue.use(Lazyload)
 export default {
   name: 'my',
   components: {
-    waterfall
+    shopList
   },
   data() {
     return {
@@ -105,7 +101,7 @@ export default {
       userStatusTitleItems: [
         {
           id: 0,
-          title: '在售中',
+          title: '销售中',
           query: 'sale'
         },
         {
@@ -119,9 +115,10 @@ export default {
       // 上拉加载错误状态
       error: false,
       // 当前选中的标签栏
-      selectTabItem: 'sale',
+      selectTabItem: '销售中',
       // 列表加载是否结束
-      finished: false,
+      icon: 'star-o',
+      loading: false,
       shopList: [],
       // 每次上拉增加加载数量
       listAddNum: 2,
@@ -131,7 +128,6 @@ export default {
   },
   created() {
     this.uid = this.$route.params.uid
-    console.log()
     this.getUserInfo()
     window.addEventListener('scroll', this.scrollHandle)
     this.imgCache()
@@ -186,66 +182,25 @@ export default {
     },
     setTabChecked(index, name) {
       console.log(name)
-      this.userStatusTitleItems.forEach(item => {
-        console.log(item.id)
-        if (item.id == index) {
-          this.selectTabItem = item.query
-          this.listSize = 0
-          this.finished = false
-          this.shopList = []
-          // this.shopListLeft = []
-          // this.shopListRight = []
-          this.getShopList()
-          return
-        }
-      })
+      this.selectTabItem = name
+      this.listSize = 0
     },
-    async getShopList() {
-      try {
-        const { data: res } = await this.$http.get(
-          `userindex/${this.selectTabItem}`,
-          {
-            params: {
-              uid: this.userInfo.id,
-              listAddNum: this.listAddNum,
-              listSize: this.listSize
-            }
-          }
-        )
-
-        if (res.meta.status !== 200) {
-          this.error = true
-          return this.$toast('服务器异常')
-        }
-        if (res.data.arr.length == 0) {
-          console.log('185 hang')
-          this.finished = true
-          return
-        }
-        // // 当前商品列表长度
-        var length = this.shopList.length
-
-        if (res.data.length === length) {
-          console.log('196 hang')
-          this.finished = true
-          return
-        }
-
-        res.data.arr.forEach(item => {
-          this.shopList.push(item)
-        })
-        this.listSize = this.shopList.length
-        // //加载状态结束
-        this.listLoading = false
-      } catch (err) {
-        this.listLoading = false
-        this.error = true
-        this.$toast('加载失败:' + err)
+    follow() {
+      this.loading = true
+      setTimeout(() => {
+        this.$toast('关注成功')
+        this.loading = false
+        this.count++
+      }, 3000)
+      if (this.icon == 'star') {
+        this.icon = 'star-o'
+      } else {
+        this.icon = 'star'
       }
     },
     async getUserInfo() {
       const { data: res } = await this.$http.get(
-        `private/v1/users/getuserinfo`,
+        `public/v1/users/getuserinfo`,
         {
           params: {
             id: this.uid
@@ -257,9 +212,10 @@ export default {
         return this.$toast('加载失败')
       }
       this.userInfo = res.data
+      console.log(this.userInfo)
     },
     back() {
-      this.$router.push(this.$route.query.redirect)
+      this.$router.push('/')
     }
   }
 }
@@ -292,32 +248,11 @@ export default {
     color: #1989fa;
   }
 }
-.pure_top {
-  width: 100%;
-  height: 250px;
-  position: relative;
-  overflow: hidden;
-}
-
-.pure_top::after {
-  content: '';
-  width: 140%;
-  height: 246px;
-  position: absolute;
-  left: -20%;
-  top: 0;
-  z-index: -1;
-  border-radius: 0 0 50% 50%;
-  background: #1496f1;
-}
 .bg {
   height: 200px;
   width: 100%;
   overflow: hidden;
   background-color: #f2f2f2;
-}
-.head {
-  height: 340px;
 }
 .user {
   display: flex;
@@ -327,30 +262,44 @@ export default {
   top: -70px;
   left: 30px;
   z-index: 1;
+  .label {
+    margin-left: 20px;
+  }
   .userImg {
     width: 100px;
     height: 100px;
     overflow: hidden;
     border-radius: 50%;
   }
-  .username {
+  .extends {
     width: calc(100vw - 60px);
-    font-size: 20px;
-    font-weight: bolder;
     margin: 10px 0 10px;
+    display: flex;
+    justify-content: space-between;
+    .username {
+      margin-left: 20px;
+      font-size: 20px;
+      font-weight: bolder;
+    }
   }
+
   .tags {
     margin: 6px 2px 4px 0px;
+    margin-left: 20px;
+    .van-tag {
+      margin-right: 10px;
+    }
   }
 }
 .history {
-  background-color: #f2f2f2;
-  height: 100%;
   padding-bottom: 53px;
   .shopImg {
     overflow: hidden;
     width: 150px;
     height: 200px;
   }
+}
+.van-icon-star {
+  color: red;
 }
 </style>
