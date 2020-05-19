@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="main" v-for="(infos, index) in info" :key="index">
-      <div class="header" @click="showPopup(info)">
+      <div class="header">
         <div class="title">
           <div class="avatar">
             <img :src="infos.author.avatar" />
@@ -11,14 +11,20 @@
             <div class="time">{{ infos.createAt | timeFilter }}</div>
           </div>
         </div>
-        <div class="report">
+        <div class="report" @click="showPopup(info)">
           <van-icon name="arrow-down" />
         </div>
       </div>
       <div class="content">
-        <div class="text">{{ infos.content.text }}</div>
+        <div class="text" @click="enterDynamic(infos._id)">
+          {{ infos.content.text }}
+        </div>
         <div class="summary" v-if="infos.content.forward_summary">
-          <a v-if="infos.summary.cover!=''" :href="infos.content.forward_summary.url" class="forward-summary">
+          <a
+            v-if="infos.summary.cover != ''"
+            :href="infos.content.forward_summary.url"
+            class="forward-summary"
+          >
             <div class="cover">
               <van-image
                 width="50"
@@ -27,15 +33,23 @@
               />
             </div>
             <div class="right-main">
-              <div class="author">@{{ infos.content.forward_summary.author.setting.name }}</div>
+              <div class="author">
+                @{{ infos.content.forward_summary.author.setting.name }}
+              </div>
               <div class="desc">
                 {{ infos.content.forward_summary.description }}
               </div>
             </div>
           </a>
-          <a v-else :href="infos.content.forward_summary.url" class="forward-summary">
+          <a
+            v-else
+            :href="infos.content.forward_summary.url"
+            class="forward-summary"
+          >
             <div class="right-main">
-              <div class="author">@{{ infos.content.forward_summary.author.setting.name }}</div>
+              <div class="author">
+                @{{ infos.content.forward_summary.author.setting.name }}
+              </div>
               <div class="desc">
                 {{ infos.content.forward_summary.description }}
               </div>
@@ -54,11 +68,11 @@
       </div>
       <div class="footer">
         <div class="features">
-          <div class="like">
-            <span class="iconfont icon-zan"></span>
+          <div class="like" @click="like(infos._id)">
+            <span :class="likeActive(infos.like) ? 'iconfont icon-zan liked': 'iconfont icon-zan'"></span>
             <div class="count">{{ infos.like.amount | featuresFilter }}</div>
           </div>
-          <div class="review">
+          <div class="review" @click="enterDynamic(infos._id)">
             <span class="iconfont icon-pinglun"></span>
             <div class="count">{{ infos.review.amount | featuresFilter }}</div>
           </div>
@@ -112,7 +126,11 @@
             />
           </div>
           <div class="forward-footer" v-if="this.summary !== null">
-            <a v-if="this.summary.cover == ''" :href="summary.url" class="forward-summary">
+            <a
+              v-if="this.summary.cover == ''"
+              :href="summary.url"
+              class="forward-summary"
+            >
               <div class="right-main">
                 <div class="author">@{{ name }}</div>
                 <div class="desc">
@@ -161,12 +179,13 @@ export default {
         url: '',
         author: ''
       },
-      name: ''
+      name: '',
+      liked: false
     }
   },
   filters: {
     featuresFilter(amount) {
-      if (amount == 0) {
+      if (!amount) {
         return
       }
       return amount
@@ -193,7 +212,8 @@ export default {
     }
   },
   created() {
-    this.id = JSON.parse(window.sessionStorage.getItem('market-uid'))._id
+    // this.id = JSON.parse(window.sessionStorage.getItem('market-uid'))._id
+    this.id = this.$store.getters.getUserInfo._id
   },
   mounted() {},
   methods: {
@@ -206,6 +226,7 @@ export default {
     showPopup(info) {
       this.show = true
       this.uid = info._id
+      console.log('Jubao')
     },
     showForwardPopup(summary, name) {
       this.forwardShow = true
@@ -225,6 +246,36 @@ export default {
         color: '#67c23a',
         background: '#f0f9eb'
       })
+    },
+    enterDynamic(did) {
+      this.$router.push({
+        path: `dynamic/detail/${did}`,
+        redirect: this.$route.path
+      })
+    },
+    likeActive(like) {
+      if (typeof like != Array || like.length == 0) {
+        return false
+      }
+      like.forEach(item => {
+        if (item == this.id) {
+          return true
+        }
+      })
+      return false
+    },
+    async like(did) {
+      this.id = this.$store.getters.getUserInfo._id
+      let { data: re } = await this.$http.put('private/v1/dynamic/like',{
+        id: did,
+        user: this.id
+      })
+      if (re.code != 201) {
+        return this.$toast('无法点赞')
+      }
+      this.$toast(re.message)
+      this.$emit('update:info')
+      this.liked = !this.liked
     },
     async push() {
       let { data: re } = await this.$http.post('private/v1/dynamic/forward', {
@@ -292,6 +343,9 @@ export default {
     border: 1px solid #f2f2f2f2;
     margin-right: 5px;
   }
+}
+.liked {
+  color: rgb(223, 98, 98);
 }
 .content {
   padding: 6px 0 10px;

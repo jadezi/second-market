@@ -64,7 +64,7 @@
       <van-area
         :area-list="areaList"
         :columns-num="1"
-        value="110102"
+        value="4"
         @cancel="showSchoolPopup"
         @confirm="getSchool"
       />
@@ -72,7 +72,7 @@
   </div>
 </template>
 <script>
-import school from '@/assets/js/school.js'
+import school from '@/assets/js/region.js'
 export default {
   name: 'login',
   components: {},
@@ -108,14 +108,15 @@ export default {
     }
   },
   created() {
-    if (window.sessionStorage.getItem('market-token')) {
+    if (!window.sessionStorage.getItem('market-token')) {
       this.type = this.$route.query.type
-      console.log(this.type)
-      if (this.$route.query.redirect) {
-        this.$router.push(this.$route.query.redirect)
-      } else {
-        this.$router.push('/')
-      }
+    } else {
+      this.getUserInfoByToken()
+    }
+    if (this.$route.query.redirect) {
+      this.$router.push(this.$route.query.redirect)
+    } else {
+      this.$router.push('/')
     }
   },
   mounted() {},
@@ -137,7 +138,7 @@ export default {
           college: this.college
         })
         console.log(re)
-        if (re.code == 400){
+        if (re.code == 400) {
           return this.$toast(re.message)
         }
         if (re.code == 403) {
@@ -203,7 +204,25 @@ export default {
     },
     showSchoolPopup() {
       this.schoolShow = !this.schoolShow
-    }
+    },
+    async getUserInfoByToken() {
+      //const token = window.sessionStorage.getItem('market-token')
+      const { data: re } = await this.$http.get(
+        'private/v1/users/getuserinfo/token'
+      )
+      if (re.code !== 200) {
+        this.$toast('获取用户信息失败，请登陆')
+        window.sessionStorage.removeItem('market-token')
+        this.$router.push({
+          path: '/login',
+          query: {
+            redirect: this.$route.path
+          }
+        })
+      }
+      this.$store.commit('setUserInfo', re.data)
+      this.userInfo = re.data
+    },
   }
 }
 </script>

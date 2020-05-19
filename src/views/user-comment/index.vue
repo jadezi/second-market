@@ -4,13 +4,16 @@
     <div v-for="(item, index) in getCommentList" :key="index">
       <cmt
         v-show="index < 2 || !isMore"
-        :commentChild="getChildCommentList(item.uid)"
+        :commentChild="getChildCommentList(item._id)"
         :comment="item"
         ref="child"
+        :goodId="goodId"
+        :identity="identity"
+        @getComment="toGetNewCommentList()"
       ></cmt>
     </div>
     <div
-      v-show="isMore && getCommentList.length > 1"
+      v-show="isMore && getCommentList.length > 2"
       class="hideContent"
       @click="isMoreBtn"
     >
@@ -23,9 +26,9 @@
     <van-divider v-if="isMore && getCommentList.length > 1" />
     <div v-if="getCommentList.length == 0" class="noreply">
       <div>
-        <img src />
+        <img src="../../assets/img/noreply.png" />
       </div>
-      <div style="margin:0 auto;width:60px;">
+      <div>
         <van-button size="small" type="warning" @click="showPopup">
           留言
         </van-button>
@@ -33,8 +36,8 @@
     </div>
     <van-popup v-model="popup" position="bottom">
       <van-cell-group id="keyboard">
-        <van-field v-model="reply" center clearable placeholder="请输入">
-          <van-button slot="button" size="small" type="primary">
+        <van-field v-model="replyText" center clearable placeholder="请输入">
+          <van-button slot="button" size="small" type="primary" @click="save">
             回复
           </van-button>
         </van-field>
@@ -44,106 +47,25 @@
 </template>
 
 <script>
-import axios from 'axios'
 import cmt from './components/cmt.vue'
 export default {
   data() {
     return {
-      reply: '',
+      id: '',
+      replyText: '',
       popup: false,
       isMore: true,
       fabulousList: [],
       backupCommentList: [],
-      commentList: [
-        // {
-        //   articleId: '',
-        //   objectId: '123',
-        //   commentFloorId: '',
-        //   name: '1',
-        //   replyId: '',
-        //   comment: '第一层',
-        //   fabulous: 2,
-        //   createTime: 1
-        // },
-        // {
-        //   articleId: '',
-        //   objectId: '234',
-        //   commentFloorId: '123',
-        //   replyId: '123',
-        //   name: '2',
-        //   comment:
-        //     '123层回复1232313123124123122131232123层回复1232313123124123122131232123层回复1232313123124123122131232',
-        //   fabulous: 3,
-        //   createTime: 2
-        // },
-        // {
-        //   articleId: '',
-        //   commentFloorId: '123',
-        //   objectId: '345',
-        //   replyId: '234',
-        //   comment: '123层回复234',
-        //   name: '3',
-        //   fabulous: 4,
-        //   createTime: 4
-        // },
-        // {
-        //   articleId: '',
-        //   commentFloorId: '567',
-        //   objectId: '456',
-        //   replyId: '567',
-        //   comment: '567层回复567',
-        //   name: '4',
-        //   fabulous: 5,
-        //   createTime: 3
-        // },
-        // {
-        //   articleId: '',
-        //   commentFloorId: '',
-        //   objectId: '567',
-        //   name: '5',
-        //   replyId: '',
-        //   comment: '567',
-        //   fabulous: 2,
-        //   createTime: 2
-        // },
-        // {
-        //   articleId: '',
-        //   commentFloorId: '123',
-        //   objectId: '000',
-        //   replyId: '123',
-        //   name: '6',
-        //   comment: '123层回复234',
-        //   fabulous: 3,
-        //   createTime: 5
-        // },
-        // {
-        //   articleId: '',
-        //   commentFloorId: '567',
-        //   objectId: '789',
-        //   replyId: '456',
-        //   comment: '567层回复456',
-        //   name: '7',
-        //   fabulous: 4,
-        //   createTime: 1
-        // },
-        // {
-        //   articleId: '',
-        //   commentFloorId: '123',
-        //   objectId: '900',
-        //   replyId: '234',
-        //   comment: '123层回复234',
-        //   name: '8',
-        //   fabulous: 5,
-        //   createTime: 2
-        // }
-      ]
+      commentList: []
     }
   },
+  props: ['goodId', 'identity'],
   components: {
     cmt
   },
   mounted() {
-    console.log(this.$route.params)
+    this.id = this.$store.getters.getUserInfo._id
     this.hideChild()
     this.toGetNewCommentList()
   },
@@ -184,25 +106,13 @@ export default {
       }
       return arr
     },
-    // 提交最新点赞记录
-    updateCommentList() {
-      axios
-        .post('http://127.0.0.1:8080/usr/comment', this.commentList)
-        .then(response => {
-          console.log(response)
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    },
     // 获取评论列表
     async toGetNewCommentList() {
-      let {data:re} = await this.$http.get('private/v1/comment/all', {
+      let { data: re } = await this.$http.get('public/v1/comment/all', {
         params: {
-          did: this.$route.params.shopId
+          did: this.$route.params.id
         }
       })
-      console.log(re)
       if (re.code !== 200) {
         this.commentList = []
         return
@@ -218,6 +128,30 @@ export default {
     },
     hideChild() {
       //this.$refs.child[1].isMoreEnable()
+    },
+    async save() {
+      if (!this.id) {
+        this.$router.push({
+          path: '/login',
+          query: {
+            redirect: this.$route.path
+          }
+        })
+      } else {
+        let { data: re } = await this.$http.post('private/v1/comment/add', {
+          did: this.$route.params.id,
+          content: {
+            uid: this.id,
+            replyId: this.goodId.uid._id,
+            comment: this.replyText,
+            commentFloorId: ''
+          }
+        })
+        if (re.code !== 201) {
+          return this.$toast(re.message)
+        }
+        this.toGetNewCommentList()
+      }
     }
   }
 }
@@ -237,5 +171,11 @@ export default {
 .reply {
   margin-top: 15px;
   margin-left: 45px;
+}
+.noreply {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 20px;
 }
 </style>

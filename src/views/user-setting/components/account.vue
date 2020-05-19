@@ -20,7 +20,7 @@
               <div class="right">
                 <div class="value">
                   <van-uploader :deletable="false" :after-read="afterRead">
-                    <van-image width="50" height="50" :src="userInfo.avatar" />
+                    <van-image width="50" height="50" :src="avatar" />
                   </van-uploader>
                 </div>
                 <van-icon name="arrow" />
@@ -45,20 +45,35 @@ export default {
     return {
       circularLoading: false,
       isLoading: false,
-      userInfo: {}
+      userInfo: {},
+      avatar: '',
+      history: ''
     }
   },
   computed: {},
   watch: {},
   created() {},
-  mounted() {},
+  mounted() {
+    this.userInfo = this.$store.state.userInfo.userInfo
+    this.avatar = this.userInfo.setting.bgImg
+    console.log(this.userInfo)
+  },
   methods: {
     onRefresh() {},
     onClickLeft() {
-      this.$emit('close')
+      this.$router.push(this.$route.query.redirect)
     },
-    afterRead() {}
-
+    async afterRead(file) {
+      let { data:re } = await this.$http.put('private/v1/users/update/bgimg',{
+        id: this.userInfo._id,
+        avatar: file.content
+      })
+      if (re.code !== 200) {
+        return this.$toast(re.message)
+      }
+      this.$toast(re.message)
+      this.avatar = re.data.src
+    }
   }
 }
 </script>

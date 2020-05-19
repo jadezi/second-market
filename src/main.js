@@ -82,7 +82,7 @@ Vue.use(NavBar)
 Vue.use(Field)
 Vue.use(Cell).use(CellGroup)
 Vue.use(Uploader)
-Vue.use(ActionSheet)
+Vue.use(ActionSheet) 
 Vue.use(Area)
 Vue.use(Popup)
 Vue.use(RadioGroup)
@@ -115,15 +115,18 @@ axios.interceptors.request.use(config => {
   } else {
     config.headers['authorization'] = sessionStorage.getItem('market-token')
   }
-  console.log(config)
   return config
 })
 
 axios.interceptors.response.use(res => {
+  console.log(res)
   if (res.data.code == 401) {
     window.sessionStorage.removeItem('market-token')
     window.sessionStorage.removeItem('market-uid')
-    router.push('/login')
+    router.push({
+      path: '/login',
+      query:{redirect:'/'}
+    })
   } else {
     return res
   }

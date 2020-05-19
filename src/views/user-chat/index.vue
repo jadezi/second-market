@@ -1,9 +1,14 @@
 <template>
   <div class="chat-bg">
     <div :class="isScroll">
-      <div class="title">
-        <span>消息</span>
-      </div>
+      <van-nav-bar title="消息" @click-right="notifyPannel">
+        <template #right>
+          <div>
+            <div :class="{ notifyDot: true, 'notifyDot-status': notifyDot }"></div>
+            <van-icon class-prefix="iconfont2 icon" name="shengyinlingsheng-" />
+          </div>
+        </template>
+      </van-nav-bar>
       <van-pull-refresh
         v-model="isLoading"
         @refresh="onRefresh"
@@ -80,16 +85,14 @@
         </van-skeleton>
       </van-pull-refresh>
     </div>
-    <!-- <div>
-      <transition name="van-slide-right">
-        <div v-if="messageFlag" class="contact">
-          <contact @closeMessage="showMessage"></contact>
-        </div>
-      </transition>
-    </div> -->
     <div v-if="circularLoading" class="main">
       <van-loading color="#FF66CC" :size="45" />
     </div>
+    <transition name="van-slide-right">
+      <div class="notifyPannel" v-if="notify">
+        <notification @closeNotify="notifyPannel" ></notification>
+      </div>
+    </transition>
     <tar></tar>
   </div>
 </template>
@@ -100,6 +103,7 @@ import activity from '../../../public/img/activity.jpg'
 import inform from '../../../public/img/inform.gif'
 import message from '../../../public/img/message.jpg'
 import tar from '@/components/tar.vue'
+import notification from './components/notification.vue'
 import { formatDate } from '@/assets/js/date.js'
 export default {
   name: 'message',
@@ -113,6 +117,8 @@ export default {
       loading: true,
       circularLoading: false,
       chat: [],
+      notify: false,
+      notifyDot: true,
       systemImage: [
         {
           name: '活动消息',
@@ -190,6 +196,9 @@ export default {
       }
       //this.loading = !this.loading;
     },
+    setNotifyDotStyle() {
+      this.notifyDot = false
+    },
     async getMessage() {
       try {
         console.log(this.id)
@@ -241,11 +250,17 @@ export default {
         }
       })
       this.$store.commit('setInfo', item)
+    },
+    notifyPannel() {
+      console.log('ok')
+      this.setNotifyDotStyle()
+      this.notify = !this.notify
     }
   },
   components: {
     //acontact,
-    tar
+    tar,
+    notification
   }
 }
 </script>
@@ -270,7 +285,16 @@ export default {
   position: relative;
   right: -60px;
 }
-.dot-status {
+.notifyDot {
+  position: relative;
+  right: -20px;
+  top: 14px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.dot-status,
+.notifyDot-status {
   background-color: red;
 }
 .title {
@@ -373,5 +397,13 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.notifyPannel {
+  position: absolute;
+  top: 0;
+  z-index: 1009;
+  background-color: #f9f9fb;
+  width: 100%;
+  height: calc(100vh);
 }
 </style>

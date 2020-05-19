@@ -323,11 +323,11 @@ export default {
       this.process = val
     },
     analyzeUser() {
-      this.userInfo = JSON.parse(window.sessionStorage.getItem('market-uid'))
+      this.userInfo = this.$store.getters.getUserInfo
     },
     async onRefresh() {
       const { data: re } = await this.$http.get(
-        'private/v1/users/getuserinfo',
+        'public/v1/users/getuserinfo',
         {
           params: {
             id: this.userInfo._id
@@ -342,7 +342,7 @@ export default {
       this.isLoading = false
     },
     onClickLeft() {
-      this.$emit('close')
+      this.$router.push(this.$route.query.redirect)
     },
     showDatePopup() {
       this.dateShow = true

@@ -1,7 +1,7 @@
 <template>
   <div>
     <van-nav-bar
-      title="地址修改"
+      title="新增地址"
       left-text="返回"
       left-arrow
       z-index="200"
@@ -12,7 +12,7 @@
         <div class="name">
           <van-cell-group>
             <van-field
-              v-model="addresses.name"
+              v-model="list.name"
               label="姓名"
               placeholder="收货人姓名"
             />
@@ -21,7 +21,7 @@
         <div class="tel">
           <van-cell-group>
             <van-field
-              v-model="addresses.tel"
+              v-model="list.tel"
               label="电话"
               placeholder="收货人电话"
             />
@@ -30,7 +30,7 @@
         <div class="address">
           <van-cell-group>
             <van-field
-              v-model="addresses.address"
+              v-model="list.address"
               label="收货地点"
               placeholder="收货地点"
             />
@@ -40,85 +40,64 @@
       <div class="func-bg">
         <van-cell-group>
           <van-switch-cell
-            v-model="addresses.isDefault"
+            v-model="list.isDefault"
+            active-color=""
             title="设为默认收货地址"
           />
         </van-cell-group>
       </div>
       <div class="ok-botton">
-        <van-button type="danger" :disabled="disabled" round @click="save">
-          保存
-        </van-button>
+        <van-button type="danger" round @click="onSave">保存</van-button>
       </div>
     </div>
   </div>
 </template>
+
 <script>
+import area from '@/assets/js/address.js'
 export default {
-  name: 'addressEdit',
+  name: 'addressAdd',
   data() {
     return {
-      switch: false,
-      disabled: true,
-      addresses: {
+      area: area,
+      searchResult: [],
+      userInfo: {},
+      list: {
         name: '',
         tel: '',
         address: '',
-        isDefault: false,
-        _id: ''
-      },
-      backup: {}
-    }
-  },
-  watch: {
-    addresses: {
-      deep: true,
-      handler: function(newValue) {
-        if (
-          newValue.name != this.backup.name ||
-          newValue.tel != this.backup.tel ||
-          newValue.address != this.backup.address ||
-          newValue.isDefault != this.backup.isDefault
-        ) {
-          this.disabled = false
-        } else {
-          this.disabled = true
-        }
+        isDefault: false
       }
     }
-  },
-  mounted() {
-    this.addresses.name = this.$store.state.userInfo.address.name
-    this.addresses.tel = this.$store.state.userInfo.address.tel
-    this.addresses.address = this.$store.state.userInfo.address.address
-    this.addresses.isDefault = this.$store.state.userInfo.address.isDefault
-    this.addresses._id = this.$store.state.userInfo.address._id
-    // this.backup = this.addresses
-    this.backup = Object.assign({}, this.addresses)
   },
   methods: {
-    async save() {
-      // 保存数据接口
-      if (
-        this.addresses.name == '' ||
-        this.addresses.tel == '' ||
-        this.addresses.address == ''
-      ) {
-        return this.$toast('请输入信息')
+    async onSave() {
+      this.userInfo = this.$store.getters.getUserInfo
+      if (!this.userInfo._id) {
+        //this.$router.push('/login', { query: { redirect: this.$route.path } })
       }
-      let { data: re } = await this.$http.post(
-        'private/v1/users/address/edit',
-        {
-          uid: this.$store.getters.getUserInfo._id,
-          list: this.addresses
-        }
-      )
+      if (
+        this.list.name == '' ||
+        this.list.tel == '' ||
+        this.list.address == ''
+      ) {
+        return this.$toast('请填写地址信息')
+      }
+      console.log(this.userInfo)
+      let { data: re } = await this.$http.post('private/v1/users/address/add', {
+        list: this.list,
+        id: this.userInfo._id
+      })
+
       if (re.code !== 201) {
         return this.$toast(re.message)
       }
-      this.$toast(re.message)
+      this.$toast('添加地址成功')
       this.$router.push({path:this.$route.query.redirectTo,query:{redirect: this.$route.query.redirect}})
+
+      // api保存新地址
     },
+    onDelete() {},
     onClickLeft() {
       this.$router.push({path:this.$route.query.redirectTo,query:{redirect: this.$route.query.redirect}})
     }

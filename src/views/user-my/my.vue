@@ -1,5 +1,5 @@
 <template>
-  <div class="bg">
+  <div class="bg" v-if="userInfo._id">
     <transition name="van-fade">
       <nav-title v-show="titleVisible" :name="userInfo.sn"></nav-title>
     </transition>
@@ -54,19 +54,13 @@
         |
         <div class="fans">粉丝 {{ userInfo.fans | friendsFilter }}</div>
       </div>
-      <div class="deal" style="margin-top:45px">
-        <div class="buy">已卖出 2</div>
-        |
-        <div class="sale">已购买 2</div>
-      </div>
-      <div class="deal" style="margin-top:45px">
-        <div class="buy">已卖出 2</div>
-        |
-        <div class="sale">已购买 2</div>
+      <div class="all">
+        <van-cell title="卖家中心" is-link to="/deals"/>
+        <van-cell title="买家中心" is-link to="/deals" />
       </div>
     </van-pull-refresh>
     <transition name="van-slide-right">
-      <div class="settingPanel" v-if="settingControl">
+      <div class="settingPanel" v-show="settingControl">
         <setting @close="hiddenSetting"></setting>
       </div>
     </transition>
@@ -112,7 +106,6 @@ export default {
     let token = window.sessionStorage.getItem('market-token')
     if (!token) {
       window.sessionStorage.removeItem('market-token')
-      window.sessionStorage.removeItem('market-uid')
       this.$router.push({
         path: '/login',
         query: {
@@ -120,14 +113,26 @@ export default {
         }
       })
     }
-    this.userInfo = JSON.parse(window.sessionStorage.getItem('market-uid'))
+    this.userInfo = this.$store.getters.getUserInfo
+    // console.log(this.$store)
+    console.log()
     if (!this.userInfo._id) {
       this.getUserInfoByToken()
+      console.log('通过token获取用户信息')
     }
-    console.log(this.userInfo._id)
+    // console.log(this.userInfo._id)
   },
-  mounted() {},
+  mounted() {
+    this.showSetting()
+  },
   methods: {
+    showSetting() {
+      let type = this.$route.query.type
+      if (type) {
+        console.log(this.$refs.setting)
+        this.$refs.setting.setting(type)
+      }
+    },
     async getUserInfoByToken() {
       //const token = window.sessionStorage.getItem('market-token')
       const { data: re } = await this.$http.get(
@@ -142,8 +147,7 @@ export default {
           }
         })
       }
-      window.sessionStorage.setItem('market-uid', JSON.stringify(re.data))
-      // this.userInfo = JSON.parse(window.sessionStorage.getItem('market-uid'))
+      this.$store.commit('setUserInfo', re.data)
       this.userInfo = re.data
     },
     scrollHandle(e) {
@@ -158,28 +162,33 @@ export default {
       return
     },
     async onRefresh() {
-      const { data: re } = await this.$http.get(
-        '/private/v1/users/getuserinfo',
-        {
-          params: {
-            id: this.userInfo._id
+      try {
+        const { data: re } = await this.$http.get(
+          '/public/v1/users/getuserinfo',
+          {
+            params: {
+              id: this.userInfo._id
+            }
           }
+        )
+        console.log(re)
+        if (re.code !== 200) {
+          this.isLoading = false
+          window.sessionStorage.removeItem('market-token')
+          this.$router.push({
+            path: '/login',
+            query: {
+              redirect: this.$route.path
+            }
+          })
         }
-      )
-      console.log(re)
-      if (re.code !== 200) {
         this.isLoading = false
-        window.sessionStorage.removeItem('market-token')
-        window.sessionStorage.removeItem('market-uid')
-        this.$router.push({
-          path: '/login',
-          query: {
-            redirect: this.$route.path
-          }
-        })
+        this.$toast('刷新成功')
+      } catch (err) {
+        console.log(err)
+        this.isLoading = false
+        this.$toast('刷新失败')
       }
-      this.isLoading = false
-      this.$toast('刷新成功')
     },
     toIndex() {
       this.$router.push({
@@ -193,8 +202,8 @@ export default {
       this.settingControl = false
     },
     openSetting() {
-      this.settingControl = true
-      console.log('11')
+      //this.settingControl = true
+      this.$router.push({path: '/user/setting',query:{redirect: this.$route.path}})
     }
   }
 }
@@ -292,5 +301,10 @@ export default {
     width: 50%;
     text-align: center;
   }
+}
+.all {
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0px 1px 5px 0px #00000030;
 }
 </style>

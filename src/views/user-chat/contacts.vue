@@ -192,33 +192,6 @@ export default {
     this.name = user.name
     this.userImg = user.avatar //发送者头像
 
-    // if (!id) {
-    //   window.sessionStorage.removeItem('market-token')
-    //   window.sessionStorage.removeItem('market-uid')
-    //   let path = this.$route.path
-    //   this.$toast('请重新登陆')
-    //   this.$router.push({
-    //     path: '/login',
-    //     query: { type: 'pwd', redirect: path }
-    //   })
-    //   return
-    // }
-    // var message = {
-    //   session: this.session,
-    //   content: {
-    //     text: this.$route.query.message,
-    //     image: '123',
-    //     msgTypeOfImage: false,
-    //     src: '',
-    //     index: 0
-    //   },
-    //   timeStamp: this.$route.query.timeStamp,
-    //   recUid: this.toId,
-    //   sendUid: this.userId,
-    //   readState: '1'
-    // }
-    // this.messageList.push(message)
-    // console.log(this.messageList)
     this.$socket.emit('connect')
   },
   sockets: {
@@ -493,9 +466,11 @@ export default {
 }
 .son-right {
   margin-right: 10px;
+  align-items: flex-end;
 }
 .son-left {
   margin-left: 10px;
+  align-items: flex-start;
 }
 .title {
   font-size: 12px;

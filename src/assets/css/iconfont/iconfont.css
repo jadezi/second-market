@@ -7,8 +7,25 @@
   url('iconfont.svg?t=1584765033328#iconfont') format('svg'); /* iOS 4.1- */
 }
 
+@font-face {font-family: "iconfont2";
+  src: url('iconfont.eot?t=1588082610263'); /* IE9 */
+  src: url('iconfont.eot?t=1588082610263#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('data:application/x-font-woff2;charset=utf-8;base64,d09GMgABAAAAAAMUAAsAAAAABsAAAALFAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHEIGVgCCcAqBQIFDATYCJAMICwYABCAFhG0HPBv1BciemjyBQLYJIrwpVZAHckME1FpVFgz1HiCrk4CSQRJKIAWsgFAeq1OnAMMDK8D/q7ncfIl03ZYoT67IimEvf+G5XMsKFbD7SgKlgB0J0zZAwFz1Cv73iXunvwUUyHznXY5rb5rUBRgHUkB7YxQv4AIJwBvGLniBlwkodFBKGdXc2QOJMntWQFjCtUlILPhlmaWqgnLDxizsEacat8ZHwO7o++GjUFWiUmJXjJ/XNAO1bwqdjLTx/41GAkIABGh7CQn9gEyY3BgfK0Zg9BhFPFYXcKzSwJvC/wdG4ah/nlBmF9cD7SD/mQSe8FG5I8j0ZjAwbtJ7k7qVm645Pm3u46PXibwz0W7F8aeNDz+zi7NHe94Ot1RevOgPmy7NKQ7c3X5/blE8fdoTNzbbX9jw6oC9Snj+HFPfBxltG1lpuw7Hlf+/+ztjbq2+bB7d4rro0c3PB1djzn/k/47uVnRpg/r1G097P+pYVS6qNhNKs2JXryizlUqPryPN9jKbx39rZHEFagH+f9qc+v7P3yhunXg83nDQt2pKBq8fB25G3v+fDXOC6lkdgb8nGNiSDZFtiFkTNKajwWLuqqpQ4H/Y3cT3VHXzW00HVc1v2FnRPkNS1Y2Uaf1QUmcgyqqGotBXy/Y6TQkxQq6hjw2AoJF7RA3cR9LIAynTvlDSwh/KGpVQmBqaHlinRwuTRwqalDSDU4vIpx2buSaZHJd2kTZrToq8KGL0kfB4CINqoJxqIZvEEku8OS0kJUMmHAubwXVkmg66wtFpWqoRKd1yv5813UmddixINpJAJklkBpqyCHHTHDYWdJaSK5/vQjSzTJNER1Odtw8RPLx/FKQKDCC1yO1BTY9yi2eOJkSSGMQIDgtqBuOIyeRAbvM4HZkmqSIToq5yfqcdGypXt1daf7cLCrYmBmdw0mQRsrVFbps85Ge2MgAAAAA=') format('woff2'),
+  url('iconfont.woff?t=1588082610263') format('woff'),
+  url('iconfont.ttf?t=1588082610263') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+  url('iconfont.svg?t=1588082610263#iconfont') format('svg'); /* iOS 4.1- */
+}
+
 .iconfont {
   font-family: "iconfont" !important;
+  font-size: 20px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.iconfont2 {
+  font-family: "iconfont2" !important;
   font-size: 20px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
@@ -31,3 +48,6 @@
   content: "\e603";
 }
 
+.icon-shengyinlingsheng-:before {
+  content: "\e628";
+}

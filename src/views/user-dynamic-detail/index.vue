@@ -5,15 +5,15 @@
         <img width="80%" src="../../assets/img/4042.gif" />
       </div>
       <div class="action">
-        <p class="oops">糟糕！OOPS！</p>
-        <p class="text">{{ error }}</p>
-        <van-button round type="info" to="/">返回首页</van-button>
+        <p class="oops">OOPS!</p>
+        <p class="text">糟糕！ {{ error }}</p>
+        <van-button round type="info" to="/bbs">返回首页</van-button>
       </div>
     </div>
     <div v-else>
       <van-sticky>
         <van-nav-bar
-          title="商品"
+          title="动态"
           left-text="返回"
           left-arrow
           right-text="投诉/举报"
@@ -21,39 +21,39 @@
           @click-right="report"
         />
       </van-sticky>
-      <div class="info" v-if="!goods.goodId == false">
+      <div class="info" v-if="dynamic != ''">
         <div class="userInfo">
           <div class="userImg">
-            <img :src="goods.goodId.uid.avatar" href="#" />
+            <img :src="dynamic.did.author.avatar" href="#" />
           </div>
           <div>
-            <div class="userName">{{ goods.goodId.uid.setting.name }}</div>
-            <div class="pushTime">{{ goods.goodId.createAt | timeFilter }}</div>
+            <div class="userName">{{ dynamic.did.author.setting.name }}</div>
+            <div class="pushTime">{{ dynamic.did.createAt | timeFilter }}</div>
           </div>
-          <div class="identity" v-if="goods.goodId.uid.auth">
+          <!-- <div class="identity" v-if="dynamic.goodId.uid.auth">
             <van-icon name="award-o" size="1.7em" color="#40E0D0" />
             <van-button plain type="info" size="mini" color="#40E0D0">
               实名认证
             </van-button>
-          </div>
-          <div class="identity" v-else>
+          </div> -->
+          <!-- <div class="identity" v-else>
             <van-icon name="award-o" size="1.7em" color="#40E0D0" />
             <van-button plain type="danger" size="mini" color="#40E0D0">
               未实名认证
             </van-button>
-          </div>
+          </div> -->
         </div>
         <van-divider />
-        <div class="priceInfo">
-          <div class="salePrice">￥{{ goods.goodId.summary.saleOfPrice }}</div>
-          <div class="oldPrice">￥{{ goods.goodId.summary.buyOfPrice }}</div>
+        <!-- <div class="priceInfo">
+          <div class="salePrice">￥{{ dynamic.goodId.summary.saleOfPrice }}</div>
+          <div class="oldPrice">￥{{ dynamic.goodId.summary.buyOfPrice }}</div>
           <div class="freeShipping"><van-tag type="danger">包邮</van-tag></div>
-        </div>
+        </div> -->
         <div class="shopContent">
-          <div class="shopText">{{ goods.content }}</div>
+          <div class="shopText">{{ dynamic.content }}</div>
           <div class="shopImage">
             <img
-              v-for="(item, index) in goods.imageGroup"
+              v-for="(item, index) in dynamic.imageGroup"
               :key="index"
               @click="showImage(index)"
               :src="item"
@@ -62,12 +62,7 @@
         </div>
       </div>
       <div class="juli"></div>
-      <cmtParent
-        ref="cmt"
-        v-if="!goods.goodId == false"
-        :goodId="goods.goodId"
-        :identity="identity"
-      ></cmtParent>
+      <cmtParent ref="cmt" :goodId="dynamic.did.author._id" :identity="identity"></cmtParent>
       <div class="bottom-menu">
         <transition name="van-fade">
           <div class="menu" v-if="isReply">
@@ -75,7 +70,7 @@
               <van-icon name="chat-o" size="1.8em" />
               <div class="leaveNote">留言</div>
             </div>
-            <div class="iwant">
+            <!-- <div class="iwant">
               <van-button
                 size="normal"
                 style="height:40px"
@@ -90,12 +85,11 @@
                 style="height:40px"
                 round
                 @click="connect"
-                v-if="!(this.id == this.goods.goodId.uid._id)"
                 color="linear-gradient(to right, #fc9114, #ff2222)"
               >
                 和TA&nbsp;沟通下
               </van-button>
-            </div>
+            </div> -->
           </div>
           <!-- </transition>
       <transition name="van-fade"> -->
@@ -149,9 +143,8 @@
 import { ImagePreview } from 'vant'
 import cmtParent from '@/views/user-comment/index.vue'
 import { differDateFormat } from '@/assets/js/date.js'
-//import axios from 'axios'
 export default {
-  name: 'ShopDetail',
+  name: 'dynamicDetail',
   data() {
     return {
       id: '',
@@ -160,12 +153,12 @@ export default {
       isReply: true,
       isKeyBroad: false,
       replyMessage: '',
-      goods: {},
+      dynamic: {},
       reportShow: false,
       reportText: '',
-      error: '页面没找到',
+      error: '不能访问了',
       show: false,
-      identity: '卖家'
+      identity: '楼主'
     }
   },
   components: {
@@ -187,15 +180,18 @@ export default {
     }
   },
   created() {
+    console.log(this.$route.params.id)
     if (this.$route.params.id) {
       this.access = true
-      this.getGoodsByUserId()
+      this.getDetailsByDynamicId()
     } else {
       this.access = false
     }
   },
   mounted() {
-    this.id = this.$store.getters.getUserInfo._id
+    var u = JSON.parse(window.sessionStorage.getItem('market-uid'))
+    this.$store.commit('setUserInfo', u)
+    this.id = this.$store.state.userInfo.userInfo._id
   },
   methods: {
     async reply() {
@@ -209,14 +205,13 @@ export default {
       } else {
         console.log('=======-=====')
         console.log(this.id)
-        console.log(this.goods.goodId.uid._id)
+        console.log(this.dynamic.did.author._id)
         console.log('=======-=====')
-        // return
         let { data: re } = await this.$http.post('private/v1/comment/add', {
           did: this.$route.params.id,
           content: {
             uid: this.id,
-            replyId: this.goods.goodId.uid._id,
+            replyId: this.dynamic.did.author._id,
             comment: this.replyContent,
             commentFloorId: ''
           }
@@ -227,59 +222,20 @@ export default {
         this.$refs.cmt.toGetNewCommentList()
       }
     },
-    async getGoodsByUserId() {
-      let { data: re } = await this.$http.get('public/v1/details/get', {
+    async getDetailsByDynamicId() {
+      let { data: re } = await this.$http.get('public/v1/dynamic/details', {
         params: {
           id: this.$route.params.id
         }
       })
+      console.log(re)
       if (re.code !== 200) {
         this.error = re.message
         this.access = false
         return this.$toast(re.message)
       }
-      this.goods = re.data
-      console.log(this.goods)
-    },
-    async connect() {
-      if (!this.id) {
-        this.$router.push({
-          path: '/login',
-          query: {
-            redirect: this.$route.path
-          }
-        })
-      } else {
-        if (this.id == this.goods.goodId.uid._id) {
-          return this.$toast('无法与自己建立会话')
-        }
-        let { data: re } = await this.$http.post(
-          '/private/v1/messagelist/add',
-          {
-            uid: this.id,
-            toId: this.goods.goodId.uid._id,
-            name: this.goods.goodId.uid.setting.name,
-            message: '',
-            shopImgUrl: this.goods.imageGroup[0],
-            readState: false
-          }
-        )
-        if (re.code != 201) {
-          return this.$toast(re.message)
-        }
-        this.$router.push({
-          path: '/user/message/contacts',
-          query: {
-            session: '',
-            toId: this.goods.goodId.uid._id,
-            name: this.goods.goodId.uid.setting.name,
-            toUserImgUrl: this.goods.goodId.uid.avatar,
-            message: '',
-            timeStamp: Date.now()
-          }
-        })
-      }
-      //this.$store.commit('setInfo', item)
+      this.dynamic = re.data
+      console.log(this.dynamic)
     },
     report() {
       this.reportShow = true
@@ -314,28 +270,11 @@ export default {
       }
     },
     onClickLeft() {
-      this.$router.push('/')
+      this.$router.push('/bbs')
     },
     replyBtn() {
       this.isReply = !this.isReply
       this.isKeyBroad = !this.isKeyBroad
-    },
-    buy() {
-      if (!this.id) {
-        this.$router.push({
-          path: '/login',
-          query: {
-            redirect: this.$route.path
-          }
-        })
-        return
-      }
-      this.$router.push({
-        path: `/shop/${this.id}/${this.$route.params.id}/order`,
-        query: {
-          redirect: this.$route.path
-        }
-      })
     },
     showImage(pos) {
       ImagePreview({
@@ -387,7 +326,7 @@ export default {
     margin: 15px 0px;
     .salePrice {
       margin-right: 8px;
-      color: #ff0000;
+    color: #ff0000;
       font-size: 20px;
       font-weight: bolder;
     }

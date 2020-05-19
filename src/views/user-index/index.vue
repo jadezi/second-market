@@ -43,7 +43,7 @@
         </div>
         <div class="extends">
           <div class="username">{{ userInfo.setting.name }}</div>
-          <div class="follow"><van-button :loading="loading"  type="warning" :icon="icon" @click="follow">关注</van-button></div>
+          <div class="follow"><van-button :loading="loading" round type="warning" :icon="icon" @click="follow">{{ followText}}</van-button></div>
         </div>
         <div class="label">{{ userInfo.setting.signature }}</div>
         <div class="tags">
@@ -117,7 +117,8 @@ export default {
       // 当前选中的标签栏
       selectTabItem: '销售中',
       // 列表加载是否结束
-      icon: 'star-o',
+      icon: 'plus',
+      followText: '关注',
       loading: false,
       shopList: [],
       // 每次上拉增加加载数量
@@ -192,10 +193,12 @@ export default {
         this.loading = false
         this.count++
       }, 3000)
-      if (this.icon == 'star') {
-        this.icon = 'star-o'
+      if (this.icon == 'plus') {
+        this.icon = 'success'
+        this.followText = '已关注'
       } else {
-        this.icon = 'star'
+        this.icon = 'plus'
+        this.followText = '关注'
       }
     },
     async getUserInfo() {

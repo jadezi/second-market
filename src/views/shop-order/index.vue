@@ -1,6 +1,6 @@
 <template>
   <div class="orderInfo-bg">
-    <van-nav-bar title="订单信息" left-text="返回" left-arrow />
+    <van-nav-bar title="订单信息" left-text="返回" left-arrow @click-left="onClickLeft"/>
     <div class="vheight"></div>
     <van-contact-card
       :type="cardType"
@@ -40,23 +40,15 @@
     </div>
     <van-submit-bar
       v-if="goods != null"
-      :price="Number(goods.goodId.summary.saleOfPrice)*100"
+      :price="Number(goods.goodId.summary.saleOfPrice) * 100"
       button-text="付款"
       @submit="onSubmit"
     />
-
-    <div class="address" v-if="isEdit">
-      <address-edit @closeAdd="closeAdd"></address-edit>
-    </div>
-    <div class="address" v-if="isAdd">
-      <user-address @closeAdd="closeAdd"></user-address>
-    </div>
-    
   </div>
 </template>
 <script>
-import addressEdit from '../user-address/addressEdit.vue'
-import userAddress from '../user-address/address.vue'
+// import addressEdit from '../user-address/addressEdit.vue'
+// import userAddress from '../user-address/addressAdd.vue'
 export default {
   data() {
     return {
@@ -64,29 +56,19 @@ export default {
       chosenContactId: null,
       editingContact: {},
       showList: false,
-      showEdit: false,
-      isEdit: false,
-      isAdd: false,
+      id: '',
+      item: {}, // 选中的收货地址
+      // showEdit: false,
+      // isEdit: false,
+      // isAdd: false,
       goods: {},
-      list: [
-        {
-          id: 0,
-          name: '张三',
-          tel: '13000000000',
-          address: '浙江省杭州市西湖区文三路 138 号东方通信大厦 7 楼 501 室'
-        },
-        {
-          id: 1,
-          name: '李四',
-          tel: '1310000000',
-          address: '浙江省杭州市拱墅区莫干山路 50 号'
-        }
-      ]
+      list: [],
+      default: ''
     }
   },
   components: {
-    addressEdit,
-    userAddress
+    // addressEdit,
+    // userAddress
   },
   computed: {
     cardType() {
@@ -100,10 +82,33 @@ export default {
     }
   },
   mounted() {
+    this.id = this.$store.getters.getUserInfo._id
     this.getGoodsByUserId()
+    this.getAddressList()
     // console.log(this.currentContact)
   },
   methods: {
+    // 地址排序
+    sortList(list) {
+      if (list.length == 0 || this.default == '') {
+        return list
+      }
+      let value = {}
+      for (let j = 0; j < list.length; j++) {
+        list[j].id = list[j]._id
+        list[j].isDefault = false
+      }
+      for (let i = 0; i < list.length; i++) {
+        if (list[i]._id == this.default) {
+          list[i].isDefault = true
+          value = list[i]
+          list.splice(i, 1)
+          break
+        }
+      }
+      list.unshift(value)
+      return list
+    },
     // 添加联系人
     onAdd() {
       this.editingContact = { id: this.list.length }
@@ -112,24 +117,56 @@ export default {
       this.showList = false
       // this.showEdit = true
     },
-
+    async getAddressList() {
+      var userInfo = this.$store.getters.getUserInfo
+      if (!userInfo._id) {
+        this.$router.push({
+          path: '/my'
+        })
+      }
+      let { data: re } = await this.$http.get(
+        '/private/v1/users/address/list',
+        {
+          params: {
+            id: userInfo._id
+          }
+        }
+      )
+      console.log(re)
+      if (re.code != 200) {
+        return (this.list = [])
+      }
+      this.default = re.data.defaultAddress
+      this.list = this.sortList(re.data.addresses)
+      console.log(this.list)
+    },
     // 编辑联系人
     onEdit(item) {
-      this.isEdit = true
-      // this.showEdit = true
+      console.log(item)
       this.isAdd = false
       this.showList = false
-      this.editingContact = item
+      this.$store.commit('setAddress', item)
+      this.$router.push({
+        path: '/user/address/edit',
+        query: { redirectTo: this.$route.path, redirect: this.$route.query.redirect }
+      })
     },
 
     // 选中联系人
-    onSelect(item) {
+    onSelect(item, index) {
       this.showList = false
-      this.chosenContactId = item.id
+      this.chosenContactId = item._id
+      // console.log(item)
+      this.item = item
+      console.log(index)
     },
     closeAdd() {
       this.isAdd = false
       this.isEdit = false
+      this.$router.push({
+        path: '/user/address/add',
+        query: { redirect: this.$route.path }
+      })
     },
     async getGoodsByUserId() {
       let { data: re } = await this.$http.get('public/v1/details/get', {
@@ -145,16 +182,16 @@ export default {
       console.log(this.goods)
     },
     // 保存联系人
-    onSave(info) {
-      this.showEdit = false
-      this.showList = false
-      if (this.isEdit) {
-        this.list = this.list.map(item => (item.id === info.id ? info : item))
-      } else {
-        this.list.push(info)
-      }
-      this.chosenContactId = info.id
-    },
+    // onSave(info) {
+    //   this.showEdit = false
+    //   this.showList = false
+    //   if (this.isEdit) {
+    //     this.list = this.list.map(item => (item.id === info.id ? info : item))
+    //   } else {
+    //     this.list.push(info)
+    //   }
+    //   this.chosenContactId = info.id
+    // },
 
     // 删除联系人
     onDelete(info) {
@@ -164,7 +201,28 @@ export default {
         this.chosenContactId = null
       }
     },
-    onSubmit() {}
+    onClickLeft() {
+      this.$router.push(this.$route.query.redirect)
+    },
+    async onSubmit() {
+      if (this.chosenContactId == null) {
+        return this.$toast('请选择收货地点')
+      }
+      let { data: re } = await this.$http.post('private/v1/deals/add', {
+        goodsId: this.goods.goodId._id,
+        buyId: this.id,
+        saleId: this.goods.goodId.uid._id,
+        address: this.item,
+        price: this.goods.goodId.summary.saleOfPrice,
+        count: 1,
+        status: '付款成功'
+      })
+      console.log(re)
+      if (re.code !== 201) {
+        return this.$toast('订单提交失败')
+      }
+      this.$toast('提交成功')
+    }
   }
 }
 </script>

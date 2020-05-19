@@ -1,6 +1,6 @@
 <template>
   <div class="demo2">
-    <a :href="item.href">
+    <a :href="'#' + item.href">
       <div class="border">
         <div class="img">
           <van-image width="100%" lazy-load :src="item.summary.cover" />

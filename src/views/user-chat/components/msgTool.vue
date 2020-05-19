@@ -1,20 +1,29 @@
 <template>
   <div class="time-stamp-bg">
     <div id="time-stamp" :class="timeStyleFun()">
-      <span>{{ msgTimeStamp | dateFilters }}</span>
+      <span v-if="setbackgroundColor">{{ msgTimeStamp | dateFilters }}</span>
     </div>
   </div>
 </template>
 <script>
 import { formatDate } from '@/assets/js/date.js'
 export default {
-  props: ['msgTimeStamp', 'timeStyle'],
+  props: ['msgTimeStamp', 'timeStyle', 'backgroundColor'],
   methods: {
     timeStyleFun() {
       if (this.timeStyle == 'right') {
         return 'timeRightStyle'
-      } else {
+      } else if (this.timeStyle == 'left') {
         return 'timeleftStyle'
+      } else {
+        return 'timeCenterStyle'
+      }
+    },
+    setbackgroundColor() {
+      if (this.backgroundColor != 'transport') {
+        return 'background-color'
+      } else {
+        return ''
       }
     }
   },
@@ -51,11 +60,13 @@ export default {
   span {
     height: 20px;
     font-size: 14px;
-    background-color: #f2f2f2;
     border-radius: 10px;
     padding: 3px 5px;
     color: #7a7a7a;
     text-align: center;
+  }
+  .background-color {
+    background-color: #f2f2f2;
   }
 }
 .timeRightStyle {
@@ -63,5 +74,8 @@ export default {
 }
 .timeleftStyle {
   justify-content: flex-start;
+}
+.timeCenterStyle {
+  justify-content: center;
 }
 </style>

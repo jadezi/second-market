@@ -2,7 +2,7 @@
   <div class="add-body">
     <div class="head">
       <van-nav-bar
-        title="标题"
+        :title="addTitle"
         left-text="返回"
         left-arrow
         right-text="发布"
@@ -16,7 +16,7 @@
         rows="5"
         autosize
         type="textarea"
-        placeholder="宝贝怎么样"
+        placeholder="怎么样……"
       />
     </div>
     <div class="upload-image">
@@ -38,7 +38,13 @@
         icon="gold-coin-o"
         @click="showPrice"
       />
-      <van-cell title="商品分类" @click="shopGroup" is-link :value="shoptitle" icon="more-o" />
+      <van-cell
+        title="商品分类"
+        @click="shopGroup"
+        is-link
+        :value="shoptitle"
+        icon="more-o"
+      />
     </div>
     <van-action-sheet v-model="priceAction" title="标题" :round="false">
       <div>
@@ -93,7 +99,7 @@
         value="330211"
         @cancel="showMore"
         @confirm="getShopTitle"
-        :columns-num='1'
+        :columns-num="1"
       />
     </van-popup>
   </div>
@@ -110,6 +116,7 @@ export default {
       inputNum: '',
       priceAgo: '',
       priceNow: '',
+      addTitle: '标题',
       freight: '',
       priceInputDistinguish: false,
       priceAction: false,
@@ -143,8 +150,10 @@ export default {
   created() {
     this.type = this.$route.query.type
     if (this.type == 'goods') {
+      this.addTitle = '商品发布'
       this.url = 'private/v1/goods/add'
     } else {
+      this.addTitle = '用户动态发布'
       this.url = 'private/v1/dynamic/add'
     }
     this.id = JSON.parse(window.sessionStorage.getItem('market-uid'))._id
@@ -229,7 +238,7 @@ export default {
     async release() {
       console.log(this.id)
       let query
-      if (this.type != 'goods'){
+      if (this.type != 'goods') {
         query = {
           author: this.id,
           imggroup: this.fileList,
@@ -237,20 +246,26 @@ export default {
           time: Date.now()
         }
       } else {
-        if (this.message==''){
+        if (this.message == '') {
           return this.$toast('请输入描述信息')
         }
-        if(!this.priceAgo || !this.priceNow){
+        if (!this.priceAgo || !this.priceNow) {
           return this.$toast('请输入价格')
         }
-        if (this.fileList.length==0){
+        if (this.fileList.length == 0) {
           return this.$toast('请上传图片')
         }
-        if (this.shoptitle == '请选择商品分类'){
+        if (this.shoptitle == '请选择商品分类') {
           return this.$toast('请选择商品分类')
         }
-        this.shopList.buyPrice = this.priceAgo.substring(1, this.priceAgo.length)
-        this.shopList.salePrice = this.priceNow.substring(1, this.priceNow.length)
+        this.shopList.buyPrice = this.priceAgo.substring(
+          1,
+          this.priceAgo.length
+        )
+        this.shopList.salePrice = this.priceNow.substring(
+          1,
+          this.priceNow.length
+        )
         console.log(this.shopList)
         query = {
           author: this.id,

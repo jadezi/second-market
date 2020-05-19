@@ -17,13 +17,13 @@
           <div class="cell" @click="showSchoolPopup">
             <div class="left">选择学校</div>
             <div class="right">
-              <div class="value">{{ college }}</div>
+              <div class="value">{{ regForm.college }}</div>
               <van-icon name="arrow" />
             </div>
           </div>
-          <van-field v-model="sn" placeholder="请输入学号" />
-          <van-field v-model="pwd1" placeholder="请输入密码" />
-          <van-field v-model="pwd2" placeholder="请确认密码" />
+          <van-field v-model="regForm.sn" placeholder="请输入学号" />
+          <van-field v-model="regForm.pwd1" placeholder="请输入密码" />
+          <van-field v-model="regForm.pwd2" placeholder="请确认密码" />
         </van-cell-group>
         <van-button
           class="reg"
@@ -41,9 +41,9 @@
       <div class="title">
         <h3>账户注册</h3>
       </div>
-      <van-field v-model="mobile" placeholder="请输入手机号" />
+      <van-field v-model="regForm.mobile" placeholder="请输入手机号" />
       <van-field
-        v-model="sms"
+        v-model="regForm.sms"
         center
         clearable
         placeholder="请输入短信验证码"
@@ -79,7 +79,7 @@
       <van-area
         :area-list="areaList"
         :columns-num="1"
-        value="110102"
+        value="4"
         @cancel="showSchoolPopup"
         @confirm="getSchool"
       />
@@ -87,23 +87,26 @@
   </div>
 </template>
 <script>
-import school from '@/assets/js/school.js'
+import school from '@/assets/js/region.js'
 export default {
   name: 'register',
   components: {},
   props: {},
   data() {
     return {
-      sn: '',
-      pwd1: '',
-      pwd2: '',
+      regForm: {
+        sn: '',
+        pwd1: '',
+        pwd2: '',
+        college: '',
+        mobile: '',
+        sms: '',
+        region: '' //学校代码
+      },
       loading: false,
       telFlag: true,
       areaList: school,
       schoolShow: false,
-      mobile: '',
-      sms: '',
-      college: '',
       leftText: '注册',
       attcode: true, //点击获取验证码按钮判断
       showbtn: true, // 展示获取验证码或倒计时按钮判断
@@ -114,7 +117,7 @@ export default {
   },
   computed: {},
   watch: {
-    mobile: function(value) {
+    'regForm.mobile': function(value) {
       var reg = /\b1[3456789]\d{9}\b/g
       let val = reg.test(value)
       if (val) {
@@ -154,7 +157,8 @@ export default {
     },
     getSchool(obj) {
       console.log(obj)
-      this.college = obj[0].name
+      this.regForm.region = obj[0].code
+      this.regForm.college = obj[0].name
       this.schoolShow = false
     },
     showSchoolPopup() {
@@ -163,39 +167,40 @@ export default {
     async reg() {
       this.loading = true
       const { data: re } = await this.$http.post('/public/v1/users/reg', {
-        sn: this.sn,
-        name: this.sn,
-        password: this.pwd1,
-        tel: this.mobile,
+        sn: this.regForm.sn,
+        password: this.regForm.pwd1,
+        tel: this.regForm.mobile,
+        name: this.regForm.sn,
         email: '',
         createAt: Date.now(),
         lastLoginAt: Date.now(),
         setting: {
-          college: this.college
+          college: this.regForm.college,
+          region: this.regForm.region,
+          name: this.regForm.sn
         }
       })
       console.log(re)
       if (re.code !== 201) {
-        this.$toast(re.message)
+        this.loading = false
+        return this.$toast(re.message)
       }
       window.sessionStorage.setItem('market-token', 'Bearer ' + re.data)
-      //window.sessionStorage.setItem('market-uid', JSON.stringify(re.data))
-      // this.$store.commit('setUserInfo', re.data)
       this.$toast(re.message)
       this.loading = false
       this.$router.push(this.$route.query.redirect)
     },
     next() {
-      if (!this.college) {
+      if (!this.regForm.college) {
         return this.$toast('请选择学校！')
       }
-      if (!this.sn) {
+      if (!this.regForm.sn) {
         return this.$toast('请输入学号')
       }
-      if (!this.pwd1 && !this.pwd2) {
+      if (!this.regForm.pwd1 && !this.regForm.pwd2) {
         return this.$toast('密码不能为空')
       }
-      if (this.pwd1 != this.pwd2) {
+      if (this.regForm.pwd1 != this.regForm.pwd2) {
         return this.$toast('密码不一致')
       }
       this.leftText = '上一步'

@@ -10,7 +10,7 @@ import Comment from '@/views/user-comment/index.vue'
 import ShopDetail from '@/views/shop-detail/index.vue'
 import OrderInfo from '@/views/shop-order/index.vue'
 import addressEdit from '@/views/user-address/addressEdit.vue'
-import address from '@/views/user-address/address.vue'
+import addressAdd from '@/views/user-address/addressAdd.vue'
 import Contacts from '@/views/user-chat/contacts.vue'
 import login from '@/views/user-login/login.vue'
 import register from '@/views/user-register/register.vue'
@@ -19,7 +19,12 @@ import BBS from '@/views/user-bbs/index.vue'
 import My from '@/views/user-my/my.vue'
 import Deal from '@/views/user-deal/index.vue'
 import Setting from '@/views/user-setting/setting.vue'
+import Account from '@/views/user-setting/components/account.vue'
+import AddressList from '@/views/user-setting/components/addressList.vue'
+import UserInfo from '@/views/user-setting/components/userInfo.vue'
+import NotFound from '@/views/404/index.vue'
 import VueSocketIO from 'vue-socket.io'
+import DynamicDetail from '@/views/user-dynamic-detail/index.vue'
 import SocketIO from 'socket.io-client'
 import 'nprogress/nprogress.css'
 
@@ -71,12 +76,17 @@ const routes = [
     component: Comment
   },
   {
-    path: '/detail/:shopId',
+    path: '/detail/:id',
     name: 'shopDetail',
     component: ShopDetail
   },
   {
-    path: '/deal',
+    path: '/dynamic/detail/:id',
+    name: 'DynamicDetail',
+    component: DynamicDetail
+  },
+  {
+    path: '/deals',
     name: 'deal',
     component: Deal
   },
@@ -86,14 +96,14 @@ const routes = [
     component: OrderInfo
   },
   {
-    path: '/user/shop/:userId/:shopId/order/addressEdit',
+    path: '/user/address/edit',
     name: 'addressEdit',
     component: addressEdit
   },
   {
-    path: '/user/address',
-    name: 'address',
-    component: address
+    path: '/user/address/add',
+    name: 'addressAdd',
+    component: addressAdd
   },
   {
     path: '/bbs',
@@ -120,6 +130,30 @@ const routes = [
     }
   },
   {
+    path: '/user/setting/address',
+    name: 'AddressList',
+    component: AddressList,
+    meta: {
+      requireAuth: true
+    }
+  },
+  {
+    path: '/user/setting/account',
+    name: 'account',
+    component: Account,
+    meta: {
+      requireAuth: true
+    }
+  },
+  {
+    path: '/user/setting/userinfo',
+    name: 'userinfo',
+    component: UserInfo,
+    meta: {
+      requireAuth: true
+    }
+  },
+  {
     path: '/login',
     name: 'login',
     component: login
@@ -128,6 +162,14 @@ const routes = [
     path: '/register',
     name: 'register',
     component: register
+  },
+  {
+    path: '*',
+    name: 'NotFound',
+    component: NotFound,
+    meta: {
+      redirect: true
+    }
   }
 ]
 
@@ -152,7 +194,7 @@ router.beforeEach((to, from, next) => {
         next()
         Vue.use(
           new VueSocketIO({
-            connection: SocketIO('http://127.0.0.1:5000'),
+            connection: SocketIO('http://localhost:5000'),
             debug: true
           })
         )
@@ -164,7 +206,14 @@ router.beforeEach((to, from, next) => {
       })
     }
   } else {
+    // if (to.path === '/login') {
+    //   next({
+    //     path: '/login',
+    //     query: { type: 'pwd', redirect: to.fullPath } // 将跳转的路由path作为参数，登录成功后跳转到该路由
+    //   })
+    // } else {
     next()
+    // }
   }
 })
 

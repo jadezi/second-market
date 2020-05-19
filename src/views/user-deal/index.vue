@@ -82,7 +82,7 @@ export default {
   mounted() {},
   methods: {
     onClickLeft() {
-      this.$router.push('/')
+      this.$router.push('/my')
     },
     onRefresh() {
       this.isLoading = true

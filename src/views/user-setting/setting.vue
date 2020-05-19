@@ -9,14 +9,14 @@
         <van-cell title="账户设置" is-link @click="showAccount" />
       </van-cell-group>
       <van-cell-group>
-        <van-cell title="黑名单" is-link to="index" />
+        <van-cell title="地址管理" is-link @click="showAddressList" />
+      </van-cell-group>
+      <van-cell-group>
+        <van-cell title="黑名单" is-link to="/user/setting/blacklist" />
         <van-cell title="隐私" is-link to="index" />
         <van-cell title="安全中心" is-link to="index" />
       </van-cell-group>
-      <van-cell-group>
-        <van-cell title="" is-link to="index" />
-        <van-cell title="路由跳转" is-link to="index" />
-      </van-cell-group>
+      
       <!-- <van-cell-group> -->
       <van-cell style="background-color:#f4f5f9">
         <van-button type="warning" block @click="exit">退出账户</van-button>
@@ -24,57 +24,40 @@
       <!-- </van-cell-group> -->
     </div>
 
-    <transition name="van-slide-right">
-      <div class="userInfo" v-if="userInfoControl">
-        <user-info @close="hiddenUserInfo"></user-info>
-      </div>
-    </transition>
-    <transition name="van-slide-right">
-      <div class="account" v-if="AccountControl">
-        <account @close="hiddenAccount"></account>
-      </div>
-    </transition>
   </div>
 </template>
 <script>
-import userInfo from './components/userInfo.vue'
-import account from './components/account.vue'
 export default {
   name: 'setting',
-  components: {
-    userInfo,
-    account
-  },
+  components: {},
   props: {},
   data() {
-    return {
-      userInfoControl: false,
-      AccountControl: false
-    }
+    return {}
   },
   computed: {},
   watch: {},
   created() {},
-  mounted() {},
+  mounted() {
+    // this.showSetting()
+  },
   methods: {
-    hiddenUserInfo() {
-      this.userInfoControl = false
-    },
     showUserInfo() {
-      this.userInfoControl = true
-    },
-    hiddenAccount() {
-      this.AccountControl = false
+      // this.userInfoControl = true
+      this.$router.push({path:'/user/setting/userinfo',query:{redirect: this.$route.path}})
     },
     showAccount() {
-      this.AccountControl = true
+      this.$router.push({path:'/user/setting/account',query:{redirect: this.$route.path}})
+      // this.accountControl = true
+    },
+    showAddressList() {
+      // this.addressListControl = true
+      this.$router.push({path:'/user/setting/address',query:{redirect: this.$route.path}})
     },
     onClickLeft() {
-      this.$emit('close')
+      this.$router.push('/my')
     },
     exit() {
       window.sessionStorage.removeItem('market-token')
-      window.sessionStorage.removeItem('market-uid')
       this.$router.push('/')
     }
   }
