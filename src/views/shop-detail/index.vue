@@ -203,7 +203,8 @@ export default {
         this.$router.push({
           path: '/login',
           query: {
-            redirect: this.$route.path
+            redirect: this.$route.path,
+            type: 'pwd'
           }
         })
       } else {
@@ -212,7 +213,7 @@ export default {
         console.log(this.goods.goodId.uid._id)
         console.log('=======-=====')
         // return
-        let { data: re } = await this.$http.post('private/v1/comment/add', {
+        let { data: re } = await this.$http.post('private/comment/add', {
           did: this.$route.params.id,
           content: {
             uid: this.id,
@@ -225,10 +226,11 @@ export default {
           return this.$toast(re.message)
         }
         this.$refs.cmt.toGetNewCommentList()
+        this.isReply = !this.isReply
       }
     },
     async getGoodsByUserId() {
-      let { data: re } = await this.$http.get('public/v1/details/get', {
+      let { data: re } = await this.$http.get('public/details/get', {
         params: {
           id: this.$route.params.id
         }
@@ -254,7 +256,7 @@ export default {
           return this.$toast('无法与自己建立会话')
         }
         let { data: re } = await this.$http.post(
-          '/private/v1/messagelist/add',
+          'private/messagelist/add',
           {
             uid: this.id,
             toId: this.goods.goodId.uid._id,

@@ -151,12 +151,12 @@ export default {
     this.type = this.$route.query.type
     if (this.type == 'goods') {
       this.addTitle = '商品发布'
-      this.url = 'private/v1/goods/add'
+      this.url = 'private/goods/add'
     } else {
       this.addTitle = '用户动态发布'
-      this.url = 'private/v1/dynamic/add'
+      this.url = 'private/dynamic/add'
     }
-    this.id = JSON.parse(window.sessionStorage.getItem('market-uid'))._id
+    this.id = this.$store.getters.getUserInfo._id
   },
   methods: {
     showMore() {

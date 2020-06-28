@@ -54,7 +54,7 @@ export default {
   watch: {},
   created() {},
   mounted() {
-    this.userInfo = this.$store.state.userInfo.userInfo
+    this.userInfo = this.$store.getters.getUserInfo
     this.avatar = this.userInfo.setting.bgImg
     console.log(this.userInfo)
   },
@@ -64,7 +64,7 @@ export default {
       this.$router.push(this.$route.query.redirect)
     },
     async afterRead(file) {
-      let { data:re } = await this.$http.put('private/v1/users/update/bgimg',{
+      let { data: re } = await this.$http.put('private/users/update/bgimg', {
         id: this.userInfo._id,
         avatar: file.content
       })

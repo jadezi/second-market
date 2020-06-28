@@ -12,9 +12,30 @@
         @focus="toSearchDetail"
       ></van-search>
     </div>
-    <div class="qrcode">扫码</div>
+    <div class="qrcode"><van-icon name="scan" @click="scan" /></div>
   </div>
 </template>
+
+<script>
+export default {
+  name: 'search',
+  data() {
+    return {
+      value: '手机'
+    }
+  },
+  methods: {
+    toSearchDetail() {
+      //this.$router.replace("/search");
+      this.$emit('openSearch')
+    },
+    scan() {
+      this.$router.push('/scan')
+    }
+  }
+}
+</script>
+
 <style scoped>
 * {
   margin: 0;
@@ -33,21 +54,11 @@
   background-color: #fff;
   height: 54px;
   line-height: 54px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.van-icon-scan {
+  font-size: 30px;
 }
 </style>
-<script>
-export default {
-  name: 'search',
-  data() {
-    return {
-      value: '热搜'
-    }
-  },
-  methods: {
-    toSearchDetail() {
-      //this.$router.replace("/search");
-      this.$emit('openSearch')
-    }
-  }
-}
-</script>

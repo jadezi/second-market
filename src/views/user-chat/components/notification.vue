@@ -48,7 +48,7 @@ export default {
     },
     async getNotify() {
       this.infos = []
-      let { data: re } = await this.$http.get('private/v1/notification/get', {
+      let { data: re } = await this.$http.get('private/notification/get', {
         params: {
           college: 4,
           type: this.type

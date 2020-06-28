@@ -18,13 +18,16 @@ import userUI from '@/views/user-index/index.vue'
 import BBS from '@/views/user-bbs/index.vue'
 import My from '@/views/user-my/my.vue'
 import Deal from '@/views/user-deal/index.vue'
+import SaleCenter from '@/views/user-sale-center/saleCenter.vue'
 import Setting from '@/views/user-setting/setting.vue'
 import Account from '@/views/user-setting/components/account.vue'
 import AddressList from '@/views/user-setting/components/addressList.vue'
 import UserInfo from '@/views/user-setting/components/userInfo.vue'
 import NotFound from '@/views/404/index.vue'
+import Receipt from '@/components/receipt.vue'
 import VueSocketIO from 'vue-socket.io'
 import DynamicDetail from '@/views/user-dynamic-detail/index.vue'
+import scan from '@/views/user-device/scan.vue'
 import SocketIO from 'socket.io-client'
 import 'nprogress/nprogress.css'
 
@@ -35,6 +38,11 @@ const routes = [
     path: '/',
     name: 'index',
     component: index
+  },
+  {
+    path: '/scan',
+    name: 'scan',
+    component: scan
   },
   {
     path: '/search',
@@ -89,6 +97,19 @@ const routes = [
     path: '/deals',
     name: 'deal',
     component: Deal
+  },
+  {
+    path: '/deals/:id',
+    name: 'receipt',
+    component: Receipt,
+    meta: {
+      requireAuth: true
+    }
+  },
+  {
+    path: '/saleCenter',
+    name: 'saleCenter',
+    component: SaleCenter
   },
   {
     path: '/shop/:userId/:shopId/order',

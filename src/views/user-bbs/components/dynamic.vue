@@ -266,7 +266,7 @@ export default {
     },
     async like(did) {
       this.id = this.$store.getters.getUserInfo._id
-      let { data: re } = await this.$http.put('private/v1/dynamic/like',{
+      let { data: re } = await this.$http.put('private/dynamic/like',{
         id: did,
         user: this.id
       })
@@ -278,7 +278,7 @@ export default {
       this.liked = !this.liked
     },
     async push() {
-      let { data: re } = await this.$http.post('private/v1/dynamic/forward', {
+      let { data: re } = await this.$http.post('private/dynamic/forward', {
         author: this.id,
         summary: this.summary,
         text: this.forwardValue,

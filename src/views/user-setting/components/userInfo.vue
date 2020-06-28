@@ -327,7 +327,7 @@ export default {
     },
     async onRefresh() {
       const { data: re } = await this.$http.get(
-        'public/v1/users/getuserinfo',
+        'public/users/getuserinfo',
         {
           params: {
             id: this.userInfo._id
@@ -407,7 +407,7 @@ export default {
     async push() {
       this.circularLoading = true
 
-      let { data: re } = await this.$http.put('/private/v1/users/update', {
+      let { data: re } = await this.$http.put('/private/users/update', {
         id: this.userInfo._id,
         avatar: this.avatar,
         setting: this.userInfo.setting

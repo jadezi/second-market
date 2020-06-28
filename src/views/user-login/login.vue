@@ -21,7 +21,7 @@
             </div>
           </div>
           <van-field v-model="sn" label="学号" placeholder="请输入学号" />
-          <van-field v-model="password" label="密码" placeholder="密码" />
+          <van-field v-model="password" type="password" label="密码" placeholder="密码" />
         </van-cell-group>
         <van-button class="login" type="primary" block round @click="pwdLogin">
           登陆
@@ -113,11 +113,11 @@ export default {
     } else {
       this.getUserInfoByToken()
     }
-    if (this.$route.query.redirect) {
-      this.$router.push(this.$route.query.redirect)
-    } else {
-      this.$router.push('/')
-    }
+    // if (this.$route.query.redirect) {
+    //   this.$router.push(this.$route.query.redirect)
+    // } else {
+    //   this.$router.push('/')
+    // }
   },
   mounted() {},
   methods: {
@@ -132,7 +132,7 @@ export default {
     },
     async pwdLogin() {
       if (this.sn && this.password) {
-        const { data: re } = await this.$http.post('public/v1/users/login', {
+        const { data: re } = await this.$http.post('public/users/login', {
           sn: this.sn,
           password: this.password,
           college: this.college
@@ -170,7 +170,6 @@ export default {
           return this.$toast(re.message)
         }
         window.sessionStorage.setItem('market-token', 'Bearer ' + re.data.token)
-        window.sessionStorage.setItem('market-uid', JSON.stringify(re.data))
         this.$store.commit('setUserInfo', re.data)
         console.log(re)
         this.$router.push(this.$route.query.redirect)
@@ -208,7 +207,7 @@ export default {
     async getUserInfoByToken() {
       //const token = window.sessionStorage.getItem('market-token')
       const { data: re } = await this.$http.get(
-        'private/v1/users/getuserinfo/token'
+        'private/users/getuserinfo/token'
       )
       if (re.code !== 200) {
         this.$toast('获取用户信息失败，请登陆')
@@ -222,7 +221,12 @@ export default {
       }
       this.$store.commit('setUserInfo', re.data)
       this.userInfo = re.data
-    },
+      if (this.$route.query.redirect) {
+        this.$router.push(this.$route.query.redirect)
+      } else {
+        this.$router.push('/')
+      }
+    }
   }
 }
 </script>

@@ -3,7 +3,7 @@
     <div>
       <div class="content">
         <div class="user-log">
-          <img :src="item.uid.avatar" href="#" />
+          <a :href="`#/user/${item.uid._id}/index`"><img :src="item.uid.avatar"  /></a>
         </div>
         <div class="msg">
           <div class="msg-top">
@@ -44,7 +44,7 @@
           <div v-show="indexC < 1 || !isMore">
             <div class="content">
               <div class="reply-user-log">
-                <img :src="itemC.uid.avatar" href="#" />
+                 <a :href="`#/user/${item.uid._id}/index`"><img :src="item.uid.avatar"  /></a>
               </div>
               <div class="msg">
                 <div class="msg-top">
@@ -192,10 +192,9 @@ export default {
     async addFabulous(cid) {
       if (!this.id) {
         this.$toast('请登录')
-        // this.$router.push({ path: '/login', redirect: this.$route.fullPath })
         return
       }
-      let { data: re } = await this.$http.put('private/v1/comment/like', {
+      let { data: re } = await this.$http.put('private/comment/like', {
         id: this.goodId._id,
         user: this.id,
         cid: cid
@@ -204,14 +203,18 @@ export default {
         return this.$toast(re.message)
       }
       this.$toast(re.message)
+      this.$emit('getComment')
     },
     // 点赞后更改样式
     likeActive(like) {
-      if (typeof like != Array || like.length == 0) {
+      console.log('点赞样式')
+      console.log(typeof like)
+      if (like.length == 0) {
         return false
       }
       like.forEach(item => {
         if (item == this.id) {
+          console.log(item)
           return true
         }
       })
@@ -224,7 +227,7 @@ export default {
         return
       }
       this.popup = false
-      let { data: re } = await this.$http.post('private/v1/comment/add', {
+      let { data: re } = await this.$http.post('private/comment/add', {
         did: this.$route.params.id,
         content: {
           uid: this.id,

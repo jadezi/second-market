@@ -1,13 +1,13 @@
 <template>
   <div class="bg">
-    <van-sticky>
-      <van-nav-bar
-        title="商品"
-        left-text="返回"
-        left-arrow
-        @click-left="onClickLeft"
-      />
-    </van-sticky>
+     <van-sticky>
+        <van-nav-bar
+          title="商品"
+          left-text="返回"
+          left-arrow
+          @click-left="onClickLeft"
+        />
+      </van-sticky>
     <van-tabs sticky swipeable @click="setTabChecked">
       <van-tab
         v-for="titleItem in dealTitleItems"
@@ -37,13 +37,7 @@
             <img class="doge" src="../../../public/img/loadingindex.gif" />
           </template>
           <div v-for="item in deals" :key="item._id">
-            <keep-alive>
-            <deal-list
-              :deals="item"
-              ref="shopload"
-              :selectTabItem="selectTabItem"
-            ></deal-list>
-            </keep-alive>
+            <deal-list ref="shopload" :deals="item" :selectTabItem="selectTabItem"></deal-list>
           </div>
         </van-pull-refresh>
       </van-tab>
@@ -53,7 +47,7 @@
 <script>
 import dealList from '@/components/dealList.vue'
 export default {
-  name: 'deal',
+  name: 'saleCenter',
   components: { dealList },
   props: {},
   data() {
@@ -67,18 +61,22 @@ export default {
           params: 'all'
         },
         {
-          title: '已购买',
+          title: '已卖出',
           index: 1,
           params: 'buy'
         },
         {
-          title: '待收货',
+          title: '售卖中',
           index: 2,
+          params: 'sale'
+        },
+        {
+          title: '收货待确认',
+          index: 3,
           params: 'receipt'
         }
       ],
-      deals: {},
-      status: ''
+      deals: {}
     }
   },
   computed: {},
@@ -93,6 +91,7 @@ export default {
     },
     onRefresh() {
       this.isLoading = true
+      this.getDeals()
       this.$toast('刷新成功')
       this.isLoading = false
     },
@@ -109,19 +108,22 @@ export default {
     async getDeals() {
       if (this.selectTabItem == '全部订单') {
         this.status = ''
-      } else if (this.selectTabItem == '已购买') {
+      } else if (this.selectTabItem == '已卖出') {
         this.status = '交易完成'
-      } else if (this.selectTabItem == '待收货') {
+      } else if (this.selectTabItem == '销售中') {
+        this.status = '销售中'
+      } else if (this.selectTabItem == '收货待确认') {
         this.status = '已付款'
       }
-      let { data: re } = await this.$http.get('private/deals/orders/buy', {
+      console.log(this.selectTabItem)
+      let { data: re } = await this.$http.get('private/deals/orders/sale', {
         params: {
           id: this.$store.getters.getUserInfo._id,
           status: this.status
         }
       })
       if (re.code !== 200) {
-        this.deals = {}
+        this.deals = []
         return this.$toast('订单信息获取失败')
       }
       this.deals = re.data

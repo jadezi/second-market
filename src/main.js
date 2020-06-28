@@ -82,7 +82,7 @@ Vue.use(NavBar)
 Vue.use(Field)
 Vue.use(Cell).use(CellGroup)
 Vue.use(Uploader)
-Vue.use(ActionSheet) 
+Vue.use(ActionSheet)
 Vue.use(Area)
 Vue.use(Popup)
 Vue.use(RadioGroup)
@@ -104,9 +104,10 @@ Vue.use(CountDown)
 Vue.use(Form)
 Vue.use(Progress)
 Vue.use(DatetimePicker)
+
 Vue.config.productionTip = false
 
-axios.defaults.baseURL = 'http://localhost:8088/api/'
+axios.defaults.baseURL = 'http://localhost:8088/api/v1/'
 
 axios.interceptors.request.use(config => {
   var pattern = new RegExp('public')
@@ -122,10 +123,10 @@ axios.interceptors.response.use(res => {
   console.log(res)
   if (res.data.code == 401) {
     window.sessionStorage.removeItem('market-token')
-    window.sessionStorage.removeItem('market-uid')
+    // window.sessionStorage.removeItem('market-uid')
     router.push({
       path: '/login',
-      query:{redirect:'/'}
+      query: { redirect: '/' }
     })
   } else {
     return res
@@ -135,7 +136,6 @@ axios.interceptors.response.use(res => {
 axios.defaults.timeout = 6000
 
 Vue.prototype.$http = axios
-
 new Vue({
   router,
   store,

@@ -108,7 +108,7 @@ export default {
     },
     // 获取评论列表
     async toGetNewCommentList() {
-      let { data: re } = await this.$http.get('public/v1/comment/all', {
+      let { data: re } = await this.$http.get('public/comment/all', {
         params: {
           did: this.$route.params.id
         }
@@ -138,7 +138,7 @@ export default {
           }
         })
       } else {
-        let { data: re } = await this.$http.post('private/v1/comment/add', {
+        let { data: re } = await this.$http.post('private/comment/add', {
           did: this.$route.params.id,
           content: {
             uid: this.id,

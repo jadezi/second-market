@@ -54,7 +54,7 @@ export default {
     },
      async getInfo() {
       try {
-        const { data: res } = await this.$http.get('private/v1/dynamic/get', {
+        const { data: res } = await this.$http.get('private/dynamic/get', {
           params: {
             id: this.id
           }

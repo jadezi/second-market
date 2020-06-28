@@ -11,7 +11,7 @@
         <van-icon name="user-o" slot="right" />
       </van-nav-bar>
     </div>
-    <div class="hide" style="padding-top:55px"></div>
+    <!-- <div class="hide" style="padding-top:55px"></div> -->
     <!-- <van-list
       v-model="loading"
       :error.sync="error"
@@ -187,7 +187,7 @@ export default {
     this.toId = this.$route.query.toId
     this.session = this.$route.query.session
     this.toUserImg = this.$route.query.toUserImgUrl //接受者头像
-    let user = JSON.parse(window.sessionStorage.getItem('market-uid'))
+    let user = this.$store.getters.getUserInfo
     this.userId = user._id //发送者id
     this.name = user.name
     this.userImg = user.avatar //发送者头像

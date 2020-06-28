@@ -62,7 +62,11 @@
         </div>
       </div>
       <div class="juli"></div>
-      <cmtParent ref="cmt" :goodId="dynamic.did.author._id" :identity="identity"></cmtParent>
+      <cmtParent
+        ref="cmt"
+        :goodId="dynamic.did.author._id"
+        :identity="identity"
+      ></cmtParent>
       <div class="bottom-menu">
         <transition name="van-fade">
           <div class="menu" v-if="isReply">
@@ -189,9 +193,11 @@ export default {
     }
   },
   mounted() {
-    var u = JSON.parse(window.sessionStorage.getItem('market-uid'))
-    this.$store.commit('setUserInfo', u)
-    this.id = this.$store.state.userInfo.userInfo._id
+    // var u = JSON.parse(window.sessionStorage.getItem('market-uid'))
+
+    // this.$store.commit('setUserInfo', u)
+    this.id = this.$store.getters.getUserInfo._id
+    // this.id = this.$store.state.userInfo.userInfo._id
   },
   methods: {
     async reply() {
@@ -199,7 +205,8 @@ export default {
         this.$router.push({
           path: '/login',
           query: {
-            redirect: this.$route.path
+            redirect: this.$route.path,
+            type: 'pwd'
           }
         })
       } else {
@@ -207,7 +214,7 @@ export default {
         console.log(this.id)
         console.log(this.dynamic.did.author._id)
         console.log('=======-=====')
-        let { data: re } = await this.$http.post('private/v1/comment/add', {
+        let { data: re } = await this.$http.post('private/comment/add', {
           did: this.$route.params.id,
           content: {
             uid: this.id,
@@ -223,7 +230,7 @@ export default {
       }
     },
     async getDetailsByDynamicId() {
-      let { data: re } = await this.$http.get('public/v1/dynamic/details', {
+      let { data: re } = await this.$http.get('public/dynamic/details', {
         params: {
           id: this.$route.params.id
         }
@@ -252,15 +259,12 @@ export default {
         if (!this.reportText) {
           return this.$toast('请输入投诉理由')
         }
-        let { data: re } = await this.$http.post(
-          'private/v1/complaint/report',
-          {
-            url: `http://localhost:8080/#${this.$route.path}`,
-            complainant: this.id,
-            respondent: this.goods.goodId.uid._id,
-            reason: this.reportText
-          }
-        )
+        let { data: re } = await this.$http.post('private/complaint/report', {
+          url: `http://localhost:8080/#${this.$route.path}`,
+          complainant: this.id,
+          respondent: this.dynamic.did.author._id,
+          reason: this.reportText
+        })
         if (re.code != 201) {
           return this.$toast(re.message)
         }
@@ -326,7 +330,7 @@ export default {
     margin: 15px 0px;
     .salePrice {
       margin-right: 8px;
-    color: #ff0000;
+      color: #ff0000;
       font-size: 20px;
       font-weight: bolder;
     }

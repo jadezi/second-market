@@ -166,7 +166,7 @@ export default {
     },
     async reg() {
       this.loading = true
-      const { data: re } = await this.$http.post('/public/v1/users/reg', {
+      const { data: re } = await this.$http.post('/public/users/reg', {
         sn: this.regForm.sn,
         password: this.regForm.pwd1,
         tel: this.regForm.mobile,

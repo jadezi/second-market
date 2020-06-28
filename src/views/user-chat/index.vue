@@ -142,11 +142,10 @@ export default {
     }
   },
   mounted() {
-    this.id = JSON.parse(window.sessionStorage.getItem('market-uid'))._id
+    this.id = this.$store.getters.getUserInfo._id
     console.log(this.id)
     if (!this.id) {
       window.sessionStorage.removeItem('market-token')
-      window.sessionStorage.removeItem('market-uid')
       let path = this.$route.path
       this.$toast('请重新登陆')
       this.$router.push({
@@ -173,7 +172,7 @@ export default {
   methods: {
     async del(toId) {
       let { data: re } = await this.$http.delete(
-        '/private/v1/messagelist/delete',
+        '/private/messagelist/delete',
         {
           data: {
             uid: this.id,
@@ -204,7 +203,7 @@ export default {
         console.log(this.id)
         this.circularLoading = true
         const { data: re } = await this.$http.get(
-          'private/v1/messagelist/getall',
+          'private/messagelist/getall',
           {
             params: {
               id: this.id

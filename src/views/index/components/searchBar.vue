@@ -40,10 +40,10 @@ export default {
   name: 'searchBar',
   data() {
     return {
-      searchVoc: '123',
+      searchVoc: '手机',
       selected: 0,
-      goodsUrl: 'public/v1/goods/search',
-      usersUrl: 'public/v1/users/search',
+      goodsUrl: 'public/goods/search',
+      usersUrl: 'public/users/search',
       url: 'public/v1/goods/search',
       empty: false,
       error: '',

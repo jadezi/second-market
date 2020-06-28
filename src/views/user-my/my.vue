@@ -55,7 +55,7 @@
         <div class="fans">粉丝 {{ userInfo.fans | friendsFilter }}</div>
       </div>
       <div class="all">
-        <van-cell title="卖家中心" is-link to="/deals"/>
+        <van-cell title="卖家中心" is-link to="/saleCenter" />
         <van-cell title="买家中心" is-link to="/deals" />
       </div>
     </van-pull-refresh>
@@ -136,7 +136,7 @@ export default {
     async getUserInfoByToken() {
       //const token = window.sessionStorage.getItem('market-token')
       const { data: re } = await this.$http.get(
-        'private/v1/users/getuserinfo/token'
+        'private/users/getuserinfo/token'
       )
       if (re.code !== 200) {
         this.$toast('获取用户信息失败，请登陆')
@@ -164,7 +164,7 @@ export default {
     async onRefresh() {
       try {
         const { data: re } = await this.$http.get(
-          '/public/v1/users/getuserinfo',
+          '/public/users/getuserinfo',
           {
             params: {
               id: this.userInfo._id
@@ -183,6 +183,8 @@ export default {
           })
         }
         this.isLoading = false
+        this.$store.commit('setUserInfo', re.data)
+        this.userInfo = re.data
         this.$toast('刷新成功')
       } catch (err) {
         console.log(err)

@@ -16,14 +16,13 @@
         <van-cell title="隐私" is-link to="index" />
         <van-cell title="安全中心" is-link to="index" />
       </van-cell-group>
-      
+
       <!-- <van-cell-group> -->
       <van-cell style="background-color:#f4f5f9">
         <van-button type="warning" block @click="exit">退出账户</van-button>
       </van-cell>
       <!-- </van-cell-group> -->
     </div>
-
   </div>
 </template>
 <script>
@@ -43,15 +42,24 @@ export default {
   methods: {
     showUserInfo() {
       // this.userInfoControl = true
-      this.$router.push({path:'/user/setting/userinfo',query:{redirect: this.$route.path}})
+      this.$router.push({
+        path: '/user/setting/userinfo',
+        query: { redirect: this.$route.path }
+      })
     },
     showAccount() {
-      this.$router.push({path:'/user/setting/account',query:{redirect: this.$route.path}})
+      this.$router.push({
+        path: '/user/setting/account',
+        query: { redirect: this.$route.path }
+      })
       // this.accountControl = true
     },
     showAddressList() {
       // this.addressListControl = true
-      this.$router.push({path:'/user/setting/address',query:{redirect: this.$route.path}})
+      this.$router.push({
+        path: '/user/setting/address',
+        query: { redirect: this.$route.path }
+      })
     },
     onClickLeft() {
       this.$router.push('/my')

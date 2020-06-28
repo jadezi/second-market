@@ -84,7 +84,7 @@ export default {
         return this.$toast('请填写地址信息')
       }
       console.log(this.userInfo)
-      let { data: re } = await this.$http.post('private/v1/users/address/add', {
+      let { data: re } = await this.$http.post('private/users/address/add', {
         list: this.list,
         id: this.userInfo._id
       })

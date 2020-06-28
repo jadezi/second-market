@@ -120,7 +120,7 @@ export default {
     // 获取标签栏标题
     async getTabList() {
       try {
-        const { data: res } = await this.$http.get('public/v1/title/index')
+        const { data: res } = await this.$http.get('public/title/index')
         if (res.code !== 200) {
           return this.$toast('网络错误')
         }

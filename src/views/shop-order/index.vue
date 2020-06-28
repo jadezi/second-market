@@ -125,7 +125,7 @@ export default {
         })
       }
       let { data: re } = await this.$http.get(
-        '/private/v1/users/address/list',
+        'private/users/address/list',
         {
           params: {
             id: userInfo._id
@@ -169,7 +169,7 @@ export default {
       })
     },
     async getGoodsByUserId() {
-      let { data: re } = await this.$http.get('public/v1/details/get', {
+      let { data: re } = await this.$http.get('public/details/get', {
         params: {
           id: this.$route.params.shopId
         }
@@ -208,20 +208,21 @@ export default {
       if (this.chosenContactId == null) {
         return this.$toast('请选择收货地点')
       }
-      let { data: re } = await this.$http.post('private/v1/deals/add', {
+      let { data: re } = await this.$http.post('private/deals/add', {
         goodsId: this.goods.goodId._id,
         buyId: this.id,
         saleId: this.goods.goodId.uid._id,
         address: this.item,
         price: this.goods.goodId.summary.saleOfPrice,
         count: 1,
-        status: '付款成功'
+        status: '已付款'
       })
       console.log(re)
       if (re.code !== 201) {
         return this.$toast('订单提交失败')
       }
       this.$toast('提交成功')
+      this.$router.push('/')
     }
   }
 }

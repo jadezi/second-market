@@ -97,7 +97,7 @@ export default {
         })
       }
       let { data: re } = await this.$http.get(
-        '/private/v1/users/address/list',
+        '/private/users/address/list',
         {
           params: {
             id: userInfo._id

@@ -47,7 +47,7 @@ export default {
   mounted() {},
   methods: {
     async getTitleGroup() {
-      const { data: res } = await this.$http.get('public/v1/title/bbs')
+      const { data: res } = await this.$http.get('public/title/bbs')
       console.log(res)
       if (res.code !== 200) {
         return this.$toast(res.message)

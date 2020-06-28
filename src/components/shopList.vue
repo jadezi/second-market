@@ -59,7 +59,7 @@ export default {
         console.log('-----获取标题-----')
         console.log(this.selectTabItem)
         console.log('-----获取结束-----')
-        const { data: res } = await this.$http.get('public/v1/goods/gettitle', {
+        const { data: res } = await this.$http.get('public/goods/gettitle', {
           params: {
             id: this.id,
             title: this.selectTabItem,

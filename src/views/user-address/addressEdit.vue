@@ -107,7 +107,7 @@ export default {
         return this.$toast('请输入信息')
       }
       let { data: re } = await this.$http.post(
-        'private/v1/users/address/edit',
+        'private/users/address/edit',
         {
           uid: this.$store.getters.getUserInfo._id,
           list: this.addresses

@@ -43,7 +43,17 @@
         </div>
         <div class="extends">
           <div class="username">{{ userInfo.setting.name }}</div>
-          <div class="follow"><van-button :loading="loading" round type="warning" :icon="icon" @click="follow">{{ followText}}</van-button></div>
+          <div class="follow" v-if="followState ">
+            <van-button
+              :loading="loading"
+              round
+              type="warning"
+              :icon="icon"
+              @click="follow"
+            >
+              {{ followText }}
+            </van-button>
+          </div>
         </div>
         <div class="label">{{ userInfo.setting.signature }}</div>
         <div class="tags">
@@ -91,6 +101,8 @@ export default {
     return {
       title: '',
       uid: '',
+      id: '',
+      followState: false,
       userInfo: {},
       // bgimg: '',
       userImg: '',
@@ -106,7 +118,7 @@ export default {
         },
         {
           id: 1,
-          title: '已卖出',
+          title: '已售出',
           query: 'finished'
         }
       ],
@@ -129,9 +141,29 @@ export default {
   },
   created() {
     this.uid = this.$route.params.uid
+    this.id = this.$store.getters.getUserInfo._id
     this.getUserInfo()
     window.addEventListener('scroll', this.scrollHandle)
     this.imgCache()
+    var friends = this.$store.getters.getUserInfo.friends
+    if (this.uid != this.id) {
+      this.followState = true
+    }
+    var that = this
+    console.log(typeof friends)
+    var result = friends.filter(function(f) {
+      if (f == that.uid) {
+          if (that.icon == 'plus') {
+            that.icon = 'success'
+            that.followText = '已关注'
+          } else {
+            that.icon = 'plus'
+            that.followText = '关注'
+          }
+      }
+      return true
+    })
+    console.log(result)
   },
   watch: {
     userInfo: {
@@ -187,11 +219,29 @@ export default {
       this.listSize = 0
     },
     follow() {
+      if (!this.id) {
+        window.sessionStorage.removeItem('market-token')
+        let path = this.$route.path
+        this.$toast('请重新登陆')
+        this.$router.push({
+          path: '/login',
+          query: { type: 'pwd', redirect: path }
+        })
+        return
+      }
       this.loading = true
-      setTimeout(() => {
+      setTimeout(async () => {
+        let { data: re } = await this.$http.put('private/users/friends/follow', {
+          id: this.id,
+          fid: this.userInfo._id
+        })
+        if (re.code != 200) {
+          this.$toast('关注失败')
+          this.loading = false
+          return
+        }
         this.$toast('关注成功')
         this.loading = false
-        this.count++
       }, 3000)
       if (this.icon == 'plus') {
         this.icon = 'success'
@@ -202,20 +252,17 @@ export default {
       }
     },
     async getUserInfo() {
-      const { data: res } = await this.$http.get(
-        `public/v1/users/getuserinfo`,
-        {
-          params: {
-            id: this.uid
-          }
+      const { data: res } = await this.$http.get(`public/users/getuserinfo`, {
+        params: {
+          id: this.uid
         }
-      )
+      })
       console.log(res)
       if (res.code !== 200) {
         return this.$toast('加载失败')
       }
       this.userInfo = res.data
-      console.log(this.userInfo)
+      // console.log(this.userInfo)
     },
     back() {
       this.$router.push('/')
