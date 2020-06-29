@@ -22,8 +22,16 @@
             </div>
           </div>
           <van-field v-model="regForm.sn" placeholder="请输入学号" />
-          <van-field v-model="regForm.pwd1" placeholder="请输入密码" />
-          <van-field v-model="regForm.pwd2" placeholder="请确认密码" />
+          <van-field
+            v-model="regForm.pwd1"
+            type="password"
+            placeholder="请输入密码"
+          />
+          <van-field
+            v-model="regForm.pwd2"
+            type="password"
+            placeholder="请确认密码"
+          />
         </van-cell-group>
         <van-button
           class="reg"

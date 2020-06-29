@@ -65,8 +65,10 @@
             <van-field
               v-model="priceAgo"
               label="入手价格"
+              clearable
               placeholder="￥0.00"
               @focus="onFocus(1)"
+              readonly
               required
             />
           </div>

@@ -215,7 +215,7 @@ router.beforeEach((to, from, next) => {
         next()
         Vue.use(
           new VueSocketIO({
-            connection: SocketIO('http://localhost:5000'),
+            connection: SocketIO('http://124.70.178.16/socket/'),
             debug: true
           })
         )

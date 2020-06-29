@@ -107,7 +107,7 @@ Vue.use(DatetimePicker)
 
 Vue.config.productionTip = false
 
-axios.defaults.baseURL = 'http://localhost:8088/api/v1/'
+axios.defaults.baseURL = 'http://124.70.178.16/api/v1/'
 
 axios.interceptors.request.use(config => {
   var pattern = new RegExp('public')
